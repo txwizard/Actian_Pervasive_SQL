@@ -59,5 +59,185 @@ Namespace My.Resources
                 resourceCulture = value
             End Set
         End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to Duplicate column name.
+        '''</summary>
+        Friend ReadOnly Property ERRMSG_DUPLICATE_COLUMN_NAME() As String
+            Get
+                Return ResourceManager.GetString("ERRMSG_DUPLICATE_COLUMN_NAME", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to Amount Owed: {0}.
+        '''</summary>
+        Friend ReadOnly Property MSG_COLUMN_LABEL_STRING_AMOUNT_OWED() As String
+            Get
+                Return ResourceManager.GetString("MSG_COLUMN_LABEL_STRING_AMOUNT_OWED", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to Amount Paid: {0}.
+        '''</summary>
+        Friend ReadOnly Property MSG_COLUMN_LABEL_STRING_AMOUNT_PAID() As String
+            Get
+                Return ResourceManager.GetString("MSG_COLUMN_LABEL_STRING_AMOUNT_PAID", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to Comments: {0}.
+        '''</summary>
+        Friend ReadOnly Property MSG_COLUMN_LABEL_STRING_COMMENTS() As String
+            Get
+                Return ResourceManager.GetString("MSG_COLUMN_LABEL_STRING_COMMENTS", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to Log: {0}.
+        '''</summary>
+        Friend ReadOnly Property MSG_COLUMN_LABEL_STRING_LOG() As String
+            Get
+                Return ResourceManager.GetString("MSG_COLUMN_LABEL_STRING_LOG", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to Registrar ID: {0}.
+        '''</summary>
+        Friend ReadOnly Property MSG_COLUMN_LABEL_STRING_REGISTRAR_ID() As String
+            Get
+                Return ResourceManager.GetString("MSG_COLUMN_LABEL_STRING_REGISTRAR_ID", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to Student ID: {0}.
+        '''</summary>
+        Friend ReadOnly Property MSG_COLUMN_LABEL_STRING_STUDENT_ID() As String
+            Get
+                Return ResourceManager.GetString("MSG_COLUMN_LABEL_STRING_STUDENT_ID", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to Transaction Number: {0}.
+        '''</summary>
+        Friend ReadOnly Property MSG_COLUMN_LABEL_STRING_TRANSACTION_NUMBER() As String
+            Get
+                Return ResourceManager.GetString("MSG_COLUMN_LABEL_STRING_TRANSACTION_NUMBER", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to ColumnName = {0}, ColumnIndex = {1}, ColumnValue = {2}, ColumnLabel = {3}.
+        '''</summary>
+        Friend ReadOnly Property MSG_COLUMNNAMESANDLABELS_TOSTRING() As String
+            Get
+                Return ResourceManager.GetString("MSG_COLUMNNAMESANDLABELS_TOSTRING", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to     Exception HResult: {0}.
+        '''</summary>
+        Friend ReadOnly Property MSG_EXCEPTION_HRESULT() As String
+            Get
+                Return ResourceManager.GetString("MSG_EXCEPTION_HRESULT", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to     Exception Source: {0}.
+        '''</summary>
+        Friend ReadOnly Property MSG_EXCEPTION_SOURCE() As String
+            Get
+                Return ResourceManager.GetString("MSG_EXCEPTION_SOURCE", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to     Exception StackTrace: {0}{1}.
+        '''</summary>
+        Friend ReadOnly Property MSG_EXCEPTION_STACKTRACE() As String
+            Get
+                Return ResourceManager.GetString("MSG_EXCEPTION_STACKTRACE", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to     Exception TargetSite: {0}.
+        '''</summary>
+        Friend ReadOnly Property MSG_EXCEPTION_TARGETSITE() As String
+            Get
+                Return ResourceManager.GetString("MSG_EXCEPTION_TARGETSITE", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to An {0} exception arose.{2}{2}    Exception Message: {1}.
+        '''</summary>
+        Friend ReadOnly Property MSG_EXCEPTION_TYPE_AND_MESSAGE() As String
+            Get
+                Return ResourceManager.GetString("MSG_EXCEPTION_TYPE_AND_MESSAGE", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to {0}, version {1}{4}Started at {2} ({3} UTC).
+        '''</summary>
+        Friend ReadOnly Property MSG_PROGRAM_BEGIN() As String
+            Get
+                Return ResourceManager.GetString("MSG_PROGRAM_BEGIN", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to {0} completed at {1}{3}Running time: {2}.
+        '''</summary>
+        Friend ReadOnly Property MSG_PROGRAM_DONE() As String
+            Get
+                Return ResourceManager.GetString("MSG_PROGRAM_DONE", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to Execution succeeded..
+        '''</summary>
+        Friend ReadOnly Property MSG_SHUTDOWN_NORMALLY() As String
+            Get
+                Return ResourceManager.GetString("MSG_SHUTDOWN_NORMALLY", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to Execution failed with status code {0:0x8x} ({1} decimal)..
+        '''</summary>
+        Friend ReadOnly Property MSG_SHUTDOWN_WITH_ERROR() As String
+            Get
+                Return ResourceManager.GetString("MSG_SHUTDOWN_WITH_ERROR", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to Press the RETURN key to return to Windows..
+        '''</summary>
+        Friend ReadOnly Property MSG_WAIT_FOR_CARBON_UNIT() As String
+            Get
+                Return ResourceManager.GetString("MSG_WAIT_FOR_CARBON_UNIT", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to ColumnName = {0}, ColumnLabel = {1}.
+        '''</summary>
+        Friend ReadOnly Property UNIQUE_COLUMN_NAME_TOSTRING() As String
+            Get
+                Return ResourceManager.GetString("UNIQUE_COLUMN_NAME_TOSTRING", resourceCulture)
+            End Get
+        End Property
     End Module
 End Namespace
