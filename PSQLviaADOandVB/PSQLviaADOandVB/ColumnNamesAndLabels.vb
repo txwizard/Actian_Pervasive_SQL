@@ -18,9 +18,9 @@
 ' 2019/07/09 DG Initial implementation, including creation of a handful of core
 '               helper routines that provide a Visual Basic implementation of my
 '               tried and true console mode program skeleton.
+'
+' 2019/07/09 DG Suppress IntelliSense code analysis warning IDE0028.
 ' ==============================================================================
-
-Imports PSQLviaADOandVB
 
 Imports WizardWrx
 
@@ -675,7 +675,9 @@ Public Class ColumnNamesAndLabels
             Const INITIAL_CAPACITY = 8
 
             If s_alstUsedNames Is Nothing Then
+#Disable Warning IDE0028 ' Simplify collection initialization.
                 s_alstUsedNames = New List(Of String)(INITIAL_CAPACITY)
+#Enable Warning IDE0028 ' Simplify collection initialization.
                 s_alstUsedNames.Add(pstrColumnName)
             Else
                 Dim strUniqueColumnName As String = CreateComparand(pstrColumnName,

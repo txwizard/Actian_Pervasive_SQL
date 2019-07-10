@@ -53,6 +53,26 @@ Namespace My
                 Return defaultInstance
             End Get
         End Property
+        
+        <Global.System.Configuration.ApplicationScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("C:\Users\DAG\Documents\_Clients\CodeProject Authors Group\Actian Zen\PSQLviaADOan"& _ 
+            "dVB_Billing_Detail.TXT")>  _
+        Public ReadOnly Property BillingDetailReportFileName() As String
+            Get
+                Return CType(Me("BillingDetailReportFileName"),String)
+            End Get
+        End Property
+        
+        <Global.System.Configuration.ApplicationScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("C:\Users\DAG\Documents\_Clients\CodeProject Authors Group\Actian Zen\PSQLviaADOan"& _ 
+            "dVB_Billing_Detail.TSV")>  _
+        Public ReadOnly Property BillingDetailTabularReportFileName() As String
+            Get
+                Return CType(Me("BillingDetailTabularReportFileName"),String)
+            End Get
+        End Property
     End Class
 End Namespace
 

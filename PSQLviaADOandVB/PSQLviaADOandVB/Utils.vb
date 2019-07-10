@@ -15,7 +15,7 @@
 '
 ' Date       By Description
 ' ---------- -- ----------------------------------------------------------------
-' 2019/07/09 DG Initial implementation, including creation of a handful of core
+' 2019/07/10 DG Initial implementation, including creation of a handful of core
 '               helper routines that provide a Visual Basic implementation of my
 '               tried and true console mode program skeleton.
 ' ==============================================================================
@@ -109,6 +109,34 @@ Public Class Utils
 
 
     ''' <summary>
+    ''' Report exceptions of all stripes.
+    ''' </summary>
+    ''' <param name="pexAllKinds">
+    ''' Pass in a reference to an Exception or derivative thereof.
+    ''' </param>
+    Public Shared Sub ReportException(pexAllKinds As Exception)
+
+        Console.WriteLine(My.Resources.MSG_EXCEPTION_TYPE_AND_MESSAGE,      ' Format control string containing 3 tokens
+                          pexAllKinds.GetType().FullName,                   ' Format Item 0: An {0} exception arose.
+                          pexAllKinds.Message,                              ' Format Item 1: Exception Message: {1}"
+                          Environment.NewLine)                              ' Format Item 2: arose.{2}{2}Exception
+        Console.WriteLine(My.Resources.MSG_EXCEPTION_HRESULT,               ' Format control string containing 1 token
+                          pexAllKinds.HResult)                              ' Format Item 0: HResult: 0
+        Console.WriteLine(My.Resources.MSG_EXCEPTION_SOURCE,                ' Format control string containing 1 token
+                          pexAllKinds.Source)                               ' Format Item 0: Exception Source: {0}
+        Console.WriteLine(My.Resources.MSG_EXCEPTION_TARGETSITE,            ' Format control string containing 1 token
+                          pexAllKinds.TargetSite)                           ' Format Item 0: Exception TargetSite: {0}
+        Console.WriteLine(My.Resources.MSG_EXCEPTION_STACKTRACE,            ' Format control string containing 2 tokenS
+                          Utils.BeautifyStackTrace(pexAllKinds.StackTrace,  ' Format Item 0: Exception StackTrace:{1}{0}
+                                                   My.Resources.MSG_EXCEPTION_STACKTRACE),
+                          Environment.NewLine)                              ' Format Item 1: Exception StackTrace:{1}{0}
+
+        Environment.ExitCode = MagicNumbers.ERROR_RUNTIME
+
+    End Sub     ' ReportException
+
+
+    ''' <summary>
     ''' Increment a static (shared) value, returning the incremented value.
     ''' </summary>
     ''' <param name="pintIncrementThisValue">
@@ -125,7 +153,27 @@ Public Class Utils
         pintIncrementThisValue += 1
         Return pintIncrementThisValue
 
-    End Function    ' SetToIncrementedValue
+    End Function    ' SetToIncrementedValue (1 of 2)
+
+
+    ''' <summary>
+    ''' Increment a static (shared) value, returning the incremented value.
+    ''' </summary>
+    ''' <param name="plngIncrementThisValue">
+    ''' Pass in a reference to the shared value to increment and return. Since
+    ''' the value is incremented, it must be passed explicitly by reference.
+    ''' </param>
+    ''' <returns>
+    ''' The return value is the initial value of
+    ''' <paramref name="plngIncrementThisValue"/> plus one, which also becomes
+    ''' the new value of <paramref name="plngIncrementThisValue"/>.
+    ''' </returns>
+    Public Shared Function SetToIncrementedValue(ByRef plngIncrementThisValue As Long) As Long
+
+        plngIncrementThisValue += 1
+        Return plngIncrementThisValue
+
+    End Function    ' SetToIncrementedValue (2 of 2)
 
 
     '''<summary>

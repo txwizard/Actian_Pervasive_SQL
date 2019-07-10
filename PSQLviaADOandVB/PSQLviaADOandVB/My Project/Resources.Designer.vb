@@ -70,7 +70,7 @@ Namespace My.Resources
         End Property
         
         '''<summary>
-        '''  Looks up a localized string similar to Amount Owed: {0}.
+        '''  Looks up a localized string similar to {0}Amount Owed: {1}.
         '''</summary>
         Friend ReadOnly Property MSG_COLUMN_LABEL_STRING_AMOUNT_OWED() As String
             Get
@@ -79,7 +79,7 @@ Namespace My.Resources
         End Property
         
         '''<summary>
-        '''  Looks up a localized string similar to Amount Paid: {0}.
+        '''  Looks up a localized string similar to {0}Amount Paid: {1}.
         '''</summary>
         Friend ReadOnly Property MSG_COLUMN_LABEL_STRING_AMOUNT_PAID() As String
             Get
@@ -88,7 +88,7 @@ Namespace My.Resources
         End Property
         
         '''<summary>
-        '''  Looks up a localized string similar to Comments: {0}.
+        '''  Looks up a localized string similar to {0}Comments: {1}{2}.
         '''</summary>
         Friend ReadOnly Property MSG_COLUMN_LABEL_STRING_COMMENTS() As String
             Get
@@ -97,7 +97,7 @@ Namespace My.Resources
         End Property
         
         '''<summary>
-        '''  Looks up a localized string similar to Log: {0}.
+        '''  Looks up a localized string similar to {0}Log: {1}.
         '''</summary>
         Friend ReadOnly Property MSG_COLUMN_LABEL_STRING_LOG() As String
             Get
@@ -106,7 +106,7 @@ Namespace My.Resources
         End Property
         
         '''<summary>
-        '''  Looks up a localized string similar to Registrar ID: {0}.
+        '''  Looks up a localized string similar to {0}Registrar ID: {1}.
         '''</summary>
         Friend ReadOnly Property MSG_COLUMN_LABEL_STRING_REGISTRAR_ID() As String
             Get
@@ -115,7 +115,7 @@ Namespace My.Resources
         End Property
         
         '''<summary>
-        '''  Looks up a localized string similar to Student ID: {0}.
+        '''  Looks up a localized string similar to Record Number {0,5}: Student ID: {1}.
         '''</summary>
         Friend ReadOnly Property MSG_COLUMN_LABEL_STRING_STUDENT_ID() As String
             Get
@@ -124,7 +124,7 @@ Namespace My.Resources
         End Property
         
         '''<summary>
-        '''  Looks up a localized string similar to Transaction Number: {0}.
+        '''  Looks up a localized string similar to {0}Transaction Number: {1}.
         '''</summary>
         Friend ReadOnly Property MSG_COLUMN_LABEL_STRING_TRANSACTION_NUMBER() As String
             Get
@@ -187,7 +187,25 @@ Namespace My.Resources
         End Property
         
         '''<summary>
-        '''  Looks up a localized string similar to {0}, version {1}{4}Started at {2} ({3} UTC).
+        '''  Looks up a localized string similar to Listing.
+        '''</summary>
+        Friend ReadOnly Property MSG_LABEL_FOR_LISTING() As String
+            Get
+                Return ResourceManager.GetString("MSG_LABEL_FOR_LISTING", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to Table  .
+        '''</summary>
+        Friend ReadOnly Property MSG_LABEL_FOR_TABLE() As String
+            Get
+                Return ResourceManager.GetString("MSG_LABEL_FOR_TABLE", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to {0}, version {1}{4}Started at {2} ({3} UTC){4}.
         '''</summary>
         Friend ReadOnly Property MSG_PROGRAM_BEGIN() As String
             Get
@@ -196,11 +214,29 @@ Namespace My.Resources
         End Property
         
         '''<summary>
-        '''  Looks up a localized string similar to {0} completed at {1}{3}Running time: {2}.
+        '''  Looks up a localized string similar to {3}{0} completed at {1}{3}Running time: {2}.
         '''</summary>
         Friend ReadOnly Property MSG_PROGRAM_DONE() As String
             Get
                 Return ResourceManager.GetString("MSG_PROGRAM_DONE", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to     Listing record # {0}.
+        '''</summary>
+        Friend ReadOnly Property MSG_PROGRESS_UPDATE() As String
+            Get
+                Return ResourceManager.GetString("MSG_PROGRESS_UPDATE", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to Report Name: Listing of everything in the Billing table{2}Run Date: {0} ({1} UTC){2}.
+        '''</summary>
+        Friend ReadOnly Property MSG_REPORT_HEADER() As String
+            Get
+                Return ResourceManager.GetString("MSG_REPORT_HEADER", resourceCulture)
             End Get
         End Property
         
@@ -223,11 +259,29 @@ Namespace My.Resources
         End Property
         
         '''<summary>
+        '''  Looks up a localized string similar to {0}{1} File Name = {2}.
+        '''</summary>
+        Friend ReadOnly Property MSG_TASK_SUMMARY() As String
+            Get
+                Return ResourceManager.GetString("MSG_TASK_SUMMARY", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Looks up a localized string similar to Press the RETURN key to return to Windows..
         '''</summary>
         Friend ReadOnly Property MSG_WAIT_FOR_CARBON_UNIT() As String
             Get
                 Return ResourceManager.GetString("MSG_WAIT_FOR_CARBON_UNIT", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to End of report, Total records = {0}.
+        '''</summary>
+        Friend ReadOnly Property REPORT_FOOTER() As String
+            Get
+                Return ResourceManager.GetString("REPORT_FOOTER", resourceCulture)
             End Get
         End Property
         

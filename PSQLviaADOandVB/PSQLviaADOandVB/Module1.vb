@@ -42,7 +42,11 @@ Module Module1
 
         Utils.DisplayStartupBanner()
 
-        DoTask()
+        Try
+            DoTask()
+        Catch ex As Exception
+            Utils.ReportException(ex)
+        End Try
 
         Utils.DisplayShutdownBanner()
 
@@ -116,13 +120,23 @@ Module Module1
         Dim cn As New ADODB.Connection
         Dim rs As New ADODB.Recordset
 
-        'This should always be adUseServer unless you
-        'specifically want to use the Client Cursor Engine
+        Dim swDetailsList As IO.StreamWriter = Nothing
+        Dim swDetailsTable As IO.StreamWriter = Nothing
+
+        Dim lngItemNumber As Long = ListInfo.LIST_IS_EMPTY
+
+        ' ----------------------------------------------------------------------
+        ' This should always be adUseServer unless you specifically want to use
+        ' the Client Cursor Engine.
+        ' ----------------------------------------------------------------------
 
         cn.CursorLocation = ADODB.CursorLocationEnum.adUseServer
         cn.ConnectionString = CONNECTION_STRING
 
         Try
+            Dim aobjColumnNamesAndLabels As ColumnNamesAndLabels() = CreateNameAndLabelArray()
+            Dim fcwProgress As ConsoleAppAids3.FixedConsoleWriter = New ConsoleAppAids3.FixedConsoleWriter(ConsoleColor.Yellow,
+                                                                                                           ConsoleColor.Black)
             cn.Open()
             rs.Open(TABLE_NAME_IS_BILLING,
                 cn,
@@ -130,31 +144,54 @@ Module Module1
                 ADODB.LockTypeEnum.adLockOptimistic,
                 ADODB.CommandTypeEnum.adCmdTableDirect)
             rs.MoveFirst()
-            Dim aobjColumnNamesAndLabels As ColumnNamesAndLabels() = CreateNameAndLabelArray()
-            ListAllFieldsOnConsole(rs,
-                                   aobjColumnNamesAndLabels)
+            swDetailsList = New IO.StreamWriter(My.Settings.BillingDetailReportFileName,
+                                                FileIOFlags.FILE_OUT_CREATE,
+                                                Text.Encoding.UTF8,
+                                                MagicNumbers.CAPACITY_08KB)
+            swDetailsTable = New IO.StreamWriter(My.Settings.BillingDetailTabularReportFileName,
+                                                 FileIOFlags.FILE_OUT_CREATE,
+                                                 Text.Encoding.UTF8,
+                                                 MagicNumbers.CAPACITY_08KB)
 
+            Do  ' Until rs.EOF
+                ListAllFieldsOnConsole(rs,
+                                       aobjColumnNamesAndLabels,
+                                       Utils.SetToIncrementedValue(lngItemNumber),
+                                       swDetailsList,
+                                       swDetailsTable,
+                                       fcwProgress)
+                rs.MoveNext()
+            Loop Until rs.EOF   ' End of Do loop
+
+            swDetailsList.WriteLine(My.Resources.REPORT_FOOTER,
+                                    lngItemNumber)
+            fcwProgress.ScrollUp()
+
+            Console.WriteLine(My.Resources.MSG_TASK_SUMMARY,
+                              Environment.NewLine,
+                              My.Resources.MSG_LABEL_FOR_LISTING,
+                              My.Settings.BillingDetailReportFileName)
+            Console.WriteLine(My.Resources.MSG_TASK_SUMMARY,
+                              SpecialStrings.EMPTY_STRING,
+                              My.Resources.MSG_LABEL_FOR_TABLE,
+                              My.Settings.BillingDetailTabularReportFileName)
 
         Catch ex As Exception
-            Console.WriteLine(My.Resources.MSG_EXCEPTION_TYPE_AND_MESSAGE,      ' Format control string containing 3 tokens
-                              ex.GetType().FullName,                            ' Format Item 0: An {0} exception arose.
-                              ex.Message,                                       ' Format Item 1: Exception Message: {1}"
-                              Environment.NewLine)                              ' Format Item 2: arose.{2}{2}Exception
-            Console.WriteLine(My.Resources.MSG_EXCEPTION_HRESULT,               ' Format control string containing 1 token
-                              ex.HResult)                                       ' Format Item 0: HResult: 0
-            Console.WriteLine(My.Resources.MSG_EXCEPTION_SOURCE,                ' Format control string containing 1 token
-                              ex.Source)                                        ' Format Item 0: Exception Source: {0}
-            Console.WriteLine(My.Resources.MSG_EXCEPTION_TARGETSITE,            ' Format control string containing 1 token
-                              ex.TargetSite)                                    ' Format Item 0: Exception TargetSite: {0}
-            Console.WriteLine(My.Resources.MSG_EXCEPTION_STACKTRACE,            ' Format control string containing 2 tokenS
-                              Utils.BeautifyStackTrace(ex.StackTrace,           ' Format Item 0: Exception StackTrace:{1}{0}
-                                                       My.Resources.MSG_EXCEPTION_STACKTRACE),
-                              Environment.NewLine)                              ' Format Item 1: Exception StackTrace:{1}{0}
-
-            Environment.ExitCode = MagicNumbers.ERROR_RUNTIME
+            Utils.ReportException(ex)
         Finally
             rs.Close()
             cn.Close()
+
+            If swDetailsList.BaseStream.CanWrite Then
+                swDetailsList.Close()
+            End If  ' If swDetailsList.BaseStream.CanWrite Then
+
+            If swDetailsTable.BaseStream.CanWrite Then
+                swDetailsTable.Close()
+            End If  ' If swDetailsList.BaseStream.CanWrite Then
+
+            swDetailsList.Dispose()
+            swDetailsTable.Dispose()
         End Try
 
     End Sub     ' DoTask
@@ -171,16 +208,90 @@ Module Module1
     ''' Pass in the ColumnNamesAndLabels array that supplies column names and
     ''' labels for the report.
     ''' </param>
+    ''' <param name="plngItemNumber">
+    ''' Pass in the current value of the item number. Passing in the value
+    ''' returned by Utils.SetToIncrementedValue works well, as this single step
+    ''' also increments the item number. This value is safe to pass by value.
+    ''' </param>
+    ''' <param name="pswDetailsList">
+    ''' Pass in a reference to the open StreamWriter onto which the itemized
+    ''' list of billing items is written as sets of vertically aligned column
+    ''' names and values. Using <paramref name="plngItemNumber"/>, this routine
+    ''' looks after writing the label row.
+    ''' </param>
+    ''' <param name="pswDetailsTable">
+    ''' Pass in a reference to the open StreamWriter onto which the details are
+    ''' written as tab delimited rows. Using <paramref name="plngItemNumber"/>,
+    ''' this routine looks after writing the label row.
+    ''' </param>
+    ''' <param name="pfcwProgress">
+    ''' Pass in a reference to a working ConsoleAppAids3.FixedConsoleWriter
+    ''' object through which the program updates the console without scrolling
+    ''' the text above it off the screen.
+    ''' </param>
     Private Sub ListAllFieldsOnConsole(ByRef prs As ADODB.Recordset,
-                                       ByRef paobjColumnNamesAndLabels As ColumnNamesAndLabels())
+                                       ByRef paobjColumnNamesAndLabels As ColumnNamesAndLabels(),
+                                       ByVal plngItemNumber As Long,
+                                       ByRef pswDetailsList As IO.StreamWriter,
+                                       ByRef pswDetailsTable As IO.StreamWriter,
+                                       ByRef pfcwProgress As ConsoleAppAids3.FixedConsoleWriter)
 
+        pfcwProgress.Write(My.Resources.MSG_PROGRESS_UPDATE,
+                           plngItemNumber)
         Dim intJ As Integer
         Dim intLastIndex = ArrayInfo.IndexFromOrdinal(paobjColumnNamesAndLabels.Length)
+        Dim strLeadingWhiteSpace As String
+
+        If plngItemNumber = MagicNumbers.PLUS_ONE Then
+            Dim sbTableLabelRow As Text.StringBuilder = New Text.StringBuilder(MagicNumbers.CAPACITY_01KB)
+
+            For intJ = ArrayInfo.ARRAY_FIRST_ELEMENT To intLastIndex
+                If intJ > ArrayInfo.ARRAY_FIRST_ELEMENT Then
+                    sbTableLabelRow.Append(SpecialCharacters.TAB_CHAR)
+                End If  ' If intJ > ArrayInfo.ARRAY_FIRST_ELEMENT Then
+
+                sbTableLabelRow.Append(paobjColumnNamesAndLabels(intJ).ColumnName)
+            Next    ' For intJ = ArrayInfo.ARRAY_FIRST_ELEMENT To intLastIndex
+
+            pswDetailsList.WriteLine(My.Resources.MSG_REPORT_HEADER,
+                                     Process.GetCurrentProcess().StartTime,
+                                     Process.GetCurrentProcess().StartTime.ToUniversalTime(),
+                                     Environment.NewLine)
+            pswDetailsTable.WriteLine(sbTableLabelRow.ToString())
+        End If  ' If plngItemNumber = MagicNumbers.PLUS_ONE Then
+
+        Dim sbTableDetailRow As Text.StringBuilder = New Text.StringBuilder(MagicNumbers.CAPACITY_01KB)
 
         For intJ = ArrayInfo.ARRAY_FIRST_ELEMENT To intLastIndex
-            Console.WriteLine(paobjColumnNamesAndLabels(intJ).ColumnLabel,
-                              prs.Fields(paobjColumnNamesAndLabels(intJ).ColumnName).Value)
+            Select Case intJ
+                Case ArrayInfo.ARRAY_FIRST_ELEMENT
+                    pswDetailsList.WriteLine(paobjColumnNamesAndLabels(intJ).ColumnLabel,
+                                         plngItemNumber,
+                                         prs.Fields(paobjColumnNamesAndLabels(intJ).ColumnName).Value)
+                    strLeadingWhiteSpace = New String(SpecialCharacters.SPACE_CHAR,
+                                                  paobjColumnNamesAndLabels(intJ).ColumnLabel.IndexOf(SpecialCharacters.COLON) + MagicNumbers.PLUS_TWO)
+                    sbTableDetailRow.Append(prs.Fields(paobjColumnNamesAndLabels(intJ).ColumnName).Value)
+                Case intLastIndex
+#Disable Warning BC42104 ' Variable is used before it has been assigned a value.
+                    pswDetailsList.WriteLine(paobjColumnNamesAndLabels(intJ).ColumnLabel,
+                                             strLeadingWhiteSpace,
+                                             prs.Fields(paobjColumnNamesAndLabels(intJ).ColumnName).Value,
+                                             Environment.NewLine)
+#Enable Warning BC42104 ' Variable is used before it has been assigned a value.
+                    sbTableDetailRow.Append(SpecialCharacters.TAB_CHAR)
+                    sbTableDetailRow.Append(prs.Fields(paobjColumnNamesAndLabels(intJ).ColumnName).Value)
+                Case Else
+#Disable Warning BC42104 ' Variable is used before it has been assigned a value.
+                    pswDetailsList.WriteLine(paobjColumnNamesAndLabels(intJ).ColumnLabel,
+                                             strLeadingWhiteSpace,
+                                             prs.Fields(paobjColumnNamesAndLabels(intJ).ColumnName).Value)
+#Enable Warning BC42104 ' Variable is used before it has been assigned a value.
+                    sbTableDetailRow.Append(SpecialCharacters.TAB_CHAR)
+                    sbTableDetailRow.Append(prs.Fields(paobjColumnNamesAndLabels(intJ).ColumnName).Value)
+            End Select
         Next    ' For intJ = Utils.ARRAY_SUBSCRIPT_FIRST To paobjColumnNamesAndLabels.Length
+
+        pswDetailsTable.WriteLine(sbTableDetailRow.ToString())
 
     End Sub '   ListAllFieldsOnConsole
 
