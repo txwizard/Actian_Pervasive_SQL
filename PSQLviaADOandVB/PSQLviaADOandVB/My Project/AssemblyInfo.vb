@@ -13,7 +13,7 @@ Imports System.Runtime.InteropServices
 <Assembly: AssemblyCompany("David A. Gray")>
 <Assembly: AssemblyProduct("Pervasive SQL Demonstration Programs")>
 <Assembly: AssemblyCopyright("Copyright © 2019, David A. Gray")>
-<Assembly: AssemblyTrademark("")>
+<Assembly: AssemblyTrademark("This software is distributed under a 3-clause BSD license.")>
 
 <Assembly: ComVisible(False)>
 
