@@ -509,6 +509,20 @@ namespace PSQLviaADOCS
 
 
         /// <summary>
+        /// Call this static method to return the global IndexIncrementIsEnabled
+        /// flag state.
+        /// </summary>
+        /// <returns>
+        /// The return value is the current value of static class member
+        /// s_fIndexIncrementIsEnabled.
+        /// </returns>
+        public static bool GetIndexIncrementIsEnabled ( )
+        {
+            return s_fIndexIncrementIsEnabled;
+        }   // public static bool GetIndexIncrementIsEnabled
+
+
+        /// <summary>
         /// This private static (Shared in Visual Basic) method constructs a
         /// string from the table and column name properties of a
         /// ColumnNamesAndLabels object.
@@ -708,6 +722,20 @@ namespace PSQLviaADOCS
             }   // int IComparable<UniqueColumnName>.CompareTo
 
 
+            /// <summary>
+            /// When <paramref name="pstrTableName"/> is null, the comparand
+            /// consists only of the <paramref name="pstrColumnName"/>.
+            /// </summary>
+            /// <param name="pstrColumnName">
+            /// Pass in a reference to a string, which cannot be empty, that
+            /// represents the column name.
+            /// </param>
+            /// <param name="pstrTableName">
+            /// When the application references two or more tables, the table
+            /// name is required to disambiguate column names. Otherwise, this
+            /// value may be left empty, or even null.
+            /// </param>
+            /// <returns></returns>
             private static string CreateComparand (
                 string pstrColumnName ,
                 string pstrTableName )
@@ -722,28 +750,43 @@ namespace PSQLviaADOCS
             }   // private static string CreateComparand
 
 
-            private static void IsColumnNameGloballyUnique ( string pstrColumnName , string pstrTableName = null )
+            /// <summary>
+            /// Update the list with each unique item, and throw when the item
+            /// is a duplicate.
+            /// </summary>
+            /// <param name="pstrColumnName">
+            /// Every item must have a column name.
+            /// </param>
+            /// <param name="pstrTableName">
+            /// Unless the application processes two or more tables, the table
+            /// name is optional, and may be left null.
+            /// </param>
+            private static void IsColumnNameGloballyUnique (
+                string pstrColumnName ,
+                string pstrTableName = null )
             {
                 const int INITIAL_CAPACITY = 8;
 
                 if ( s_alstUsedNames == null )
-                {
-                    s_alstUsedNames = new List<string> ( INITIAL_CAPACITY );
-                    s_alstUsedNames.Add ( pstrColumnName );
+                {   // Defer initialization of the list until it is needed.
+                    s_alstUsedNames = new List<string> ( INITIAL_CAPACITY )
+                    {   // The initializer also inserts the first item.
+                        pstrColumnName
+                    };  // s_alstUsedNames = new List<string> ( INITIAL_CAPACITY )
                 }   // TRUE (First pass) block, if ( s_alstUsedNames == null )
                 else
-                {
+                {   // The list contains at least one item. Construct a candidate.
                     string strUniqueColumnName = CreateComparand (
                         pstrColumnName ,
                         pstrTableName );
 
                     if ( s_alstUsedNames.BinarySearch ( strUniqueColumnName ) <= ListInfo.BINARY_SEARCH_NOT_FOUND )
-                    {
+                    {   // The new item is unique. Append it, then sort the list.
                         s_alstUsedNames.Add ( strUniqueColumnName );
                         s_alstUsedNames.Sort ( );
                     }   // TRUE (anticipated outcome) block, if ( s_alstUsedNames.BinarySearch ( strUniqueColumnName ) <= ListInfo.BINARY_SEARCH_NOT_FOUND )
                     else
-                    {
+                    {   // The item is a duplicate. Throw an exception.
                         throw new ArgumentOutOfRangeException (
                             nameof ( pstrColumnName ) ,
                             pstrColumnName ,

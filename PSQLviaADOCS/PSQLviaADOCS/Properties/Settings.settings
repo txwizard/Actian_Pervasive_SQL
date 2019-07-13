@@ -1,0 +1,12 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="PSQLviaADOCS.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="BillingDetailReportFileName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">C:\Users\DAG\Documents\_Clients\CodeProject Authors Group\Actian Zen\PSQLviaADOCS_Billing_Detail.TXT</Value>
+    </Setting>
+    <Setting Name="BillingDetailTabularReportFileName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">C:\Users\DAG\Documents\_Clients\CodeProject Authors Group\Actian Zen\PSQLviaADOCS_Billing_Detail.TSV</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>
