@@ -70,70 +70,25 @@ namespace PSQLviaADOCS.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0}Amount Owed: {1}.
+        ///   Looks up a localized string similar to {1}Table name {0} is invalid.{1}.
         /// </summary>
-        internal static string MSG_COLUMN_LABEL_STRING_AMOUNT_OWED {
+        internal static string ERRMSG_INVALID_NAME {
             get {
-                return ResourceManager.GetString("MSG_COLUMN_LABEL_STRING_AMOUNT_OWED", resourceCulture);
+                return ResourceManager.GetString("ERRMSG_INVALID_NAME", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0}Amount Paid: {1}.
+        ///   Looks up a localized string similar to Line {0} in {1} table schema file {2} is invalid.{6}    Expected Column Count = {3}{6}    Actual Column Count   = {4}{6}    Text of Invalid Line  = {5}{6}.
         /// </summary>
-        internal static string MSG_COLUMN_LABEL_STRING_AMOUNT_PAID {
+        internal static string ERRMSG_INVALID_SCHEMA_LINE {
             get {
-                return ResourceManager.GetString("MSG_COLUMN_LABEL_STRING_AMOUNT_PAID", resourceCulture);
+                return ResourceManager.GetString("ERRMSG_INVALID_SCHEMA_LINE", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0}Comments: {1}{2}.
-        /// </summary>
-        internal static string MSG_COLUMN_LABEL_STRING_COMMENTS {
-            get {
-                return ResourceManager.GetString("MSG_COLUMN_LABEL_STRING_COMMENTS", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to {0}Log: {1}.
-        /// </summary>
-        internal static string MSG_COLUMN_LABEL_STRING_LOG {
-            get {
-                return ResourceManager.GetString("MSG_COLUMN_LABEL_STRING_LOG", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to {0}Registrar ID: {1}.
-        /// </summary>
-        internal static string MSG_COLUMN_LABEL_STRING_REGISTRAR_ID {
-            get {
-                return ResourceManager.GetString("MSG_COLUMN_LABEL_STRING_REGISTRAR_ID", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Record Number {0,5}: Student ID: {1}.
-        /// </summary>
-        internal static string MSG_COLUMN_LABEL_STRING_STUDENT_ID {
-            get {
-                return ResourceManager.GetString("MSG_COLUMN_LABEL_STRING_STUDENT_ID", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to {0}Transaction Number: {1}.
-        /// </summary>
-        internal static string MSG_COLUMN_LABEL_STRING_TRANSACTION_NUMBER {
-            get {
-                return ResourceManager.GetString("MSG_COLUMN_LABEL_STRING_TRANSACTION_NUMBER", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to ColumnName = {0}, ColumnIndex = {1}, ColumnValue = {2}, ColumnLabel = {3}.
+        ///   Looks up a localized string similar to TableName = {0}, ColumnName = {1}, ColumnIndex = {2}, ColumnValue = {3}, ColumnLabel = {4}.
         /// </summary>
         internal static string MSG_COLUMNNAMESANDLABELS_TOSTRING {
             get {
@@ -210,6 +165,24 @@ namespace PSQLviaADOCS.Properties {
         internal static string MSG_PROGRESS_UPDATE {
             get {
                 return ResourceManager.GetString("MSG_PROGRESS_UPDATE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to     Specify which table to process..
+        /// </summary>
+        internal static string MSG_PROMPT_FOR_TABLE_NAME {
+            get {
+                return ResourceManager.GetString("MSG_PROMPT_FOR_TABLE_NAME", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Record Number {0,5}: .
+        /// </summary>
+        internal static string MSG_RECORD_LABEL_PREFIX {
+            get {
+                return ResourceManager.GetString("MSG_RECORD_LABEL_PREFIX", resourceCulture);
             }
         }
         

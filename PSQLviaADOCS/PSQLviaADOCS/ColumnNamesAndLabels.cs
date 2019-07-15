@@ -14,9 +14,11 @@
     Revision History
     ----------------------------------------------------------------------------
 
-    Date       By Description
-    ---------- -- --------------------------------------------------------------
-    2019/07/12 DG Initial implementation.
+    Date       Version By Description
+    ---------- ------- ---------------------------------------------------------
+    2019/07/12 1.0.0.0 DG Initial implementation.
+
+    2019/07/14 1.1.0.0 DG Make the implementation much more efficient.
     ============================================================================
 */
 
@@ -41,22 +43,14 @@ namespace PSQLviaADOCS
         /// </summary>
         private ColumnNamesAndLabels ( )
         {
-        }   // private ColumnNamesAndLabels constructor (1 of 9)
+        }   // private ColumnNamesAndLabels constructor (1 of 5)
 
 
         /// <summary>
         /// Construct an instance that identifies a table by name, has a value,
         /// and has an automatically generated index number.
         /// </summary>
-        /// <param name="pstrTableName">
-        /// Specify the string containing the table name to disambiguate
-        /// like-named columns in two or more tables.
-        /// 
-        /// When the application uses only a single table, the table name
-        /// may be ignored by passing either a null reference (Nothing in
-        /// Visual Basic) or the empty string.
-        /// </param>
-        /// <param name="pstrColumnName">
+        /// <param name="pucnColumnName">
         /// Specify the string containing the column name to be validated
         /// against the list. If the constructor succeeds, the column name is
         /// unique with respect to the table named by the
@@ -71,109 +65,27 @@ namespace PSQLviaADOCS
         /// which may be used for reporting or other processing.
         /// </param>
         public ColumnNamesAndLabels (
-            string pstrTableName ,
-            UniqueColumnName pstrColumnName ,
+            UniqueColumnName pucnColumnName ,
             string pstrColumnLabel ,
             string pstrColumnValue )
         {
-            _strTableName = pstrTableName;
-            _ucnColumnName = pstrColumnName;
+            _ucnColumnName = pucnColumnName;
             _strColumnLabel = pstrColumnLabel;
             _strColumnValue = pstrColumnValue;
 
             _intColumnIndex = Utils.SetToIncrementedValue ( ref s_intNextIndex );
-        }   // public ColumnNamesAndLabels constructor (2 of 9)
+        }   // public ColumnNamesAndLabels constructor (2 of 5)
 
 
         /// <summary>
         /// Construct an instance that identifies a table by name, has a value, and
         /// and has an explicitly assigned index number.
         /// </summary>
-        /// <param name="pstrTableName">
-        /// Specify the string containing the table name to disambiguate
-        /// like-named columns in two or more tables.
-        /// 
-        /// When the application uses only a single table, the table name
-        /// may be ignored by passing either a null reference (Nothing in
-        /// Visual Basic) or the empty string.
-        /// </param>
         /// <param name="pintColumnIndex">
         /// Specify the integer containing index to assign, which also disables
         /// automatic assignment for all subsequent instances.
         /// </param>
-        /// <param name="pstrColumnName">
-        /// Specify the string containing the column name to be validated
-        /// against the list. If the constructor succeeds, the column name is
-        /// unique with respect to the table named by the
-        /// <paramref name="pstrTableName"/> parameter.
-        /// </param>
-        /// <param name="pstrColumnLabel">
-        /// Specify a string containing the column label, which is not
-        /// sanity-checked for uniqueness.
-        /// </param>
-        /// <param name="pstrColumnValue">
-        /// Specify a string representation of a value to assign to the column,
-        /// which may be used for reporting or other processing.
-        /// </param>
-        public ColumnNamesAndLabels (
-            string pstrTableName ,
-            int pintColumnIndex ,
-            UniqueColumnName pstrColumnName ,
-            string pstrColumnLabel ,
-            string pstrColumnValue )
-        {
-            _strTableName = pstrTableName;
-            _ucnColumnName = pstrColumnName;
-            _strColumnLabel = pstrColumnLabel;
-            _strColumnValue = pstrColumnValue;
-
-            _intColumnIndex = pintColumnIndex;
-            s_fIndexIncrementIsEnabled = false;
-        }   // public ColumnNamesAndLabels constructor (3 of 9)
-
-
-        /// <summary>
-        /// Construct an instance that omits the table name, has a value, and
-        /// and has an automatically generated index number.
-        /// </summary>
-        /// <param name="pstrColumnName">
-        /// Specify the string containing the column name to be validated
-        /// against the list. If the constructor succeeds, the column name is
-        /// unique with respect to the table named by the
-        /// <paramref name="pstrTableName"/> parameter.
-        /// </param>
-        /// <param name="pstrColumnLabel">
-        /// Specify a string containing the column label, which is not
-        /// sanity-checked for uniqueness.
-        /// </param>
-        /// <param name="pstrColumnValue">
-        /// Specify a string representation of a value to assign to the column,
-        /// which may be used for reporting or other processing.
-        /// </param>
-        public ColumnNamesAndLabels (
-            UniqueColumnName pstrColumnName ,
-            string pstrColumnLabel ,
-            string pstrColumnValue )
-        {
-            _ucnColumnName = pstrColumnName;
-            _strColumnLabel = pstrColumnLabel;
-            _strColumnValue = pstrColumnValue;
-
-            _intColumnIndex = Utils.SetToIncrementedValue ( ref s_intNextIndex );
-
-            _strTableName = SpecialStrings.EMPTY_STRING;
-        }   // public ColumnNamesAndLabels constructor (4 of 9)
-
-
-        /// <summary>
-        /// Construct an instance that omits the table name, has a value, and
-        /// and has an explicitly assigned index number.
-        /// </summary>
-        /// <param name="pintColumnIndex">
-        /// Specify the integer containing index to assign, which also disables
-        /// automatic assignment for all subsequent instances.
-        /// </param>
-        /// <param name="pstrColumnName">
+        /// <param name="pucnColumnName">
         /// Specify the string containing the column name to be validated
         /// against the list. If the constructor succeeds, the column name is
         /// unique with respect to the table named by the
@@ -189,97 +101,17 @@ namespace PSQLviaADOCS
         /// </param>
         public ColumnNamesAndLabels (
             int pintColumnIndex ,
-            UniqueColumnName pstrColumnName ,
+            UniqueColumnName pucnColumnName ,
             string pstrColumnLabel ,
             string pstrColumnValue )
         {
-            _ucnColumnName = pstrColumnName;
+            _ucnColumnName = pucnColumnName;
             _strColumnLabel = pstrColumnLabel;
             _strColumnValue = pstrColumnValue;
 
             _intColumnIndex = pintColumnIndex;
             s_fIndexIncrementIsEnabled = false;
-
-            _strTableName = SpecialStrings.EMPTY_STRING;
-        }   // public ColumnNamesAndLabels constructor (5 of 9)
-
-
-        /// <summary>
-        /// Construct an instance that identifies a table by name and has an
-        /// automatically generated index number, but omits a value, which can
-        /// be set through its read/write property.
-        /// </summary>
-        /// <param name="pstrTableName">
-        /// Specify the string containing the table name to disambiguate
-        /// like-named columns in two or more tables.
-        /// 
-        /// When the application uses only a single table, the table name
-        /// may be ignored by passing either a null reference (Nothing in
-        /// Visual Basic) or the empty string.
-        /// </param>
-        /// <param name="pstrColumnName">
-        /// Specify the string containing the column name to be validated
-        /// against the list. If the constructor succeeds, the column name is
-        /// unique with respect to the table named by the
-        /// <paramref name="pstrTableName"/> parameter.
-        /// </param>
-        /// <param name="pstrColumnLabel">
-        /// Specify a string containing the column label, which is not
-        /// sanity-checked for uniqueness.
-        /// </param>
-        public ColumnNamesAndLabels (
-            string pstrTableName ,
-            UniqueColumnName pstrColumnName ,
-            string pstrColumnLabel )
-        {
-            _strTableName = pstrTableName;
-            _ucnColumnName = pstrColumnName;
-            _strColumnLabel = pstrColumnLabel;
-
-            _intColumnIndex = Utils.SetToIncrementedValue ( ref s_intNextIndex );
-        }   // public ColumnNamesAndLabels constructor (6 of 9)
-
-
-        /// <summary>
-        /// Construct an instance that identifies a table by name and has an
-        /// explicitly assigned index number, but omits a value, which can be
-        /// set through its read/write property.
-        /// </summary>
-        /// <param name="pstrTableName">
-        /// Specify the string containing the table name to disambiguate
-        /// like-named columns in two or more tables.
-        /// 
-        /// When the application uses only a single table, the table name
-        /// may be ignored by passing either a null reference (Nothing in
-        /// Visual Basic) or the empty string.
-        /// </param>
-        /// <param name="pintColumnIndex">
-        /// Specify the integer containing index to assign, which also disables
-        /// automatic assignment for all subsequent instances.
-        /// </param>
-        /// <param name="pstrColumnName">
-        /// Specify the string containing the column name to be validated
-        /// against the list. If the constructor succeeds, the column name is
-        /// unique with respect to the table named by the
-        /// <paramref name="pstrTableName"/> parameter.
-        /// </param>
-        /// <param name="pstrColumnLabel">
-        /// Specify a string containing the column label, which is not
-        /// sanity-checked for uniqueness.
-        /// </param>
-        public ColumnNamesAndLabels (
-            string pstrTableName ,
-            int pintColumnIndex ,
-            UniqueColumnName pstrColumnName ,
-            string pstrColumnLabel )
-        {
-            _strTableName = pstrTableName;
-            _ucnColumnName = pstrColumnName;
-            _strColumnLabel = pstrColumnLabel;
-
-            _intColumnIndex = pintColumnIndex;
-            s_fIndexIncrementIsEnabled = false;
-        }   // public ColumnNamesAndLabels constructor (7 of 9)
+        }   // public ColumnNamesAndLabels constructor (3 of 5)
 
 
         /// <summary>
@@ -287,35 +119,26 @@ namespace PSQLviaADOCS
         /// automatically generated index. The table and value proeprties are
         /// omitted, and remain null, although the value may be subsequently set.
         /// </summary>
-        /// <param name="pstrTableName">
-        /// Specify the string containing the table name to disambiguate
-        /// like-named columns in two or more tables.
-        /// 
-        /// When the application uses only a single table, the table name
-        /// may be ignored by passing either a null reference (Nothing in
-        /// Visual Basic) or the empty string.
-        /// </param>
-        /// <param name="pstrColumnName">
+        /// <param name="pucnColumnName">
         /// Specify the string containing the column name to be validated
         /// against the list. If the constructor succeeds, the column name is
         /// unique with respect to the table named by the
-        /// <paramref name="pstrTableName"/> parameter.
+        /// <paramref name="pstrTableName"/> parameter of the 
+        /// <paramref name="pucnColumnName"/> constructor.
         /// </param>
         /// <param name="pstrColumnLabel">
         /// Specify a string containing the column label, which is not
         /// sanity-checked for uniqueness.
         /// </param>
         public ColumnNamesAndLabels (
-            UniqueColumnName pstrColumnName ,
+            UniqueColumnName pucnColumnName ,
             string pstrColumnLabel )
         {
-            _ucnColumnName = pstrColumnName;
+            _ucnColumnName = pucnColumnName;
             _strColumnLabel = pstrColumnLabel;
 
             _intColumnIndex = Utils.SetToIncrementedValue ( ref s_intNextIndex );
-
-            _strTableName = SpecialStrings.EMPTY_STRING;
-        }   // public ColumnNamesAndLabels constructor (8 of 9)
+        }   // public ColumnNamesAndLabels constructor (4 of 5)
 
 
         /// <summary>
@@ -323,15 +146,11 @@ namespace PSQLviaADOCS
         /// automatically generated index. The table and value proeprties are
         /// omitted, and remain null, although the value may be subsequently set.
         /// </summary>
-        /// <param name="pstrTableName">
-        /// Specify the string containing the table name to disambiguate
-        /// like-named columns in two or more tables.
-        /// 
-        /// When the application uses only a single table, the table name
-        /// may be ignored by passing either a null reference (Nothing in
-        /// Visual Basic) or the empty string.
+        /// <param name="pintColumnIndex">
+        /// Specify the integer containing index to assign, which also disables
+        /// automatic assignment for all subsequent instances.
         /// </param>
-        /// <param name="pstrColumnName">
+        /// <param name="pucnColumnName">
         /// Specify the string containing the column name to be validated
         /// against the list. If the constructor succeeds, the column name is
         /// unique with respect to the table named by the
@@ -343,17 +162,15 @@ namespace PSQLviaADOCS
         /// </param>
         public ColumnNamesAndLabels (
             int pintColumnIndex ,
-            UniqueColumnName pstrColumnName ,
+            UniqueColumnName pucnColumnName ,
             string pstrColumnLabel )
         {
-            _ucnColumnName = pstrColumnName;
+            _ucnColumnName = pucnColumnName;
             _strColumnLabel = pstrColumnLabel;
 
             _intColumnIndex = pintColumnIndex;
             s_fIndexIncrementIsEnabled = false;
-
-            _strTableName = SpecialStrings.EMPTY_STRING;
-        }   // public ColumnNamesAndLabels constructor (9 of 9)
+        }   // public ColumnNamesAndLabels constructor (5 of 5)
 
 
         /// <summary>
@@ -414,7 +231,7 @@ namespace PSQLviaADOCS
         {
             get
             {
-                return _strTableName;
+                return _ucnColumnName.TableName;
             }   // public string TableName property getter method
         }   // public string TableName property
 
@@ -474,10 +291,11 @@ namespace PSQLviaADOCS
         {
             return string.Format (
                 Properties.Resources.MSG_COLUMNNAMESANDLABELS_TOSTRING ,        // Format Control String    
-                _ucnColumnName.ColumnName ,                                     // Format Item 0: ColumnName = {0}
-                _intColumnIndex ,                                               // Format Item 1: ColumnIndex = {1}    
-                _strColumnValue ,                                               // Format Item 2: ColumnValue = {2}    
-                _strColumnLabel );                                              // Format Item 3: ColumnLabel = {3}
+                StringTricks.DisplayNullSafely ( _ucnColumnName.TableName ) ,   // Format Item 0: TableName = {0}
+                _ucnColumnName.ColumnName ,                                     // Format Item 0: ColumnName = {1}
+                _intColumnIndex ,                                               // Format Item 1: ColumnIndex = {2}    
+                _strColumnValue ,                                               // Format Item 2: ColumnValue = {3}    
+                _strColumnLabel );                                              // Format Item 3: ColumnLabel = {4}
         }   // public override string ToString
 
 
@@ -538,14 +356,13 @@ namespace PSQLviaADOCS
         private static string CreateComparand ( ColumnNamesAndLabels columnNamesAndLabels )
         {
             return string.Concat (
-                columnNamesAndLabels._strTableName ,
+                columnNamesAndLabels._ucnColumnName.TableName ,
                 SpecialCharacters.UNDERSCORE_CHAR ,
                 columnNamesAndLabels._ucnColumnName.ColumnName );
         }   // private static string CreateComparand
 
 
         private readonly UniqueColumnName _ucnColumnName;
-        private readonly string _strTableName;
         private readonly string _strColumnValue;
         private readonly string _strColumnLabel;
         private readonly int _intColumnIndex = WizardWrx.ArrayInfo.ARRAY_INVALID_INDEX;
@@ -610,7 +427,9 @@ namespace PSQLviaADOCS
                 if ( string.IsNullOrEmpty ( pstrColumnName ) )
                     throw new ArgumentNullException ( nameof ( pstrColumnName ) );
 
-                IsColumnNameGloballyUnique ( pstrColumnName );
+                IsColumnNameGloballyUnique (
+                    pstrColumnName ,
+                    pstrTableName );
                 ColumnName = pstrColumnName;
                 TableName = pstrTableName;
             }   // public UniqueColumnName constructor (3 of 3)

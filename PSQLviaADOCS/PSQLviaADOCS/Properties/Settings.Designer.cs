@@ -23,29 +23,43 @@ namespace PSQLviaADOCS.Properties {
             }
         }
         
-        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("C:\\Users\\DAG\\Documents\\_Clients\\CodeProject Authors Group\\Actian Zen\\PSQLviaADOCS" +
-            "_Billing_Detail.TXT")]
-        public string BillingDetailReportFileName {
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\Users\\DAG\\Documents\\_Clients\\CodeProject Authors Group\\Actian Zen\\Table_Schema" +
+            "s")]
+        public string TableSchemasDirectoryName {
             get {
-                return ((string)(this["BillingDetailReportFileName"]));
-            }
-            set {
-                this["BillingDetailReportFileName"] = value;
+                return ((string)(this["TableSchemasDirectoryName"]));
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("C:\\Users\\DAG\\Documents\\_Clients\\CodeProject Authors Group\\Actian Zen\\PSQLviaADOCS" +
-            "_Billing_Detail.TSV")]
-        public string BillingDetailTabularReportFileName {
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\Users\\DAG\\Documents\\_Clients\\CodeProject Authors Group\\Actian Zen\\Reports")]
+        public string ReportsDirectoryName {
             get {
-                return ((string)(this["BillingDetailTabularReportFileName"]));
+                return ((string)(this["ReportsDirectoryName"]));
             }
             set {
-                this["BillingDetailTabularReportFileName"] = value;
+                this["ReportsDirectoryName"] = value;
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("$$AssemblyTitle$$_$$TableName$$_Detail.TXT")]
+        public string DetailReportListFileNameTemplate {
+            get {
+                return ((string)(this["DetailReportListFileNameTemplate"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("$$AssemblyTitle$$_$$TableName$$_Detail.TSV")]
+        public string DetailTabularReportFileNameTemplate {
+            get {
+                return ((string)(this["DetailTabularReportFileNameTemplate"]));
             }
         }
     }

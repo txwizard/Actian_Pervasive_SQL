@@ -121,37 +121,17 @@
     <value>Duplicate column name</value>
     <comment>The public ValidColumnName constructor uses this message to report a duplicate column name.</comment>
   </data>
+  <data name="ERRMSG_INVALID_NAME" xml:space="preserve">
+    <value>{1}Table name {0} is invalid.{1}</value>
+    <comment>Main module helper routine PromptForTableName formats a message when the specified table name is invalid.</comment>
+  </data>
+  <data name="ERRMSG_INVALID_SCHEMA_LINE" xml:space="preserve">
+    <value>Line {0} in {1} table schema file {2} is invalid.{6}    Expected Column Count = {3}{6}    Actual Column Count   = {4}{6}    Text of Invalid Line  = {5}{6}</value>
+    <comment>In the unlikely event that the schema file becomes corrupted, this message identifies the affected line and the cause of the corruption.</comment>
+  </data>
   <data name="MSG_COLUMNNAMESANDLABELS_TOSTRING" xml:space="preserve">
-    <value>ColumnName = {0}, ColumnIndex = {1}, ColumnValue = {2}, ColumnLabel = {3}</value>
+    <value>TableName = {0}, ColumnName = {1}, ColumnIndex = {2}, ColumnValue = {3}, ColumnLabel = {4}</value>
     <comment>The ToString method on FieldNamesAndLabels formats its output from this template.</comment>
-  </data>
-  <data name="MSG_COLUMN_LABEL_STRING_AMOUNT_OWED" xml:space="preserve">
-    <value>{0}Amount Owed: {1}</value>
-    <comment>Method ListAllFieldsOnConsole uses this template to display the column at index 3.</comment>
-  </data>
-  <data name="MSG_COLUMN_LABEL_STRING_AMOUNT_PAID" xml:space="preserve">
-    <value>{0}Amount Paid: {1}</value>
-    <comment>Method ListAllFieldsOnConsole uses this template to display the column at index 4.</comment>
-  </data>
-  <data name="MSG_COLUMN_LABEL_STRING_COMMENTS" xml:space="preserve">
-    <value>{0}Comments: {1}{2}</value>
-    <comment>Method ListAllFieldsOnConsole uses this template to display the column at index 6.</comment>
-  </data>
-  <data name="MSG_COLUMN_LABEL_STRING_LOG" xml:space="preserve">
-    <value>{0}Log: {1}</value>
-    <comment>Method ListAllFieldsOnConsole uses this template to display the column at index 2.</comment>
-  </data>
-  <data name="MSG_COLUMN_LABEL_STRING_REGISTRAR_ID" xml:space="preserve">
-    <value>{0}Registrar ID: {1}</value>
-    <comment>Method ListAllFieldsOnConsole uses this template to display the column at index 5.</comment>
-  </data>
-  <data name="MSG_COLUMN_LABEL_STRING_STUDENT_ID" xml:space="preserve">
-    <value>Record Number {0,5}: Student ID: {1}</value>
-    <comment>Method ListAllFieldsOnConsole uses this template to display the column at index 0.</comment>
-  </data>
-  <data name="MSG_COLUMN_LABEL_STRING_TRANSACTION_NUMBER" xml:space="preserve">
-    <value>{0}Transaction Number: {1}</value>
-    <comment>Method ListAllFieldsOnConsole uses this template to display the column at index 1.</comment>
   </data>
   <data name="MSG_EXCEPTION_HRESULT" xml:space="preserve">
     <value>    Exception HResult: {0}</value>
@@ -184,6 +164,14 @@
   <data name="MSG_PROGRESS_UPDATE" xml:space="preserve">
     <value>    Listing record # {0}</value>
     <comment>Main module subroutine ListAllFieldsOnConsole uses this message to update the console.</comment>
+  </data>
+  <data name="MSG_PROMPT_FOR_TABLE_NAME" xml:space="preserve">
+    <value>    Specify which table to process.</value>
+    <comment>Static method PromptForTableName in the main module displays this text to request a missing table name.</comment>
+  </data>
+  <data name="MSG_RECORD_LABEL_PREFIX" xml:space="preserve">
+    <value>Record Number {0,5}: </value>
+    <comment>The first column (field) shown on the report is the record ID, which has this as its prefix. Everything else gets whitespace.</comment>
   </data>
   <data name="MSG_REPORT_HEADER" xml:space="preserve">
     <value>Report Name: Listing of everything in the Billing table{2}Run Date: {0} ({1} UTC){2}</value>

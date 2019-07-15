@@ -7,22 +7,23 @@
 
     Class:              ColumnNamesAndLabels
 
-    Objective:          This class models a column name and its label,
-                        optionally associating both with a database table.
+    Objective:          This static class exposes a few general-purpose helpers.
+
+    Remarks:            This entire class begs to be moved into a library, maybe
+                        MoreMath.
 
     ----------------------------------------------------------------------------
     Revision History
     ----------------------------------------------------------------------------
 
-    Date       By Description
-    ---------- -- --------------------------------------------------------------
-    2019/07/12 DG Initial implementation.
+    Date       Version By Description
+    ---------- ------- ---------------------------------------------------------
+    2019/07/12 1.0.0.0 DG Initial implementation.
+
+    2019/07/14 1.1.0.0 DG Eliminate unused routines and using directives and fix
+                          the abstract (objective).
     ============================================================================
 */
-
-using System;
-
-using WizardWrx;
 
 
 namespace PSQLviaADOCS
