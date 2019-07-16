@@ -52,7 +52,19 @@ namespace PSQLviaADOCS
 
         static ConsoleAppStateManager s_csm = ConsoleAppStateManager.GetTheSingleInstance ( );
 
-        static readonly string s_strRecordLabelPrefix = Properties.Resources.MSG_RECORD_LABEL_PREFIX;
+        //  --------------------------------------------------------------------
+        //  Method ListAllFieldsOnConsole, which is called in a While loop, uses
+        //  these variables, all of which acquire values during the first pass
+        //  that never change thereafter. Combining these statics with null-
+        //  coalescing operators enables these values to be reused on subsequent
+        //  iterations, saving a good deal of complex data manipulation.
+        //  --------------------------------------------------------------------
+
+        static string s_strFinalRecordLabelPrefix = null;
+        static string s_strLeadingWhiteSpace = null;
+        static string s_strDynamicListReportFormatString = null;
+        static string s_strDispMsgNRecs = null;
+        static int? s_intLastIndex;
 
         static void Main ( string [ ] args )
         {
@@ -424,9 +436,16 @@ namespace PSQLviaADOCS
             //  compilation process.
             //  ----------------------------------------------------------------
 
-            string strLeadingWhiteSpace = null;
             string strListTokenZero = null;
-            string strDynamicListReportFormatString = FormatItem.UpgradeFormatItem (
+
+            //  ----------------------------------------------------------------
+            //  The null-coalescing operator in the following statement causes 
+            //  s_strDynamicListReportFormatString to be initialized on first
+            //  use, and avoids wasting the effort, which would yield identical
+            //  results, on subsequent loop iterations.
+            //  ----------------------------------------------------------------
+
+            s_strDynamicListReportFormatString = s_strDynamicListReportFormatString ?? FormatItem.UpgradeFormatItem (
                 LIST_REPORT_FORMAT_CONTROL_STRING ,                             // System.String        pstrFormat          Specify a valid format string to upgrade. The string must contain a token of the form {n}, where n is equal to pintItemIndex.
                 ArrayInfo.ARRAY_SECOND_ELEMENT ,                                // System.Int32         pintItemIndex       Specify the index of the item to be upgraded. The integer must be positive, and pstrFormat must contain at least once instance of a correspondingly numbered format item.
                 FormatItem.Alignment.Left ,                                     // FormatItem.Alignment penmAlignment       Specify Left or Right.Center alignment is unsupported , although it could be achieved with custom code.
@@ -451,14 +470,14 @@ namespace PSQLviaADOCS
             //          prevent off-by-one logic errors.
             //  ----------------------------------------------------------------
 
-            int intLastIndex = ArrayInfo.IndexFromOrdinal ( paColumnInfo.Length );
-            string strDispMsgTotalRecords = prs.RecordCount.ToString (          // An open ADO recordset bound to a table reports its record count.
+            s_intLastIndex = s_intLastIndex ?? ArrayInfo.IndexFromOrdinal ( paColumnInfo.Length );
+            s_strDispMsgNRecs = s_strDispMsgNRecs ?? prs.RecordCount.ToString ( // An open ADO recordset bound to a table reports its record count.
                 DisplayFormats.NUMBER_PER_REG_SETTINGS_0D );                    // Format the integer with thousands separators per the Regional Settings in the Windows Control Panel.
             pfcwProgress.Write (                                                // Update the status shown on the console.
                 Properties.Resources.MSG_PROGRESS_UPDATE ,                      // Format Item 0: Listing record # {0}
                 plngItemNumber.ToString (                                       // Argument plngItemNumber is the current record number.
                     DisplayFormats.NUMBER_PER_REG_SETTINGS_0D ) ,               // Format the integer with thousands separators per the Regional Settings in the Windows Control Panel.
-                strDispMsgTotalRecords );                                       // Format Item 1: of {1}
+                s_strDispMsgNRecs );                                            // Format Item 1: of {1}
 
             //  ----------------------------------------------------------------
             //  The calling routine initializes plngItemNumber to one before the
@@ -476,7 +495,7 @@ namespace PSQLviaADOCS
                 StringBuilder sbTableLabelRow = new StringBuilder ( MagicNumbers.CAPACITY_01KB );
 
                 for ( int intJ = ArrayInfo.ARRAY_FIRST_ELEMENT ;
-                          intJ <= intLastIndex ;
+                          intJ <= s_intLastIndex ;
                           intJ++ )
                 {
                     if ( intJ > ArrayInfo.ARRAY_FIRST_ELEMENT )
@@ -485,14 +504,14 @@ namespace PSQLviaADOCS
                     }   // if ( intJ > ArrayInfo.ARRAY_FIRST_ELEMENT )
 
                     sbTableLabelRow.Append ( paColumnInfo [ intJ ].ColumnName );
-                }   // for ( int intJ = ArrayInfo.ARRAY_FIRST_ELEMENT ; intJ <= intLastIndex ; intJ++ )
+                }   // for ( int intJ = ArrayInfo.ARRAY_FIRST_ELEMENT ; intJ <= s_intLastIndex ; intJ++ )
 
                 pswDetailsList.WriteLine (
                     Properties.Resources.MSG_REPORT_HEADER ,                    // Format control string
                     s_csm.BaseStateManager.AppStartupTimeLocal ,                // Format Item 0: Run Date: {0}
                     s_csm.BaseStateManager.AppStartupTimeUtc ,                  // Format Item 1: ({1} UTC)
                     prs.Source ,                                                // Format Item 2: Table Name       = {2}
-                    strDispMsgTotalRecords ,                                    // Format Item 3: Records in Table = {3}
+                    s_strDispMsgNRecs ,                                         // Format Item 3: Records in Table = {3}
                     Environment.NewLine );                                      // Format Item 4: Platform-dependent newline at end of each output line
                 pswDetailsTable.WriteLine ( sbTableLabelRow.ToString ( ) );     // Since WriteLine won't convert this implicitly, ToString must be called by name.
             }   // if ( plngItemNumber == MagicNumbers.PLUS_ONE )
@@ -508,7 +527,7 @@ namespace PSQLviaADOCS
             StringBuilder sbTableDetailRow = new StringBuilder ( MagicNumbers.CAPACITY_01KB );
 
             for ( int intJ = ArrayInfo.ARRAY_FIRST_ELEMENT ;
-                      intJ <= intLastIndex ;
+                      intJ <= s_intLastIndex ;
                       intJ++ )
             {
                 //  ------------------------------------------------------------
@@ -539,9 +558,9 @@ namespace PSQLviaADOCS
 
                 if ( intJ == ArrayInfo.ARRAY_FIRST_ELEMENT )
                 {   // Process the first column.
-                    string strRecordLabelPrefix =
+                    s_strFinalRecordLabelPrefix = s_strFinalRecordLabelPrefix ??
                         FormatItem.UpgradeFormatItem (
-                            s_strRecordLabelPrefix ,                            // System.String        pstrFormat          Specify a valid format string to upgrade. The string must contain a token of the form {n}, where n is equal to pintItemIndex.
+                            Properties.Resources.MSG_RECORD_LABEL_PREFIX ,      // System.String        pstrFormat          Specify a valid format string to upgrade. The string must contain a token of the form {n}, where n is equal to pintItemIndex.
                             ArrayInfo.ARRAY_FIRST_ELEMENT ,                     // System.Int32         pintItemIndex       Specify the index of the item to be upgraded. The integer must be positive, and pstrFormat must contain at least once instance of a correspondingly numbered format item.
                             FormatItem.AdjustToMaximumWidth (                   // System.String        pstrFormatString    Specify a standard or custom Numeric or DateTime format string.Contrast this with pstrUpgrade , which expects you to supply the entire format item , ready for substitution.
                                 ArrayInfo.ARRAY_FIRST_ELEMENT ,                 // System.Int32         pintItemIndex       The index is a standard zero based array subscript which corresponds to the position of an item in a list of objects.The list happens to be the items that correspond to the format items in a format string.
@@ -550,44 +569,49 @@ namespace PSQLviaADOCS
                                 FormatItem.Alignment.Right ,                    // FormatItem.Alignment penmAlignment       Specify Left or Right. Center alignment is unsupported, although it could be achieved with custom code.   
                                 DisplayFormats.NUMBER_PER_REG_SETTINGS_0D ) );
                     strListTokenZero = string.Format (                          // Establish the maximum possible width given the number of records in the recordset.
-                        strRecordLabelPrefix ,                                  // Format control string
+                        s_strFinalRecordLabelPrefix ,                           // Format control string
                         prs.RecordCount.ToString (                              // An open ADO recordset bound to a table reports its record count.
                             DisplayFormats.NUMBER_PER_REG_SETTINGS_0D ) );      // Format the integer with thousands separators per the Regional Settings in the Windows Control Panel.
-                    strLeadingWhiteSpace = new string (
+                    s_strLeadingWhiteSpace = s_strLeadingWhiteSpace ?? new string (
                         SpecialCharacters.SPACE_CHAR ,
                         strListTokenZero.IndexOf (
                             SpecialCharacters.COLON )
                             + MagicNumbers.PLUS_TWO );                          // 
                     strListTokenZero = string.Format (                          // Format the current item number to the same width.
-                        strRecordLabelPrefix ,                                  // Format control string
+                        s_strFinalRecordLabelPrefix ,                           // Format control string
                         plngItemNumber.ToString (                               // An open ADO recordset bound to a table reports its record count.
                             DisplayFormats.NUMBER_PER_REG_SETTINGS_0D ) );      // Format the integer with thousands separators per the Regional Settings in the Windows Control Panel.
                     sbTableDetailRow.Append ( prs.Fields [ paColumnInfo [ intJ ].ColumnName ].Value );
                 }   // TRUE block, if ( intJ == ArrayInfo.ARRAY_FIRST_ELEMENT )
-                else if ( intJ == intLastIndex )
+                else if ( intJ == s_intLastIndex )
                 {   // Process the last column.
-                    strListTokenZero = strLeadingWhiteSpace;
                     sbTableDetailRow.Append ( SpecialCharacters.TAB_CHAR );
                     sbTableDetailRow.Append ( prs.Fields [ paColumnInfo [ intJ ].ColumnName ].Value );
                     pswDetailsTable.WriteLine ( sbTableDetailRow.ToString ( ) );
-                }   // TRUE block, else if ( intJ == intLastIndex )
+                }   // TRUE block, else if ( intJ == s_intLastIndex )
                 else
                 {   // Process all but the first and last columns.
-                    strListTokenZero = strLeadingWhiteSpace;
                     sbTableDetailRow.Append ( SpecialCharacters.TAB_CHAR );
                     sbTableDetailRow.Append ( prs.Fields [ paColumnInfo [ intJ ].ColumnName ].Value );
-                }   // FALSE block, else if ( intJ == intLastIndex )
+
+                    if ( intJ == ArrayInfo.ARRAY_SECOND_ELEMENT )
+                    {   // After the second iteration, this never changes.
+                        strListTokenZero = s_strLeadingWhiteSpace;
+                    }   // if ( intJ == ArrayInfo.ARRAY_SECOND_ELEMENT )
+                }   // FALSE block, else if ( intJ == s_intLastIndex )
 
                 pswDetailsList.WriteLine (
-                    strDynamicListReportFormatString ,
-                    new object [ ]
+                    s_strDynamicListReportFormatString ,                        // Format Control String
+                    new object [ ]                                              // Array of format items
                     {
                         strListTokenZero ,                                      // Format Item 0: Label Prefix
-                        paColumnInfo[intJ].ColumnLabel ,                        // Format Item 1: Column Label
+                        paColumnInfo [ intJ ].ColumnLabel ,                     // Format Item 1: Column Label
                         prs.Fields[paColumnInfo[intJ].ColumnName].Value ,       // Format Item 2: Column Value
-                        Logic.IsLastForIterationLE ( intJ , intLastIndex )      // Format Item 3: Newline or Nothing
-                            ? Environment.NewLine :
-                            SpecialStrings.EMPTY_STRING
+                        Logic.IsLastForIterationLE (                            // Format Item 3: Newline or Nothing
+                            intJ ,                                              // System.Int32 pintLoopIndex   Specify the integer loop index.
+                            ( int ) s_intLastIndex )                            // System.Int32 pintLimit       Specify the integer limit value. (For now, nullable type s_intLastIndex must be cast to an ordinary int.)
+                            ? Environment.NewLine                               // The last line gets a newline.
+                            : SpecialStrings.EMPTY_STRING                       // All other lines get nothing.
                     } );
             }   // for ( int intJ = ArrayInfo.ARRAY_FIRST_ELEMENT ; intJ <= intLastIndex ; intJ++ )
         }   // private static void ListAllFieldsOnConsole
