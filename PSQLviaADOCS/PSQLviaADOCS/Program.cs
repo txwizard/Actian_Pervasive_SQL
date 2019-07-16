@@ -21,12 +21,16 @@
     2019/07/12 1.0.0.0 DG Initial implementation.
 
     2019/07/14 1.1.0.0 DG Make the implementation much more data driven.
+
+    2019/07/16 1.2.0.0 DG Sanity check the table name when it is read from the
+                          command line.
     ============================================================================
 */
 
 
 using System;
 
+using System.Collections.Generic;                           // Generics live here.
 using System.IO;                                            // File and stream I/O routines come from this namespace.
 using System.Text;                                          // Text encoders and string builders come from this namespace.
 
@@ -34,6 +38,7 @@ using ADODB;                                                // Use ADODB via COM
 
 using WizardWrx;                                            // Import functions from the Common and Core libraries that live in the root namespace.
 using WizardWrx.ConsoleAppAids3;                            // This subsidiary namespace includes a handful of closely related specialized classes.
+using WizardWrx.FormatStringEngine;
 
 namespace PSQLviaADOCS
 {
@@ -85,29 +90,47 @@ namespace PSQLviaADOCS
         private static void DoTask ( string [ ] pastrArgs )
         {
             const string CONNECTION_STRING = @"Provider=PervasiveOLEDB;Data Source=Demodata";
-            const string TABLE_NAME_IS_BILLING = @"Billing";
-
-            string strTableName = pastrArgs.Length > ListInfo.LIST_IS_EMPTY
-                ? pastrArgs [ ArrayInfo.ARRAY_FIRST_ELEMENT ]
-                : PromptForTableName ( );
-            Connection cn = new Connection ( );
-            Recordset rs = new Recordset ( );
 
             StreamWriter swDetailsList = null;
             StreamWriter swDetailsTable = null;
+            FixedConsoleWriter fcwProgress = null;
+
+            Connection cn = null;
+            Recordset rs = null;
 
             long lngItemNumber = ListInfo.LIST_IS_EMPTY;
 
-            //  --------------------------------------------------------------------
-            //  This should always be adUseServer unless you specifically want touse
-            //  use the Client Cursor Engine.
-            //  --------------------------------------------------------------------
-
-            cn.CursorLocation = CursorLocationEnum.adUseServer;
-            cn.ConnectionString = CONNECTION_STRING;
+            //  ----------------------------------------------------------------
+            //  Pretty much anything that can throw exceptions is inside this
+            //  Try/Catch/Finally block. Defining constants and initialized
+            //  integers cannot throw; neither should declaring an uninitialized
+            //  StreamWriter, Connection, Recordset, or FixedConsoleWriter. 
+            //  Everything above this comment needs method scope so that it is
+            //  visible to the Finally block.
+            //  ----------------------------------------------------------------
 
             try
             {
+                string strTableName = pastrArgs.Length > ListInfo.LIST_IS_EMPTY
+                    ? pastrArgs [ ArrayInfo.ARRAY_FIRST_ELEMENT ]
+                    : PromptForTableName ( );
+
+                if ( pastrArgs.Length > ListInfo.LIST_IS_EMPTY && ( !File.Exists ( DeriveTableSchemaFQFN ( strTableName ) ) ) )
+                {
+                    WizardWrx.ConsoleStreams.ErrorMessagesInColor messagesInColor = new WizardWrx.ConsoleStreams.ErrorMessagesInColor (
+                        ConsoleColor.White ,
+                        ConsoleColor.DarkRed );
+
+                    messagesInColor.WriteLine (
+                        Properties.Resources.ERRMSG_INVALID_NAME ,                  // Format control string read from managed resource table
+                        strTableName.QuoteString ( ) ,                              // Format Item 0: Table name {0}
+                        Environment.NewLine );                                      // Format Item 1: {1}Table ... is invalid.{1}
+                }   // if ( pastrArgs.Length > ListInfo.LIST_IS_EMPTY && (!File.Exists ( DeriveTableSchemaFQFN ( strTableName ) ) ) )
+
+                Console.WriteLine (
+                    Properties.Resources.MSG_DISPLAY_TABLE_NAME_ON_CONSOLE ,        // Format control string read from managed resource table
+                    strTableName ,                                                  // Format Item 0: Processing PSQL database table {0}
+                    Environment.NewLine );                                          // Format Item 1: Platform depdent newline {1}Processing AND {0}{1}
                 string strDetailListReportFQFN = AssembleReportFileName (
                         OutputFileType.DetailListReport ,
                         strTableName );
@@ -115,18 +138,28 @@ namespace PSQLviaADOCS
                         OutputFileType.DetailTabularReport ,
                         strTableName );
                 ColumnNamesAndLabels [ ] aobjColumnNamesAndLabels = CreateNameAndLabelArray ( strTableName );
-                FixedConsoleWriter fcwProgress = new FixedConsoleWriter (
+                fcwProgress = new FixedConsoleWriter (
                     ConsoleColor.Yellow ,
                     ConsoleColor.Black );
 
+                cn = new Connection ( );
+                rs = new Recordset ( );
+
+                //  ------------------------------------------------------------
+                //  This should always be adUseServer unless you specifically
+                //  want to use the Client Cursor Engine.
+                //  ------------------------------------------------------------
+
+                cn.CursorLocation = CursorLocationEnum.adUseServer;
+                cn.ConnectionString = CONNECTION_STRING;
+
                 cn.Open ( );
                 rs.Open (
-                    TABLE_NAME_IS_BILLING ,
-                    cn ,
-                    CursorTypeEnum.adOpenDynamic ,
-                    LockTypeEnum.adLockOptimistic ,
-                    ( int ) CommandTypeEnum.adCmdTableDirect );
-                rs.MoveFirst ( );
+                    strTableName ,                                              // Table or query name
+                    cn ,                                                        // Connection object, which must be open
+                    CursorTypeEnum.adOpenDynamic ,                              // Cursor type
+                    LockTypeEnum.adLockOptimistic ,                             // Locking scheme
+                    ( int ) CommandTypeEnum.adCmdTableDirect );                 // Flags: CommandTypeEnum specifies a Table
                 swDetailsList = new StreamWriter (
                     strDetailListReportFQFN ,
                     FileIOFlags.FILE_OUT_CREATE ,
@@ -137,6 +170,7 @@ namespace PSQLviaADOCS
                     FileIOFlags.FILE_OUT_CREATE ,
                     Encoding.UTF8 ,
                     MagicNumbers.CAPACITY_08KB );
+                rs.MoveFirst ( );
 
                 while ( !rs.EOF )
                 {
@@ -174,6 +208,7 @@ namespace PSQLviaADOCS
             }
             catch ( Exception ex )
             {
+                fcwProgress.ScrollUp ( );
                 s_csm.BaseStateManager.AppExceptionLogger.ReportException ( ex );
                 s_csm.BaseStateManager.AppReturnCode = MagicNumbers.ERROR_RUNTIME;
             }
@@ -305,6 +340,36 @@ namespace PSQLviaADOCS
 
 
         /// <summary>
+        /// Construct a list of column labels from an array of
+        /// ColumnNamesAndLabels objects.
+        /// </summary>
+        /// <param name="paColumnInfo">
+        /// Pass in a reference to the ColumnNamesAndLabels from which labels
+        /// are needed.
+        /// </param>
+        /// <returns>
+        /// The return value is a list containing the labels found in the
+        /// <paramref name="paColumnInfo"/> array. The list is unsorted, since
+        /// it is used only to compute the length of the longest string in it,
+        /// after which the list is discarded.
+        /// </returns>
+        private static List<string> GetAllColumnLabels ( ColumnNamesAndLabels [ ] paColumnInfo )
+        {
+            int intColumnCount = paColumnInfo.Length;
+            List<string> rlstOfLabels = new List<string> ( intColumnCount );
+
+            for ( int intJ = ArrayInfo.ARRAY_FIRST_ELEMENT ;
+                      intJ < intColumnCount ;
+                      intJ++ )
+            {
+                rlstOfLabels.Add ( paColumnInfo [ intJ ].ColumnLabel );
+            }   // for ( int intJ = ArrayInfo.ARRAY_FIRST_ELEMENT ; intJ < intColumnCount ; intJ++ )
+
+            return rlstOfLabels;
+        }   // private static List<string> GetAllColumnLabels
+
+
+        /// <summary>
         /// List all columns (fields) in the Current record of a recordset.
         /// </summary>
         /// <param name="prs">
@@ -361,6 +426,12 @@ namespace PSQLviaADOCS
 
             string strLeadingWhiteSpace = null;
             string strListTokenZero = null;
+            string strDynamicListReportFormatString = FormatItem.UpgradeFormatItem (
+                LIST_REPORT_FORMAT_CONTROL_STRING ,                             // System.String        pstrFormat          Specify a valid format string to upgrade. The string must contain a token of the form {n}, where n is equal to pintItemIndex.
+                ArrayInfo.ARRAY_SECOND_ELEMENT ,                                // System.Int32         pintItemIndex       Specify the index of the item to be upgraded. The integer must be positive, and pstrFormat must contain at least once instance of a correspondingly numbered format item.
+                FormatItem.Alignment.Left ,                                     // FormatItem.Alignment penmAlignment       Specify Left or Right.Center alignment is unsupported , although it could be achieved with custom code.
+                SpecialStrings.EMPTY_STRING ,                                   // System.String        pstrFormatString    Specify a standard or custom Numeric or DateTime format string.Contrast this with pstrUpgrade , which expects you to supply the entire format item , ready for substitution.
+                GetAllColumnLabels ( paColumnInfo ) );                          // List<System.String>  pastrValueArray     Specify an array of strings, all of which are values intended to be formatted by the upgraded format item. This routine determines the length of the longest string, which becomes the basis of the alignment parameter inserted into the upgraded format item.
 
             //  ----------------------------------------------------------------
             //  This property is referenced many times, including every 
@@ -381,9 +452,13 @@ namespace PSQLviaADOCS
             //  ----------------------------------------------------------------
 
             int intLastIndex = ArrayInfo.IndexFromOrdinal ( paColumnInfo.Length );
-            pfcwProgress.Write (
-                Properties.Resources.MSG_PROGRESS_UPDATE ,
-                plngItemNumber );
+            string strDispMsgTotalRecords = prs.RecordCount.ToString (          // An open ADO recordset bound to a table reports its record count.
+                DisplayFormats.NUMBER_PER_REG_SETTINGS_0D );                    // Format the integer with thousands separators per the Regional Settings in the Windows Control Panel.
+            pfcwProgress.Write (                                                // Update the status shown on the console.
+                Properties.Resources.MSG_PROGRESS_UPDATE ,                      // Format Item 0: Listing record # {0}
+                plngItemNumber.ToString (                                       // Argument plngItemNumber is the current record number.
+                    DisplayFormats.NUMBER_PER_REG_SETTINGS_0D ) ,               // Format the integer with thousands separators per the Regional Settings in the Windows Control Panel.
+                strDispMsgTotalRecords );                                       // Format Item 1: of {1}
 
             //  ----------------------------------------------------------------
             //  The calling routine initializes plngItemNumber to one before the
@@ -413,11 +488,13 @@ namespace PSQLviaADOCS
                 }   // for ( int intJ = ArrayInfo.ARRAY_FIRST_ELEMENT ; intJ <= intLastIndex ; intJ++ )
 
                 pswDetailsList.WriteLine (
-                    Properties.Resources.MSG_REPORT_HEADER ,
-                    System.Diagnostics.Process.GetCurrentProcess ( ).StartTime ,
-                    System.Diagnostics.Process.GetCurrentProcess ( ).StartTime.ToUniversalTime ( ) ,
-                    Environment.NewLine );
-                pswDetailsTable.WriteLine ( sbTableLabelRow.ToString ( ) );
+                    Properties.Resources.MSG_REPORT_HEADER ,                    // Format control string
+                    s_csm.BaseStateManager.AppStartupTimeLocal ,                // Format Item 0: Run Date: {0}
+                    s_csm.BaseStateManager.AppStartupTimeUtc ,                  // Format Item 1: ({1} UTC)
+                    prs.Source ,                                                // Format Item 2: Table Name       = {2}
+                    strDispMsgTotalRecords ,                                    // Format Item 3: Records in Table = {3}
+                    Environment.NewLine );                                      // Format Item 4: Platform-dependent newline at end of each output line
+                pswDetailsTable.WriteLine ( sbTableLabelRow.ToString ( ) );     // Since WriteLine won't convert this implicitly, ToString must be called by name.
             }   // if ( plngItemNumber == MagicNumbers.PLUS_ONE )
 
             //  ----------------------------------------------------------------
@@ -462,14 +539,29 @@ namespace PSQLviaADOCS
 
                 if ( intJ == ArrayInfo.ARRAY_FIRST_ELEMENT )
                 {   // Process the first column.
-                    strListTokenZero = string.Format (
-                        s_strRecordLabelPrefix ,
-                        plngItemNumber );
+                    string strRecordLabelPrefix =
+                        FormatItem.UpgradeFormatItem (
+                            s_strRecordLabelPrefix ,                            // System.String        pstrFormat          Specify a valid format string to upgrade. The string must contain a token of the form {n}, where n is equal to pintItemIndex.
+                            ArrayInfo.ARRAY_FIRST_ELEMENT ,                     // System.Int32         pintItemIndex       Specify the index of the item to be upgraded. The integer must be positive, and pstrFormat must contain at least once instance of a correspondingly numbered format item.
+                            FormatItem.AdjustToMaximumWidth (                   // System.String        pstrFormatString    Specify a standard or custom Numeric or DateTime format string.Contrast this with pstrUpgrade , which expects you to supply the entire format item , ready for substitution.
+                                ArrayInfo.ARRAY_FIRST_ELEMENT ,                 // System.Int32         pintItemIndex       The index is a standard zero based array subscript which corresponds to the position of an item in a list of objects.The list happens to be the items that correspond to the format items in a format string.
+                                prs.RecordCount.ToString (                      // System.Int32         pintMaximumWidth    The maximum width is a positive integer that specifies the desired width of the item.
+                                    DisplayFormats.NUMBER_PER_REG_SETTINGS_0D ).Length ,
+                                FormatItem.Alignment.Right ,                    // FormatItem.Alignment penmAlignment       Specify Left or Right. Center alignment is unsupported, although it could be achieved with custom code.   
+                                DisplayFormats.NUMBER_PER_REG_SETTINGS_0D ) );
+                    strListTokenZero = string.Format (                          // Establish the maximum possible width given the number of records in the recordset.
+                        strRecordLabelPrefix ,                                  // Format control string
+                        prs.RecordCount.ToString (                              // An open ADO recordset bound to a table reports its record count.
+                            DisplayFormats.NUMBER_PER_REG_SETTINGS_0D ) );      // Format the integer with thousands separators per the Regional Settings in the Windows Control Panel.
                     strLeadingWhiteSpace = new string (
                         SpecialCharacters.SPACE_CHAR ,
                         strListTokenZero.IndexOf (
                             SpecialCharacters.COLON )
-                            + MagicNumbers.PLUS_TWO );
+                            + MagicNumbers.PLUS_TWO );                          // 
+                    strListTokenZero = string.Format (                          // Format the current item number to the same width.
+                        strRecordLabelPrefix ,                                  // Format control string
+                        plngItemNumber.ToString (                               // An open ADO recordset bound to a table reports its record count.
+                            DisplayFormats.NUMBER_PER_REG_SETTINGS_0D ) );      // Format the integer with thousands separators per the Regional Settings in the Windows Control Panel.
                     sbTableDetailRow.Append ( prs.Fields [ paColumnInfo [ intJ ].ColumnName ].Value );
                 }   // TRUE block, if ( intJ == ArrayInfo.ARRAY_FIRST_ELEMENT )
                 else if ( intJ == intLastIndex )
@@ -487,7 +579,7 @@ namespace PSQLviaADOCS
                 }   // FALSE block, else if ( intJ == intLastIndex )
 
                 pswDetailsList.WriteLine (
-                    LIST_REPORT_FORMAT_CONTROL_STRING ,
+                    strDynamicListReportFormatString ,
                     new object [ ]
                     {
                         strListTokenZero ,                                      // Format Item 0: Label Prefix

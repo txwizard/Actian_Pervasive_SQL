@@ -97,6 +97,15 @@ namespace PSQLviaADOCS.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Processing PSQL database table {0}{1}.
+        /// </summary>
+        internal static string MSG_DISPLAY_TABLE_NAME_ON_CONSOLE {
+            get {
+                return ResourceManager.GetString("MSG_DISPLAY_TABLE_NAME_ON_CONSOLE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to     Exception HResult: {0}.
         /// </summary>
         internal static string MSG_EXCEPTION_HRESULT {
@@ -160,7 +169,7 @@ namespace PSQLviaADOCS.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to     Listing record # {0}.
+        ///   Looks up a localized string similar to     Listing record # {0} of {1}.
         /// </summary>
         internal static string MSG_PROGRESS_UPDATE {
             get {
@@ -178,7 +187,7 @@ namespace PSQLviaADOCS.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Record Number {0,5}: .
+        ///   Looks up a localized string similar to Record Number {0}: .
         /// </summary>
         internal static string MSG_RECORD_LABEL_PREFIX {
             get {
@@ -187,7 +196,7 @@ namespace PSQLviaADOCS.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Report Name: Listing of everything in the Billing table{2}Run Date: {0} ({1} UTC){2}.
+        ///   Looks up a localized string similar to Report Name: Listing of Everything in a PSQL Table{4}Run Date: {0} ({1} UTC){4}{4}Table Name       = {2}{4}Records in Table = {3}{4}.
         /// </summary>
         internal static string MSG_REPORT_HEADER {
             get {

@@ -133,6 +133,10 @@
     <value>TableName = {0}, ColumnName = {1}, ColumnIndex = {2}, ColumnValue = {3}, ColumnLabel = {4}</value>
     <comment>The ToString method on FieldNamesAndLabels formats its output from this template.</comment>
   </data>
+  <data name="MSG_DISPLAY_TABLE_NAME_ON_CONSOLE" xml:space="preserve">
+    <value>Processing PSQL database table {0}{1}</value>
+    <comment>The main routine formats a message that displays the name of the table being processed on the console output stream.</comment>
+  </data>
   <data name="MSG_EXCEPTION_HRESULT" xml:space="preserve">
     <value>    Exception HResult: {0}</value>
     <comment>The exception handler in the catch block of the main routine uses these string to construct the exception report that it displays on the application's console.</comment>
@@ -162,7 +166,7 @@
     <comment>The DoTask routine on the main module constructs its summary report from this template.</comment>
   </data>
   <data name="MSG_PROGRESS_UPDATE" xml:space="preserve">
-    <value>    Listing record # {0}</value>
+    <value>    Listing record # {0} of {1}</value>
     <comment>Main module subroutine ListAllFieldsOnConsole uses this message to update the console.</comment>
   </data>
   <data name="MSG_PROMPT_FOR_TABLE_NAME" xml:space="preserve">
@@ -170,11 +174,11 @@
     <comment>Static method PromptForTableName in the main module displays this text to request a missing table name.</comment>
   </data>
   <data name="MSG_RECORD_LABEL_PREFIX" xml:space="preserve">
-    <value>Record Number {0,5}: </value>
+    <value>Record Number {0}: </value>
     <comment>The first column (field) shown on the report is the record ID, which has this as its prefix. Everything else gets whitespace.</comment>
   </data>
   <data name="MSG_REPORT_HEADER" xml:space="preserve">
-    <value>Report Name: Listing of everything in the Billing table{2}Run Date: {0} ({1} UTC){2}</value>
+    <value>Report Name: Listing of Everything in a PSQL Table{4}Run Date: {0} ({1} UTC){4}{4}Table Name       = {2}{4}Records in Table = {3}{4}</value>
     <comment>Main module subroutine ListAllFieldsOnConsole uses this message to label the detail report.</comment>
   </data>
   <data name="MSG_SHUTDOWN_NORMALLY" xml:space="preserve">

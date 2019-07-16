@@ -19,6 +19,9 @@
     2019/07/12 1.0.0.0 DG Initial implementation.
 
     2019/07/14 1.1.0.0 DG Make the implementation much more efficient.
+
+    2019/07/16 1.2.0.0 DG Break the code into regions, and add missing XML code
+                          documentation.
     ============================================================================
 */
 
@@ -37,6 +40,7 @@ namespace PSQLviaADOCS
     /// </summary>
     public class ColumnNamesAndLabels : IComparable<ColumnNamesAndLabels>
     {
+        #region Constructors
         /// <summary>
         /// To guarantee that all instances are initialized, the default
         /// constructor is marked private.
@@ -171,8 +175,10 @@ namespace PSQLviaADOCS
             _intColumnIndex = pintColumnIndex;
             s_fIndexIncrementIsEnabled = false;
         }   // public ColumnNamesAndLabels constructor (5 of 5)
+        #endregion  // Constructors
 
 
+        #region Public Instance Properties
         /// <summary>
         /// Get the automatically generated or explicitly set column index.
         /// </summary>
@@ -234,8 +240,10 @@ namespace PSQLviaADOCS
                 return _ucnColumnName.TableName;
             }   // public string TableName property getter method
         }   // public string TableName property
+        #endregion  // Public Instance Properties
 
 
+        #region Overridden Base Class Methods
         /// <summary>
         /// Override the Equals method on the base class, System.Object, to return a
         /// value that is consistent with the IComparable implemntation.
@@ -297,8 +305,10 @@ namespace PSQLviaADOCS
                 _strColumnValue ,                                               // Format Item 2: ColumnValue = {3}    
                 _strColumnLabel );                                              // Format Item 3: ColumnLabel = {4}
         }   // public override string ToString
+        #endregion  // Overridden Base Class Methods
 
 
+        #region IComparable Interface Implementation
         /// <summary>
         /// This method implements the IComparable interface for pairs of
         /// ColumnNamesAndLabels objects.
@@ -324,8 +334,10 @@ namespace PSQLviaADOCS
 
             return strComparandThis.CompareTo ( strComparandOther );
         }   // int IComparable<ColumnNamesAndLabels>.CompareTo
+        #endregion  // IComparable Interface Implementation
 
 
+        #region Public Static Methods
         /// <summary>
         /// Call this static method to return the global IndexIncrementIsEnabled
         /// flag state.
@@ -338,8 +350,10 @@ namespace PSQLviaADOCS
         {
             return s_fIndexIncrementIsEnabled;
         }   // public static bool GetIndexIncrementIsEnabled
+        #endregion  // Public Static Methods
 
 
+        #region Private Static Methods
         /// <summary>
         /// This private static (Shared in Visual Basic) method constructs a
         /// string from the table and column name properties of a
@@ -360,24 +374,32 @@ namespace PSQLviaADOCS
                 SpecialCharacters.UNDERSCORE_CHAR ,
                 columnNamesAndLabels._ucnColumnName.ColumnName );
         }   // private static string CreateComparand
+        #endregion  // Private Static Methods
 
-
+        #region Private Instance Storage
         private readonly UniqueColumnName _ucnColumnName;
         private readonly string _strColumnValue;
         private readonly string _strColumnLabel;
         private readonly int _intColumnIndex = WizardWrx.ArrayInfo.ARRAY_INVALID_INDEX;
+        #endregion  // Private Instance Storage
+
+
+        #region Private Static (Class) Storage
         private static int s_intNextIndex = WizardWrx.ArrayInfo.ARRAY_INVALID_INDEX;
         private static bool s_fIndexIncrementIsEnabled = true;
+        #endregion  // Private Static (Class) Storage
 
 
+        #region Nested Public Class UniqueColumnName
         /// <summary>
         /// Instances of this class are strings that are guaranteed to be
         /// globally unique. The guarantee is enforced by comparing the 
         /// combination of the table and column names against an internal
         /// list of names registered by previous constructor calls.
         /// </summary>
-        public class UniqueColumnName:IComparable<UniqueColumnName>
+        public class UniqueColumnName : IComparable<UniqueColumnName>
         {
+            #region UniqueColumnName Constructors
             /// <summary>
             /// To guarantee that all instances are initialized, the default
             /// constructor is marked private.
@@ -433,20 +455,30 @@ namespace PSQLviaADOCS
                 ColumnName = pstrColumnName;
                 TableName = pstrTableName;
             }   // public UniqueColumnName constructor (3 of 3)
+            #endregion  // UniqueColumnName Constructors
 
 
+            #region UniqueColumnName Public Properties
             /// <summary>
             /// Get the ColumnName string stored in the instance.
             /// </summary>
-            public string ColumnName { get; }   // public string ColumnName property
+            public string ColumnName
+            {
+                get;
+            }   // public string ColumnName property
 
 
             /// <summary>
             /// Get the TableName string stored in the instance.
             /// </summary>
-            public string TableName { get; }   // public string TableName property
+            public string TableName
+            {
+                get;
+            }   // public string TableName property
+            #endregion  // UniqueColumnName Public Properties
 
 
+            #region UniqueColumnName Overridden Base Class Methods
             /// <summary>
             /// Override the Equals method on the base class, System.Object, to return a
             /// value that is consistent with the IComparable implemntation.
@@ -511,8 +543,10 @@ namespace PSQLviaADOCS
                     ColumnName ,                                                // Format Item 0: ColumnName = {0}
                     TableName );                                                // Format Item 1: ColumnLabel = {1}
             }   // public override string ToString
+            #endregion  // UniqueColumnName Overridden Base Class Methods
 
 
+            #region UniqueColumnName IComparable Interface Implementation
             /// <summary>
             /// Implement the IComparable interface on a pair of ValidColumnName
             /// objects.
@@ -539,8 +573,10 @@ namespace PSQLviaADOCS
                         other.ColumnName ,
                         other.TableName ) );
             }   // int IComparable<UniqueColumnName>.CompareTo
+            #endregion  // UniqueColumnName IComparable Interface Implementation
 
 
+            #region UniqueColumnName Private Static Methods and Storage
             /// <summary>
             /// When <paramref name="pstrTableName"/> is null, the comparand
             /// consists only of the <paramref name="pstrColumnName"/>.
@@ -554,7 +590,11 @@ namespace PSQLviaADOCS
             /// name is required to disambiguate column names. Otherwise, this
             /// value may be left empty, or even null.
             /// </param>
-            /// <returns></returns>
+            /// <returns>
+            /// The return value is a string constructed from the table name, if
+            /// present, and the column name. If the table name is absent, the
+            /// column name is treated as sufficient, and is returned by itself.
+            /// </returns>
             private static string CreateComparand (
                 string pstrColumnName ,
                 string pstrTableName )
@@ -616,6 +656,8 @@ namespace PSQLviaADOCS
 
 
             private static List<string> s_alstUsedNames;
+            #endregion  // UniqueColumnName Private Static Methods and Storage
         }   // public class UniqueColumnName
     }   // public class ColumnNamesAndLabels
+    #endregion  // Nested Public Class UniqueColumnName
 }   // partial namespace PSQLviaADOCS
