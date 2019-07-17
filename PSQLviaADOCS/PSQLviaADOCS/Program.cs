@@ -42,14 +42,76 @@ using WizardWrx.FormatStringEngine;
 
 namespace PSQLviaADOCS
 {
+    /// <summary>
+    /// By convention, the Program class defines Main, the entry point routine
+    /// of all console mode applications implemented in C#.
+    /// </summary>
     class Program
     {
+        #region Module Constants and Enumerations
+        /// <summary>
+        /// The status code returned for an invalid verb is one greater than the
+        /// value returned for a garden variety runtime exception.
+        /// </summary>
+        const int ERROR_BAD_VERB = MagicNumbers.ERROR_RUNTIME + ArrayInfo.NEXT_INDEX;
+
+
+        /// <summary>
+        /// The verb fed into the command line must map to one of these values.
+        /// </summary>
+        enum CrudVerb
+        {
+            /// <summary>
+            /// List is the default value.
+            /// </summary>
+            List,
+
+            /// <summary>
+            /// Create is equivalent to Add in the old ACID model.
+            /// </summary>
+            Create,
+
+            /// <summary>
+            /// Read is equivalent to Inquire in the old ACID model.
+            /// </summary>
+            Read,
+
+            /// <summary>
+            /// Update is equivalent to Change in the old ACID model.
+            /// </summary>
+            Update,
+
+            /// <summary>
+            /// Delete is the same in both the old ACID model and the new CRUD
+            /// model.
+            /// </summary>
+            Delete
+        }   // enum CrudVerb
+
+
+        /// <summary>
+        /// OutputFileType is used internally to give directions to private
+        /// method AssembleReportFileName, the routine that assembles a file
+        /// name from various configuration settings.
+        /// </summary>
         enum OutputFileType
         {
+            /// <summary>
+            /// Instruct AssembleReportFileName to construct the name for the
+            /// list report covering all rows in a table.
+            /// </summary>
             DetailListReport,
+
+            /// <summary>
+            /// Instruct AssembleReportFileName to construct the name for the
+            /// tabular report covering all rows in a table.
+            /// </summary>
             DetailTabularReport
         }   // enum OutputFileType
+        #endregion  // Module Constants and Enumerations
 
+
+        #region Module Static Members
         static ConsoleAppStateManager s_csm = ConsoleAppStateManager.GetTheSingleInstance ( );
 
         //  --------------------------------------------------------------------
@@ -65,7 +127,9 @@ namespace PSQLviaADOCS
         static string s_strDynamicListReportFormatString = null;
         static string s_strDispMsgNRecs = null;
         static int? s_intLastIndex;
+        #endregion  // Module Static Members
 
+        #region Module Main Routines
         static void Main ( string [ ] args )
         {
             s_csm.DisplayBOJMessage ( );
@@ -93,14 +157,30 @@ namespace PSQLviaADOCS
                 }   // TRUE (anticipated outcome) block, if ( Environment.ExitCode == MagicNumbers.ERROR_SUCCESS )
                 else
                 {
-                    s_csm.ErrorExit ( ( uint ) Environment.ExitCode );
+                    //s_csm.ErrorExit ( ( uint ) Environment.ExitCode );                            // This line assumes that BaseStateManager updated Environment.ExitCode, which it did not.
+                    s_csm.ErrorExit ( ( uint ) s_csm.BaseStateManager.AppReturnCode );              // ErrorExit expects a uint, while both AppReturnCode and Environment.ExitCode are signed.
                 }   // FALSE (unanticipated outcome) block, if ( Environment.ExitCode == MagicNumbers.ERROR_SUCCESS )
             }   // Try/Catch/Finally block
         }   // static void Main
 
 
+        /// <summary>
+        /// Perform the task for which the program was designed.
+        /// </summary>
+        /// <param name="pastrArgs">
+        /// Feed in the argument list that was passed into the command line.
+        /// </param>
+        /// <returns>
+        /// If the routine succeeds, its return value is TRUE. Otherwise, the
+        /// return value is FALSE, signaling the calling routine to behave
+        /// accordingly.
+        /// </returns>
         private static void DoTask ( string [ ] pastrArgs )
         {
+            const int ARG_COUNT_NONE = ListInfo.LIST_IS_EMPTY;
+            const int ARG_TABLE_NAME = ArrayInfo.ARRAY_FIRST_ELEMENT;
+            const int CRUD_VERB = ARG_TABLE_NAME + ArrayInfo.NEXT_INDEX;
+
             const string CONNECTION_STRING = @"Provider=PervasiveOLEDB;Data Source=Demodata";
 
             StreamWriter swDetailsList = null;
@@ -111,6 +191,7 @@ namespace PSQLviaADOCS
             Recordset rs = null;
 
             long lngItemNumber = ListInfo.LIST_IS_EMPTY;
+            CrudVerb verb = CrudVerb.List;
 
             //  ----------------------------------------------------------------
             //  Pretty much anything that can throw exceptions is inside this
@@ -123,11 +204,11 @@ namespace PSQLviaADOCS
 
             try
             {
-                string strTableName = pastrArgs.Length > ListInfo.LIST_IS_EMPTY
-                    ? pastrArgs [ ArrayInfo.ARRAY_FIRST_ELEMENT ]
+                string strTableName = pastrArgs.Length > ARG_COUNT_NONE
+                    ? pastrArgs [ ARG_TABLE_NAME ]
                     : PromptForTableName ( );
 
-                if ( pastrArgs.Length > ListInfo.LIST_IS_EMPTY && ( !File.Exists ( DeriveTableSchemaFQFN ( strTableName ) ) ) )
+                if ( pastrArgs.Length > ARG_COUNT_NONE && ( !File.Exists ( DeriveTableSchemaFQFN ( strTableName ) ) ) )
                 {
                     WizardWrx.ConsoleStreams.ErrorMessagesInColor messagesInColor = new WizardWrx.ConsoleStreams.ErrorMessagesInColor (
                         ConsoleColor.White ,
@@ -137,12 +218,23 @@ namespace PSQLviaADOCS
                         Properties.Resources.ERRMSG_INVALID_NAME ,                  // Format control string read from managed resource table
                         strTableName.QuoteString ( ) ,                              // Format Item 0: Table name {0}
                         Environment.NewLine );                                      // Format Item 1: {1}Table ... is invalid.{1}
-                }   // if ( pastrArgs.Length > ListInfo.LIST_IS_EMPTY && (!File.Exists ( DeriveTableSchemaFQFN ( strTableName ) ) ) )
+                }   // if ( pastrArgs.Length > ARG_COUNT_NONE && (!File.Exists ( DeriveTableSchemaFQFN ( strTableName ) ) ) )
+
+                if ( pastrArgs.Length > CRUD_VERB )
+                {
+                    verb = EvaluateCrudVerb ( pastrArgs [ CRUD_VERB ] );
+
+                    if ( s_csm.BaseStateManager.AppReturnCode == ERROR_BAD_VERB )
+                    {
+                        return;
+                    }   // if ( s_csm.BaseStateManager.AppReturnCode == ERROR_BAD_VERB )
+                }   // if ( pastrArgs.Length > CRUD_VERB )
 
                 Console.WriteLine (
                     Properties.Resources.MSG_DISPLAY_TABLE_NAME_ON_CONSOLE ,        // Format control string read from managed resource table
                     strTableName ,                                                  // Format Item 0: Processing PSQL database table {0}
-                    Environment.NewLine );                                          // Format Item 1: Platform depdent newline {1}Processing AND {0}{1}
+                    verb ,                                                          // Format Item 1: Action Taken = {1}
+                    Environment.NewLine );                                          // Format Item 1: Platform depdent newline database table {0}{2} AND Action Taken = {1}{2}
                 string strDetailListReportFQFN = AssembleReportFileName (
                         OutputFileType.DetailListReport ,
                         strTableName );
@@ -220,165 +312,36 @@ namespace PSQLviaADOCS
             }
             catch ( Exception ex )
             {
-                fcwProgress.ScrollUp ( );
+                if ( fcwProgress != null )
+                {   // Skip the ScrollUp call when fcwProgress is unitialized (null).
+                    fcwProgress.ScrollUp ( );
+                }   // if ( fcwProgress != null )
+
                 s_csm.BaseStateManager.AppExceptionLogger.ReportException ( ex );
                 s_csm.BaseStateManager.AppReturnCode = MagicNumbers.ERROR_RUNTIME;
             }
             finally
             {
-                rs.Close ( );
-                cn.Close ( );
+                if ( s_csm.BaseStateManager.AppReturnCode != ERROR_BAD_VERB )
+                {
+                    rs.Close ( );
+                    cn.Close ( );
 
-                if ( swDetailsList.BaseStream.CanWrite )
-                {   // The StreamWriter is open, as should be the case, since we dispensed with a Using block.
-                    swDetailsList.Close ( );
-                }   // if ( swDetailsList.BaseStream.CanWrite )
+                    if ( swDetailsList.BaseStream.CanWrite )
+                    {   // The StreamWriter is open, as should be the case, since we dispensed with a Using block.
+                        swDetailsList.Close ( );
+                    }   // if ( swDetailsList.BaseStream.CanWrite )
 
-                if ( swDetailsTable.BaseStream.CanWrite )
-                {   // The StreamWriter is open, as should be the case, since we dispensed with a Using block.
-                    swDetailsTable.Close ( );
-                }   // if ( swDetailsTable.BaseStream.CanWrite )
+                    if ( swDetailsTable.BaseStream.CanWrite )
+                    {   // The StreamWriter is open, as should be the case, since we dispensed with a Using block.
+                        swDetailsTable.Close ( );
+                    }   // if ( swDetailsTable.BaseStream.CanWrite )
 
-                swDetailsList.Dispose ( );
-                swDetailsTable.Dispose ( );
+                    swDetailsList.Dispose ( );
+                    swDetailsTable.Dispose ( );
+                }   // if ( s_csm.BaseStateManager.AppReturnCode != ERROR_BAD_VERB )
             }
         }   // private static void DoTask
-
-
-        private static string AssembleReportFileName (
-            OutputFileType penmOutputFileType ,
-            string pstrTableName )
-        {
-            const string ASSEMBLY_TITLE_TOKEN = @"$$AssemblyTitle$$";
-            const string TABLE_NAME_TOKEN = @"$$TableName$$";
-
-            string strReportFileNameTemplate = null;
-
-            switch ( penmOutputFileType )
-            {
-                case OutputFileType.DetailListReport:
-                    strReportFileNameTemplate = Properties.Settings.Default.DetailReportListFileNameTemplate;
-                    break;
-                case OutputFileType.DetailTabularReport:
-                    strReportFileNameTemplate = Properties.Settings.Default.DetailTabularReportFileNameTemplate;
-                    break;
-                default:
-                    throw new System.ComponentModel.InvalidEnumArgumentException (
-                        nameof ( penmOutputFileType ) ,
-                        ( int ) penmOutputFileType ,
-                        penmOutputFileType.GetType ( ) );
-            }   // switch ( penmOutputFileType )
-
-            string strReportFileName = strReportFileNameTemplate.Replace (
-                ASSEMBLY_TITLE_TOKEN ,
-                s_csm.BaseStateManager.AppRootAssemblyFileBaseName ).Replace (
-                TABLE_NAME_TOKEN ,
-                pstrTableName );
-            return FileNameTricks.MakeFQFN (
-                strReportFileName ,
-                Properties.Settings.Default.ReportsDirectoryName );
-        }   // private static string AssembleReportFileName
-
-
-        private static ColumnNamesAndLabels [ ] CreateNameAndLabelArray ( string pstrTableName )
-        {
-            const int POS_COLUMN_NAME = ArrayInfo.ARRAY_FIRST_ELEMENT;
-            const int POS_COLUMN_LABEL = POS_COLUMN_NAME + ArrayInfo.NEXT_INDEX;
-            const int EXPECTED_COLUMN_COUNT = POS_COLUMN_LABEL + ArrayInfo.NEXT_INDEX;
-
-            string strTableSchemaFQFN = DeriveTableSchemaFQFN ( pstrTableName );
-            string [ ] astrSchemaLines = File.ReadAllLines ( strTableSchemaFQFN );
-            int intLineCount = astrSchemaLines.Length;
-            ColumnNamesAndLabels [ ] raColumnNamesAndLabels = new ColumnNamesAndLabels [ ArrayInfo.IndexFromOrdinal ( intLineCount ) ];
-
-            for ( int intLineNumber = ArrayInfo.ARRAY_SECOND_ELEMENT ;
-                      intLineNumber < intLineCount ;
-                      intLineNumber++ )
-            {
-                string [ ] astrColumnMetaData = astrSchemaLines [ intLineNumber ].Split ( SpecialCharacters.TAB_CHAR );
-
-                if ( astrColumnMetaData.Length == EXPECTED_COLUMN_COUNT )
-                {
-                    raColumnNamesAndLabels [ ArrayInfo.IndexFromOrdinal ( intLineNumber ) ] = new ColumnNamesAndLabels (
-                        new ColumnNamesAndLabels.UniqueColumnName (
-                            astrColumnMetaData [ POS_COLUMN_NAME ] ,
-                            pstrTableName ) ,
-                        astrColumnMetaData [ POS_COLUMN_LABEL ] );
-                }   // TRUE (anticipated outcome) block, if ( astrColumnMetaData.Length == EXPECTED_COLUMN_COUNT )
-                else
-                {
-                    throw new InvalidOperationException (
-                        string.Format (
-                            Properties.Resources.ERRMSG_INVALID_SCHEMA_LINE ,   // Format Control String
-                            new object [ ]
-                            {
-                                intLineNumber ,                                 // Format Item 0: Line {0}
-                                pstrTableName ,                                 // Format Item 1: in {1}
-                                strTableSchemaFQFN ,                            // Format Item 2: table schema file {2}
-                                EXPECTED_COLUMN_COUNT ,                         // Format Item 3: Expected Column Count = {3}
-                                astrColumnMetaData.Length ,                     // Format Item 4: Actual Column Count   = {4}
-                                astrSchemaLines [ intLineNumber ] ,             // Format Item 5: Text of Invalid Line  = {5}
-                                Environment.NewLine                             // Format Item 6: Embedded platform-dependent newline token
-                            } ) );
-                }   // FALSE (unanticipated outcome) block, if ( astrColumnMetaData.Length == EXPECTED_COLUMN_COUNT )
-                //raColumnNamesAndLabels[ArrayInfo.IndexFromOrdinal(intLineNumber)]=new ColumnNamesAndLabels()
-            }   // for ( int intLineNumber = ArrayInfo.ARRAY_SECOND_ELEMENT ; intLineNumber < intLineCount ; intLineNumber++ )
-
-            return raColumnNamesAndLabels;
-        }   // private static ColumnNamesAndLabels [ ] CreateNameAndLabelArray
-
-
-        /// <summary>
-        /// Derive the absolute (fully qualified) name of the file that contains
-        /// the table schema metadata to process.
-        /// </summary>
-        /// <param name="pstrTableName">
-        /// Pass in a string containing the name of the table, from which to
-        /// derive the absolute name of the file that contains its schema data.
-        /// </param>
-        /// <returns>
-        /// The return value is a string that contains the absolute (fully
-        /// qualified) name of the file that contains the schema to process.
-        /// </returns>
-        private static string DeriveTableSchemaFQFN ( string pstrTableName )
-        {
-            return FileNameTricks.MakeFQFN (
-                    string.Concat (
-                        @"Table_" ,
-                        pstrTableName ,
-                        @".TSV" ) ,
-                    Properties.Settings.Default.TableSchemasDirectoryName.ToString ( ) );
-        }   // private static string DeriveTableSchemaFQFN
-
-
-        /// <summary>
-        /// Construct a list of column labels from an array of
-        /// ColumnNamesAndLabels objects.
-        /// </summary>
-        /// <param name="paColumnInfo">
-        /// Pass in a reference to the ColumnNamesAndLabels from which labels
-        /// are needed.
-        /// </param>
-        /// <returns>
-        /// The return value is a list containing the labels found in the
-        /// <paramref name="paColumnInfo"/> array. The list is unsorted, since
-        /// it is used only to compute the length of the longest string in it,
-        /// after which the list is discarded.
-        /// </returns>
-        private static List<string> GetAllColumnLabels ( ColumnNamesAndLabels [ ] paColumnInfo )
-        {
-            int intColumnCount = paColumnInfo.Length;
-            List<string> rlstOfLabels = new List<string> ( intColumnCount );
-
-            for ( int intJ = ArrayInfo.ARRAY_FIRST_ELEMENT ;
-                      intJ < intColumnCount ;
-                      intJ++ )
-            {
-                rlstOfLabels.Add ( paColumnInfo [ intJ ].ColumnLabel );
-            }   // for ( int intJ = ArrayInfo.ARRAY_FIRST_ELEMENT ; intJ < intColumnCount ; intJ++ )
-
-            return rlstOfLabels;
-        }   // private static List<string> GetAllColumnLabels
 
 
         /// <summary>
@@ -615,6 +578,178 @@ namespace PSQLviaADOCS
                     } );
             }   // for ( int intJ = ArrayInfo.ARRAY_FIRST_ELEMENT ; intJ <= intLastIndex ; intJ++ )
         }   // private static void ListAllFieldsOnConsole
+        #endregion  // Module Main Routines
+
+
+        #region Module Subroutines
+        private static string AssembleReportFileName (
+            OutputFileType penmOutputFileType ,
+            string pstrTableName )
+        {
+            const string ASSEMBLY_TITLE_TOKEN = @"$$AssemblyTitle$$";
+            const string TABLE_NAME_TOKEN = @"$$TableName$$";
+
+            string strReportFileNameTemplate = null;
+
+            switch ( penmOutputFileType )
+            {
+                case OutputFileType.DetailListReport:
+                    strReportFileNameTemplate = Properties.Settings.Default.DetailReportListFileNameTemplate;
+                    break;
+                case OutputFileType.DetailTabularReport:
+                    strReportFileNameTemplate = Properties.Settings.Default.DetailTabularReportFileNameTemplate;
+                    break;
+                default:
+                    throw new System.ComponentModel.InvalidEnumArgumentException (
+                        nameof ( penmOutputFileType ) ,
+                        ( int ) penmOutputFileType ,
+                        penmOutputFileType.GetType ( ) );
+            }   // switch ( penmOutputFileType )
+
+            string strReportFileName = strReportFileNameTemplate.Replace (
+                ASSEMBLY_TITLE_TOKEN ,
+                s_csm.BaseStateManager.AppRootAssemblyFileBaseName ).Replace (
+                TABLE_NAME_TOKEN ,
+                pstrTableName );
+            return FileNameTricks.MakeFQFN (
+                strReportFileName ,
+                Properties.Settings.Default.ReportsDirectoryName );
+        }   // private static string AssembleReportFileName
+
+
+        private static ColumnNamesAndLabels [ ] CreateNameAndLabelArray ( string pstrTableName )
+        {
+            const int POS_COLUMN_NAME = ArrayInfo.ARRAY_FIRST_ELEMENT;
+            const int POS_COLUMN_LABEL = POS_COLUMN_NAME + ArrayInfo.NEXT_INDEX;
+            const int EXPECTED_COLUMN_COUNT = POS_COLUMN_LABEL + ArrayInfo.NEXT_INDEX;
+
+            string strTableSchemaFQFN = DeriveTableSchemaFQFN ( pstrTableName );
+            string [ ] astrSchemaLines = File.ReadAllLines ( strTableSchemaFQFN );
+            int intLineCount = astrSchemaLines.Length;
+            ColumnNamesAndLabels [ ] raColumnNamesAndLabels = new ColumnNamesAndLabels [ ArrayInfo.IndexFromOrdinal ( intLineCount ) ];
+
+            for ( int intLineNumber = CSVFileInfo.FIRST_RECORD ;
+                      intLineNumber < intLineCount ;
+                      intLineNumber++ )
+            {
+                string [ ] astrColumnMetaData = astrSchemaLines [ intLineNumber ].Split ( SpecialCharacters.TAB_CHAR );
+
+                if ( astrColumnMetaData.Length == EXPECTED_COLUMN_COUNT )
+                {
+                    raColumnNamesAndLabels [ ArrayInfo.IndexFromOrdinal ( intLineNumber ) ] = new ColumnNamesAndLabels (
+                        new ColumnNamesAndLabels.UniqueColumnName (
+                            astrColumnMetaData [ POS_COLUMN_NAME ] ,
+                            pstrTableName ) ,
+                        astrColumnMetaData [ POS_COLUMN_LABEL ] );
+                }   // TRUE (anticipated outcome) block, if ( astrColumnMetaData.Length == EXPECTED_COLUMN_COUNT )
+                else
+                {
+                    throw new InvalidOperationException (
+                        string.Format (
+                            Properties.Resources.ERRMSG_INVALID_SCHEMA_LINE ,   // Format Control String
+                            new object [ ]
+                            {
+                                intLineNumber ,                                 // Format Item 0: Line {0}
+                                pstrTableName ,                                 // Format Item 1: in {1}
+                                strTableSchemaFQFN ,                            // Format Item 2: table schema file {2}
+                                EXPECTED_COLUMN_COUNT ,                         // Format Item 3: Expected Column Count = {3}
+                                astrColumnMetaData.Length ,                     // Format Item 4: Actual Column Count   = {4}
+                                astrSchemaLines [ intLineNumber ] ,             // Format Item 5: Text of Invalid Line  = {5}
+                                Environment.NewLine                             // Format Item 6: Embedded platform-dependent newline token
+                            } ) );
+                }   // FALSE (unanticipated outcome) block, if ( astrColumnMetaData.Length == EXPECTED_COLUMN_COUNT )
+                //raColumnNamesAndLabels[ArrayInfo.IndexFromOrdinal(intLineNumber)]=new ColumnNamesAndLabels()
+            }   // for ( int intLineNumber = CSVFileInfo.FIRST_RECORD ; intLineNumber < intLineCount ; intLineNumber++ )
+
+            return raColumnNamesAndLabels;
+        }   // private static ColumnNamesAndLabels [ ] CreateNameAndLabelArray
+
+
+        /// <summary>
+        /// Derive the absolute (fully qualified) name of the file that contains
+        /// the table schema metadata to process.
+        /// </summary>
+        /// <param name="pstrTableName">
+        /// Pass in a string containing the name of the table, from which to
+        /// derive the absolute name of the file that contains its schema data.
+        /// </param>
+        /// <returns>
+        /// The return value is a string that contains the absolute (fully
+        /// qualified) name of the file that contains the schema to process.
+        /// </returns>
+        private static string DeriveTableSchemaFQFN ( string pstrTableName )
+        {
+            return FileNameTricks.MakeFQFN (
+                    string.Concat (
+                        @"Table_" ,
+                        pstrTableName ,
+                        @".TSV" ) ,
+                    Properties.Settings.Default.TableSchemasDirectoryName.ToString ( ) );
+        }   // private static string DeriveTableSchemaFQFN
+
+
+        private static CrudVerb EvaluateCrudVerb ( string pstrVerb )
+        {
+            try
+            {
+                return pstrVerb.EnumFromString<CrudVerb> ( );
+            }
+            catch ( InvalidOperationException exInvOper )
+            {
+                string strExpectedMessageText = Properties.Resources.ERRMSG_PREFIX_INVALID_VERB;
+                int intExpectedMessageStartPos = exInvOper.Message.IndexOf ( strExpectedMessageText );
+
+                if ( intExpectedMessageStartPos > ListInfo.INDEXOF_NOT_FOUND )
+                {   // The exception message contains the expected phrase, preceded by the verb. Report it and consume the exception.
+                    s_csm.BaseStateManager.AppReturnCode = ERROR_BAD_VERB;
+
+                    WizardWrx.ConsoleStreams.ErrorMessagesInColor messagesInColor = new WizardWrx.ConsoleStreams.ErrorMessagesInColor (
+                        s_csm.BaseStateManager.AppExceptionLogger.ErrorMessageColors.MessageForegroundColor ,
+                        s_csm.BaseStateManager.AppExceptionLogger.ErrorMessageColors.MessageBackgroundColor );
+                    messagesInColor.WriteLine (
+                        exInvOper.Message.Substring (
+                            ListInfo.SUBSTR_BEGINNING ,                         // Start at beginning of string
+                            intExpectedMessageStartPos                          // Take characters to position of phrase
+                            + strExpectedMessageText.Length ) );                //      plus its length.
+                }   // TRUE (anticipated outcome) block, if ( intExpectedMessageStartPos > ListInfo.INDEXOF_NOT_FOUND )
+                else
+                {   // The exception message text is unexpected. Pass it up the call stack for reporting and program abort.
+                    throw exInvOper;
+                }   // FALSE (unanticipated outcome) block, if ( intExpectedMessageStartPos > ListInfo.INDEXOF_NOT_FOUND )
+            }   // Try/Catch block
+
+            return CrudVerb.List;
+        }   // private static CrudVerb EvaluateCrudVerb
+
+
+        /// <summary>
+        /// Construct a list of column labels from an array of
+        /// ColumnNamesAndLabels objects.
+        /// </summary>
+        /// <param name="paColumnInfo">
+        /// Pass in a reference to the ColumnNamesAndLabels from which labels
+        /// are needed.
+        /// </param>
+        /// <returns>
+        /// The return value is a list containing the labels found in the
+        /// <paramref name="paColumnInfo"/> array. The list is unsorted, since
+        /// it is used only to compute the length of the longest string in it,
+        /// after which the list is discarded.
+        /// </returns>
+        private static List<string> GetAllColumnLabels ( ColumnNamesAndLabels [ ] paColumnInfo )
+        {
+            int intColumnCount = paColumnInfo.Length;
+            List<string> rlstOfLabels = new List<string> ( intColumnCount );
+
+            for ( int intJ = ArrayInfo.ARRAY_FIRST_ELEMENT ;
+                      intJ < intColumnCount ;
+                      intJ++ )
+            {
+                rlstOfLabels.Add ( paColumnInfo [ intJ ].ColumnLabel );
+            }   // for ( int intJ = ArrayInfo.ARRAY_FIRST_ELEMENT ; intJ < intColumnCount ; intJ++ )
+
+            return rlstOfLabels;
+        }   // private static List<string> GetAllColumnLabels
 
 
         /// <summary>
@@ -651,8 +786,8 @@ namespace PSQLviaADOCS
                     if ( messagesInColor == null )
                     {   // Defer creation until needed.
                         messagesInColor = new WizardWrx.ConsoleStreams.ErrorMessagesInColor (
-                            ConsoleColor.White ,
-                            ConsoleColor.DarkRed );
+                            s_csm.BaseStateManager.AppExceptionLogger.ErrorMessageColors.MessageForegroundColor ,
+                            s_csm.BaseStateManager.AppExceptionLogger.ErrorMessageColors.MessageBackgroundColor );
                     }   // if ( messagesInColor == null )
 
                     messagesInColor.WriteLine (
@@ -662,5 +797,6 @@ namespace PSQLviaADOCS
                 }   // FALSE (undesired outcome) block, if ( File.Exists ( DeriveTableSchemaFQFN ( strTableNameCandidate ) ) )
             }   // while ( true )
         }   // private static string PromptForTableName
+        #endregion  // Module Subroutines
     }   // class Program
 }   // partial amespace PSQLviaADOCS

@@ -129,12 +129,16 @@
     <value>Line {0} in {1} table schema file {2} is invalid.{6}    Expected Column Count = {3}{6}    Actual Column Count   = {4}{6}    Text of Invalid Line  = {5}{6}</value>
     <comment>In the unlikely event that the schema file becomes corrupted, this message identifies the affected line and the cause of the corruption.</comment>
   </data>
+  <data name="ERRMSG_PREFIX_INVALID_VERB" xml:space="preserve">
+    <value>is not a valid value for CrudVerb.</value>
+    <comment>EvaluateCrudVerb examines the exception to confirm that it contains this string, which is expected when the routine gets an invalid verb.</comment>
+  </data>
   <data name="MSG_COLUMNNAMESANDLABELS_TOSTRING" xml:space="preserve">
     <value>TableName = {0}, ColumnName = {1}, ColumnIndex = {2}, ColumnValue = {3}, ColumnLabel = {4}</value>
     <comment>The ToString method on FieldNamesAndLabels formats its output from this template.</comment>
   </data>
   <data name="MSG_DISPLAY_TABLE_NAME_ON_CONSOLE" xml:space="preserve">
-    <value>Processing PSQL database table {0}{1}</value>
+    <value>Processing PSQL database table {0}{2}                Action Taken = {1}{2}</value>
     <comment>The main routine formats a message that displays the name of the table being processed on the console output stream.</comment>
   </data>
   <data name="MSG_EXCEPTION_HRESULT" xml:space="preserve">

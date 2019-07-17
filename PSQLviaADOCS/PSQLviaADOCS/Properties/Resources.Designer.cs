@@ -88,6 +88,15 @@ namespace PSQLviaADOCS.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to is not a valid value for CrudVerb..
+        /// </summary>
+        internal static string ERRMSG_PREFIX_INVALID_VERB {
+            get {
+                return ResourceManager.GetString("ERRMSG_PREFIX_INVALID_VERB", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to TableName = {0}, ColumnName = {1}, ColumnIndex = {2}, ColumnValue = {3}, ColumnLabel = {4}.
         /// </summary>
         internal static string MSG_COLUMNNAMESANDLABELS_TOSTRING {
@@ -97,7 +106,7 @@ namespace PSQLviaADOCS.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Processing PSQL database table {0}{1}.
+        ///   Looks up a localized string similar to Processing PSQL database table {0}{2}                Action Taken = {1}{2}.
         /// </summary>
         internal static string MSG_DISPLAY_TABLE_NAME_ON_CONSOLE {
             get {
