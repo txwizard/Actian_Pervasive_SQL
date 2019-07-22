@@ -14,5 +14,17 @@
     <Setting Name="DetailTabularReportFileNameTemplate" Type="System.String" Scope="Application">
       <Value Profile="(Default)">$$AssemblyTitle$$_$$TableName$$_Detail.TSV</Value>
     </Setting>
+    <Setting Name="ConnectionString" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Provider=PervasiveOLEDB;Data Source=Demodata</Value>
+    </Setting>
+    <Setting Name="TableColumnPropertiesFileNameTemplate" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">$$AssemblyTitle$$_$$TableName$$_Properties.TSV</Value>
+    </Setting>
+    <Setting Name="BooleanTrueList" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">True;Yes;T;Y;Male;M</Value>
+    </Setting>
+    <Setting Name="BooleanFalseList" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">False;No;F;N;Female;F</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

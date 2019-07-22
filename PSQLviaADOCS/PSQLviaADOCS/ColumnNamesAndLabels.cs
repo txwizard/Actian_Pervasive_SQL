@@ -1,9 +1,11 @@
 ﻿/*
     ============================================================================
 
+    Module Name:        ColumnNamesAndLabels.cs
+
     Assembly:           PSQLviaADOCS
 
-    Root Namespace:     PSQLviaADOandVB
+    Root Namespace:     PSQLviaADOCS
 
     Class:              ColumnNamesAndLabels
 
@@ -22,8 +24,16 @@
 
     2019/07/16 1.2.0.0 DG Break the code into regions, and add missing XML code
                           documentation.
+
+    2019/07/22 1.3.0.0 DG 1) Make ColumnValue a read/write member, and add
+                             static methods to return lists of column (field)
+                             names and values as separate arrays for feeding
+                             into the ADODB record input and update methods.
+
+                          2) Define a delegate that generates column values.
     ============================================================================
 */
+
 
 using System;
 
@@ -34,6 +44,27 @@ using WizardWrx;
 
 namespace PSQLviaADOCS
 {
+    /// <summary>
+    /// This is the signature of a delegate that generates the value of a data
+    /// base column.
+    /// </summary>
+    /// <param name="pdbConnection">
+    /// Pass in a reference to the open ADODB.Connection through which to access
+    /// the database.
+    /// </param>
+    /// <param name="paobjInputs">
+    /// Pass in am optional array of object variables from which to derive the
+    /// return value. If there are none, the array may be null or empty.
+    /// </param>
+    /// <returns>
+    /// The return value is an objectified representation of the value to assign
+    /// to the column.
+    /// </returns>
+    public delegate object ColumnValueSetter (
+        ADODB.Connection pdbConnection ,
+        object [ ] paobjInputs = null );
+
+
     /// <summary>
     /// This class models a set of column names and labels. Each column has an
     /// auto-generated zero-based index number.
@@ -47,7 +78,7 @@ namespace PSQLviaADOCS
         /// </summary>
         private ColumnNamesAndLabels ( )
         {
-        }   // private ColumnNamesAndLabels constructor (1 of 5)
+        }   // private ColumnNamesAndLabels constructor (1 of 7)
 
 
         /// <summary>
@@ -64,21 +95,75 @@ namespace PSQLviaADOCS
         /// Specify a string containing the column label, which is not
         /// sanity-checked for uniqueness.
         /// </param>
-        /// <param name="pstrColumnValue">
-        /// Specify a string representation of a value to assign to the column,
-        /// which may be used for reporting or other processing.
+        /// <param name="pobjColumnValue">
+        /// Specify an objectified value to assign to the column, which may be
+        /// used for reporting or other processing.
         /// </param>
         public ColumnNamesAndLabels (
             UniqueColumnName pucnColumnName ,
             string pstrColumnLabel ,
-            string pstrColumnValue )
+            object pobjColumnValue )
         {
             _ucnColumnName = pucnColumnName;
             _strColumnLabel = pstrColumnLabel;
-            _strColumnValue = pstrColumnValue;
+            _objColumnValue = pobjColumnValue;
 
-            _intColumnIndex = Utils.SetToIncrementedValue ( ref s_intNextIndex );
-        }   // public ColumnNamesAndLabels constructor (2 of 5)
+            if ( s_fIndexIncrementIsEnabled )
+            {
+                _intColumnIndex = MoreMath.IncrementAndReturnNewValue ( ref s_intNextIndex );
+            }   // if ( s_fIndexIncrementIsEnabled )
+        }   // public ColumnNamesAndLabels constructor (2 of 7)
+        /// <summary>
+        /// Construct an instance that identifies a table by name, has a value,
+        /// and has an automatically generated index number.
+        /// </summary>
+        /// <param name="pucnColumnName">
+        /// Specify the string containing the column name to be validated
+        /// against the list. If the constructor succeeds, the column name is
+        /// unique with respect to the table named by the
+        /// <paramref name="pstrTableName"/> parameter.
+        /// </param>
+        /// <param name="pstrColumnLabel">
+        /// Specify a string containing the column label, which is not
+        /// sanity-checked for uniqueness.
+        /// </param>
+        /// <param name="pobjColumnValue">
+        /// Specify an objectified value to assign to the column, which may be
+        /// used for reporting or other processing.
+        /// </param>
+        /// <param name="pcolumnValueSetter">
+        /// Pass in the routine to register as the value source of the column.
+        /// </param>
+        public ColumnNamesAndLabels (
+            UniqueColumnName pucnColumnName ,
+            string pstrColumnLabel ,
+            ColumnValueSetter pcolumnValueSetter ,
+            object [ ] paobjInputs ,
+            ADODB.Connection pdbConnection )
+        {
+            _ucnColumnName = pucnColumnName;
+            _strColumnLabel = pstrColumnLabel;
+            _columnValueSetter = pcolumnValueSetter;
+
+            //  ----------------------------------------------------------------
+            //  I prefer the more verbose, and obvious, expression here to the
+            //  terse, and less obvious, simplification suggested by the editor.
+            //  ----------------------------------------------------------------
+
+#pragma warning disable
+            if ( pcolumnValueSetter != null )
+            {
+                _objColumnValue = pcolumnValueSetter (
+                    pdbConnection ,
+                    paobjInputs );
+            }   // if ( pcolumnValueSetter != null )
+#pragma warning restore
+
+            if ( s_fIndexIncrementIsEnabled )
+            {
+                _intColumnIndex = MoreMath.IncrementAndReturnNewValue ( ref s_intNextIndex );
+            }   // if ( s_fIndexIncrementIsEnabled )
+        }   // public ColumnNamesAndLabels constructor (3 of 7)
 
 
         /// <summary>
@@ -99,23 +184,82 @@ namespace PSQLviaADOCS
         /// Specify a string containing the column label, which is not
         /// sanity-checked for uniqueness.
         /// </param>
-        /// <param name="pstrColumnValue">
-        /// Specify a string representation of a value to assign to the column,
-        /// which may be used for reporting or other processing.
+        /// <param name="pobjColumnValue">
+        /// Specify an objectified value to assign to the column, which may be
+        /// used for reporting or other processing.
         /// </param>
         public ColumnNamesAndLabels (
             int pintColumnIndex ,
             UniqueColumnName pucnColumnName ,
             string pstrColumnLabel ,
-            string pstrColumnValue )
+            object pobjColumnValue )
         {
+            _intColumnIndex = pintColumnIndex;
             _ucnColumnName = pucnColumnName;
             _strColumnLabel = pstrColumnLabel;
-            _strColumnValue = pstrColumnValue;
+            _objColumnValue = pobjColumnValue;
 
-            _intColumnIndex = pintColumnIndex;
             s_fIndexIncrementIsEnabled = false;
-        }   // public ColumnNamesAndLabels constructor (3 of 5)
+        }   // public ColumnNamesAndLabels constructor (4 of 7)
+
+
+        /// <summary>
+        /// Construct an instance that identifies a table by name, has a value, and
+        /// and has an explicitly assigned index number.
+        /// </summary>
+        /// <param name="pintColumnIndex">
+        /// Specify the integer containing index to assign, which also disables
+        /// automatic assignment for all subsequent instances.
+        /// </param>
+        /// <param name="pucnColumnName">
+        /// Specify the string containing the column name to be validated
+        /// against the list. If the constructor succeeds, the column name is
+        /// unique with respect to the table named by the
+        /// <paramref name="pstrTableName"/> parameter.
+        /// </param>
+        /// <param name="pstrColumnLabel">
+        /// Specify a string containing the column label, which is not
+        /// sanity-checked for uniqueness.
+        /// </param>
+        /// <param name="pobjColumnValue">
+        /// Specify an objectified value to assign to the column, which may be
+        /// used for reporting or other processing.
+        /// </param>
+        /// <param name="pcolumnValueSetter">
+        /// Pass in the routine to register as the value source of the column.
+        /// </param>
+        public ColumnNamesAndLabels (
+            int pintColumnIndex ,
+            UniqueColumnName pucnColumnName ,
+            string pstrColumnLabel ,
+            ColumnValueSetter pcolumnValueSetter ,
+            object [ ] paobjInputs ,
+            ADODB.Connection pdbConnection )
+        {
+            _intColumnIndex = pintColumnIndex;
+            _ucnColumnName = pucnColumnName;
+            _strColumnLabel = pstrColumnLabel;
+            _columnValueSetter = pcolumnValueSetter;
+
+            //  ----------------------------------------------------------------
+            //  I prefer the more verbose, and obvious, expression here to the
+            //  terse, and less obvious, simplification suggested by the editor.
+            //  ----------------------------------------------------------------
+
+#pragma warning disable
+            if ( pcolumnValueSetter != null )
+            {
+                _objColumnValue = pcolumnValueSetter (
+                    pdbConnection ,
+                    paobjInputs );
+            }   // if ( pcolumnValueSetter != null )
+#pragma warning restore
+
+            if ( s_fIndexIncrementIsEnabled )
+            {
+                _intColumnIndex = MoreMath.IncrementAndReturnNewValue ( ref s_intNextIndex );
+            }   // if ( s_fIndexIncrementIsEnabled )
+        }   // public ColumnNamesAndLabels constructor (5 of 7)
 
 
         /// <summary>
@@ -141,8 +285,11 @@ namespace PSQLviaADOCS
             _ucnColumnName = pucnColumnName;
             _strColumnLabel = pstrColumnLabel;
 
-            _intColumnIndex = Utils.SetToIncrementedValue ( ref s_intNextIndex );
-        }   // public ColumnNamesAndLabels constructor (4 of 5)
+            if ( s_fIndexIncrementIsEnabled )
+            {
+                _intColumnIndex = MoreMath.IncrementAndReturnNewValue ( ref s_intNextIndex );
+            }   // if ( s_fIndexIncrementIsEnabled )
+        }   // public ColumnNamesAndLabels constructor (6 of 7)
 
 
         /// <summary>
@@ -164,17 +311,20 @@ namespace PSQLviaADOCS
         /// Specify a string containing the column label, which is not
         /// sanity-checked for uniqueness.
         /// </param>
+        /// <param name="pcolumnValueSetter">
+        /// Pass in the routine to register as the value source of the column.
+        /// </param>
         public ColumnNamesAndLabels (
             int pintColumnIndex ,
             UniqueColumnName pucnColumnName ,
             string pstrColumnLabel )
         {
+            _intColumnIndex = pintColumnIndex;
             _ucnColumnName = pucnColumnName;
             _strColumnLabel = pstrColumnLabel;
 
-            _intColumnIndex = pintColumnIndex;
             s_fIndexIncrementIsEnabled = false;
-        }   // public ColumnNamesAndLabels constructor (5 of 5)
+        }   // public ColumnNamesAndLabels constructor (7 of 7)
         #endregion  // Constructors
 
 
@@ -188,7 +338,7 @@ namespace PSQLviaADOCS
             {
                 return _intColumnIndex;
             }   // public int ColumnIndex getter method
-        }   // public int ColumnIndex property
+        }   // public read-only int ColumnIndex property
 
 
         /// <summary>
@@ -200,7 +350,7 @@ namespace PSQLviaADOCS
             {
                 return _strColumnLabel;
             }   // public string ColumnLabel property getter method
-        }   // public string ColumnLabel property
+        }   // public read-only string ColumnLabel property
 
 
         /// <summary>
@@ -213,20 +363,25 @@ namespace PSQLviaADOCS
             {
                 return _ucnColumnName.ColumnName;
             }   // public string ColumnName property getter method
-        }   // public string ColumnName property
+        }   // public read-only string ColumnName property
 
 
         /// <summary>
-        /// Get the string representation of the Column Value property stored in
-        /// the instance.
+        /// Get or set the string representation of the Column Value property 
+        /// stored in the instance.
         /// </summary>
-        public string ColumnValue
+        public object ColumnValue
         {
             get
             {
-                return _strColumnValue;
+                return _objColumnValue;
             }   // public string ColumnValue property getter method
-        }   // public string ColumnValue property
+
+            set
+            {
+                _objColumnValue = value;
+            }   // public string ColumnValue property setter method
+        }   // public read-write string ColumnValue property
 
 
         /// <summary>
@@ -239,7 +394,21 @@ namespace PSQLviaADOCS
             {
                 return _ucnColumnName.TableName;
             }   // public string TableName property getter method
-        }   // public string TableName property
+        }   // public read-only string TableName property
+
+
+        /// <summary>
+        /// Get the signature of the delegate that initializes the value of the
+        /// object when its constructor is called. This value is stored for the
+        /// record only, since the constructor gets a duplicate reference, too.
+        /// </summary>
+        public ColumnValueSetter ValueSetter
+        {
+            get
+            {
+                return _columnValueSetter;
+            }   // public ColumnValueSetter ValueSetter setter method
+        }   // public read-only ColumnValueSetter ValueSetter property
         #endregion  // Public Instance Properties
 
 
@@ -302,7 +471,7 @@ namespace PSQLviaADOCS
                 StringTricks.DisplayNullSafely ( _ucnColumnName.TableName ) ,   // Format Item 0: TableName = {0}
                 _ucnColumnName.ColumnName ,                                     // Format Item 0: ColumnName = {1}
                 _intColumnIndex ,                                               // Format Item 1: ColumnIndex = {2}    
-                _strColumnValue ,                                               // Format Item 2: ColumnValue = {3}    
+                _objColumnValue ,                                               // Format Item 2: ColumnValue = {3}    
                 _strColumnLabel );                                              // Format Item 3: ColumnLabel = {4}
         }   // public override string ToString
         #endregion  // Overridden Base Class Methods
@@ -339,6 +508,97 @@ namespace PSQLviaADOCS
 
         #region Public Static Methods
         /// <summary>
+        /// Call this method to get a list of column (field) names for use with
+        /// the AddNew and Update methods on an ADODB Recordset object.
+        /// </summary>
+        /// <param name="paobjColumnNamesAndLabels">
+        /// Pass in a reference to the initialized array of ColumnNamesAndLabels
+        /// objects from which to extract the list of column names.
+        /// </param>
+        /// <returns>
+        /// The return value is an array of strings, each element of which is
+        /// the name of a column (field) in the Recordset with which it is used.
+        /// </returns>
+        public static string [ ] GetColumnNamesArray ( ColumnNamesAndLabels [ ] paobjColumnNamesAndLabels )
+        {
+            if ( paobjColumnNamesAndLabels != null )
+            {
+                if ( paobjColumnNamesAndLabels.Length > ArrayInfo.ARRAY_IS_EMPTY )
+                {
+                    int intItemCount = paobjColumnNamesAndLabels.Length;
+                    string [ ] rastrOutputArray = new string [ intItemCount ];
+
+                    for ( int intCurrentItem = ArrayInfo.ARRAY_FIRST_ELEMENT ;
+                              intCurrentItem < intItemCount ;
+                              intCurrentItem++ )
+                    {
+                        rastrOutputArray [ intCurrentItem ] = paobjColumnNamesAndLabels [ intCurrentItem ].ColumnName;
+                    }   // for ( int intCurrentItem = ArrayInfo.ARRAY_FIRST_ELEMENT ; intCurrentItem < intItemCount ; intCurrentItem++ )
+
+                    return rastrOutputArray;
+                }   // TRUE (anticipated outcome) block, if ( aobjColumnNamesAndLabels.Length > ArrayInfo.ARRAY_IS_EMPTY )
+                else
+                {   // Since all ArgumentException exceptions require a Message parameter, the message may as well include the parameter name.
+                    throw new ArgumentException (
+                        string.Format (
+                            WizardWrx.Common.Properties.Resources.ERRMSG_ARRAY_IS_EMPTY ,
+                            nameof ( paobjColumnNamesAndLabels ) ) );
+                }   // FALSE (unanticipated outcome) block, if ( aobjColumnNamesAndLabels.Length > ArrayInfo.ARRAY_IS_EMPTY )
+            }   // TRUE (anticipated outcome) block, if ( aobjColumnNamesAndLabels != null )
+            else
+            {   // The default message is self-explanatory, and if any question remains, the exception reporter spells it out.
+                throw new ArgumentNullException ( nameof ( paobjColumnNamesAndLabels ) );
+            }   // FALSE (unanticipated outcome) block, if ( aobjColumnNamesAndLabels != null )
+        }   // public static string [ ] GetColumnNamesArray method
+
+
+        /// <summary>
+        /// Call this method to get a list of column (field) values for use with
+        /// the AddNew and Update methods on an ADODB Recordset object.
+        /// </summary>
+        /// <param name="paobjColumnNamesAndLabels">
+        /// Pass in a reference to the initialized array of ColumnNamesAndLabels
+        /// objects from which to extract the list of column values.
+        /// </param>
+        /// <returns>
+        /// The return value is an array of strings, each element of which is
+        /// the values of a column (field) in the Recordset with which it is
+        /// used.
+        /// </returns>
+        public static object [ ] GetColumnValuesArray ( ColumnNamesAndLabels [ ] paobjColumnNamesAndLabels )
+        {
+            if ( paobjColumnNamesAndLabels != null )
+            {
+                if ( paobjColumnNamesAndLabels.Length > ArrayInfo.ARRAY_IS_EMPTY )
+                {
+                    int intItemCount = paobjColumnNamesAndLabels.Length;
+                    object [ ] rastrOutputArray = new string [ intItemCount ];
+
+                    for ( int intCurrentItem = ArrayInfo.ARRAY_FIRST_ELEMENT ;
+                              intCurrentItem < intItemCount ;
+                              intCurrentItem++ )
+                    {
+                        rastrOutputArray [ intCurrentItem ] = paobjColumnNamesAndLabels [ intCurrentItem ].ColumnValue;
+                    }   // for ( int intCurrentItem = ArrayInfo.ARRAY_FIRST_ELEMENT ; intCurrentItem < intItemCount ; intCurrentItem++ )
+
+                    return rastrOutputArray;
+                }   // TRUE (anticipated outcome) block, if ( aobjColumnNamesAndLabels.Length > ArrayInfo.ARRAY_IS_EMPTY )
+                else
+                {   // Since all ArgumentException exceptions require a Message parameter, the message may as well include the parameter name.
+                    throw new ArgumentException (
+                        string.Format (
+                            WizardWrx.Common.Properties.Resources.ERRMSG_ARRAY_IS_EMPTY ,
+                            nameof ( paobjColumnNamesAndLabels ) ) );
+                }   // FALSE (unanticipated outcome) block, if ( aobjColumnNamesAndLabels.Length > ArrayInfo.ARRAY_IS_EMPTY )
+            }   // TRUE (anticipated outcome) block, if ( aobjColumnNamesAndLabels != null )
+            else
+            {   // The default message is self-explanatory, and if any question remains, the exception reporter spells it out.
+                throw new ArgumentNullException ( nameof ( paobjColumnNamesAndLabels ) );
+            }   // FALSE (unanticipated outcome) block, if ( aobjColumnNamesAndLabels != null )
+        }   // public static object [ ] GetColumnValuesArray method
+
+
+        /// <summary>
         /// Call this static method to return the global IndexIncrementIsEnabled
         /// flag state.
         /// </summary>
@@ -346,10 +606,10 @@ namespace PSQLviaADOCS
         /// The return value is the current value of static class member
         /// s_fIndexIncrementIsEnabled.
         /// </returns>
-        public static bool GetIndexIncrementIsEnabled ( )
+        public static bool IsIndexIncrementEnabled ( )
         {
             return s_fIndexIncrementIsEnabled;
-        }   // public static bool GetIndexIncrementIsEnabled
+        }   // public static bool IsIndexIncrementEnabled
         #endregion  // Public Static Methods
 
 
@@ -376,11 +636,13 @@ namespace PSQLviaADOCS
         }   // private static string CreateComparand
         #endregion  // Private Static Methods
 
+
         #region Private Instance Storage
         private readonly UniqueColumnName _ucnColumnName;
-        private readonly string _strColumnValue;
-        private readonly string _strColumnLabel;
+        private readonly ColumnValueSetter _columnValueSetter;
         private readonly int _intColumnIndex = WizardWrx.ArrayInfo.ARRAY_INVALID_INDEX;
+        private readonly string _strColumnLabel;
+        private object _objColumnValue;
         #endregion  // Private Instance Storage
 
 

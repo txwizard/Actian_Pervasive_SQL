@@ -121,6 +121,18 @@
     <value>Duplicate column name</value>
     <comment>The public ValidColumnName constructor uses this message to report a duplicate column name.</comment>
   </data>
+  <data name="ERRMSG_INTERNAL_SQL_ERROR" xml:space="preserve">
+    <value>Internal error: The value in column zero of the result set returned by SQL query {0} is {1}, which cannot be converted to a long integer.</value>
+    <comment>Callback routine AssignNextID formats an error message from this string to repost that the value returned by the SQL query that it sent to the data base returned an invalid integral value.</comment>
+  </data>
+  <data name="ERRMSG_INVALID_BOOLEAN_VALUE" xml:space="preserve">
+    <value>The specified value is not a valid Boolean string value.</value>
+    <comment>static Method ADOHelpers.ParseAndConvertBoolean attaches this string to its ArgumentOutOfRange exception reports.</comment>
+  </data>
+  <data name="ERRMSG_INVALID_DATE_CONVERSION" xml:space="preserve">
+    <value>The specified input value cannot be converted to the specified numeric type.</value>
+    <comment>Static method ADOHelpers.ParseAndConvertDBDate attaches this to the ArgumentOutOfRangeException exception that it throws when instructed to report invalid inputs through an exception.</comment>
+  </data>
   <data name="ERRMSG_INVALID_NAME" xml:space="preserve">
     <value>{1}Table name {0} is invalid.{1}</value>
     <comment>Main module helper routine PromptForTableName formats a message when the specified table name is invalid.</comment>
@@ -128,6 +140,10 @@
   <data name="ERRMSG_INVALID_SCHEMA_LINE" xml:space="preserve">
     <value>Line {0} in {1} table schema file {2} is invalid.{6}    Expected Column Count = {3}{6}    Actual Column Count   = {4}{6}    Text of Invalid Line  = {5}{6}</value>
     <comment>In the unlikely event that the schema file becomes corrupted, this message identifies the affected line and the cause of the corruption.</comment>
+  </data>
+  <data name="ERRMSG_NUMERIC_CONVERSION" xml:space="preserve">
+    <value>The specified input value cannot be converted to the specified numeric type.</value>
+    <comment>Static methods on the ADOHelpers class use this message to report numeric conversion errors.</comment>
   </data>
   <data name="ERRMSG_PREFIX_INVALID_VERB" xml:space="preserve">
     <value>is not a valid value for CrudVerb.</value>
@@ -137,7 +153,11 @@
     <value>TableName = {0}, ColumnName = {1}, ColumnIndex = {2}, ColumnValue = {3}, ColumnLabel = {4}</value>
     <comment>The ToString method on FieldNamesAndLabels formats its output from this template.</comment>
   </data>
-  <data name="MSG_DISPLAY_TABLE_NAME_ON_CONSOLE" xml:space="preserve">
+  <data name="MSG_COLUMN_PROPERTIES_LABEL_ROW" xml:space="preserve">
+    <value>Index\tName\tActualSize\tAttributes\tDataFormat\tDefinedSize\tNumericScale\tPrecision\tProperties_Count\tStatus\tType</value>
+    <comment>The ListTableColumnProperties method uses this string as its label row.</comment>
+  </data>
+  <data name="MSG_DISPLAY_TABLE_NAME_AND_VERB" xml:space="preserve">
     <value>Processing PSQL database table {0}{2}                Action Taken = {1}{2}</value>
     <comment>The main routine formats a message that displays the name of the table being processed on the console output stream.</comment>
   </data>
@@ -161,9 +181,17 @@
     <value>An {0} exception arose.{2}{2}    Exception Message: {1}</value>
     <comment>The exception handler in the catch block of the main routine uses these string to construct the exception report that it displays on the application's console.</comment>
   </data>
+  <data name="MSG_INFO_ASSIGNED_COLUMN_VALUE" xml:space="preserve">
+    <value>        {0}: {1} value assigned by system = {2}</value>
+    <comment>Method AddNewRows displays this message once for each column (field) that gets its value assigned by the program.</comment>
+  </data>
   <data name="MSG_LABEL_FOR_LISTING" xml:space="preserve">
     <value>Listing</value>
     <comment>The DoTask routine on the main module constructs its summary report from this template.</comment>
+  </data>
+  <data name="MSG_LABEL_FOR_PROPERTIES_LIST" xml:space="preserve">
+    <value>Column Properties</value>
+    <comment>Static method ListTableColumnProperties uses this template to make its final report.</comment>
   </data>
   <data name="MSG_LABEL_FOR_TABLE" xml:space="preserve">
     <value>Table  </value>
@@ -172,6 +200,14 @@
   <data name="MSG_PROGRESS_UPDATE" xml:space="preserve">
     <value>    Listing record # {0} of {1}</value>
     <comment>Main module subroutine ListAllFieldsOnConsole uses this message to update the console.</comment>
+  </data>
+  <data name="MSG_PROMPT_FOR_FIELD_VALUE" xml:space="preserve">
+    <value>        {0}: Enter value for field {1}: </value>
+    <comment>Method AddNewRows displays this message once for each column (field) in the table.</comment>
+  </data>
+  <data name="MSG_PROMPT_FOR_NEW_VALUES" xml:space="preserve">
+    <value>    Enter values for the new record in response to the following prompts.{0}</value>
+    <comment>Method AddNewRows displayss this message once before it begins prompting for new field values.</comment>
   </data>
   <data name="MSG_PROMPT_FOR_TABLE_NAME" xml:space="preserve">
     <value>    Specify which table to process.</value>
@@ -184,6 +220,10 @@
   <data name="MSG_REPORT_HEADER" xml:space="preserve">
     <value>Report Name: Listing of Everything in a PSQL Table{4}Run Date: {0} ({1} UTC){4}{4}Table Name       = {2}{4}Records in Table = {3}{4}</value>
     <comment>Main module subroutine ListAllFieldsOnConsole uses this message to label the detail report.</comment>
+  </data>
+  <data name="MSG_SCHEMA_PROGRESS" xml:space="preserve">
+    <value>    Listing Column # {0}, {1} of table {2}</value>
+    <comment>Method ListPropertiesOfColumn uses this template for its progress messages.</comment>
   </data>
   <data name="MSG_SHUTDOWN_NORMALLY" xml:space="preserve">
     <value>Execution succeeded.</value>

@@ -62,5 +62,41 @@ namespace PSQLviaADOCS.Properties {
                 return ((string)(this["DetailTabularReportFileNameTemplate"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Provider=PervasiveOLEDB;Data Source=Demodata")]
+        public string ConnectionString {
+            get {
+                return ((string)(this["ConnectionString"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("$$AssemblyTitle$$_$$TableName$$_Properties.TSV")]
+        public string TableColumnPropertiesFileNameTemplate {
+            get {
+                return ((string)(this["TableColumnPropertiesFileNameTemplate"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True;Yes;T;Y;Male;M")]
+        public string BooleanTrueList {
+            get {
+                return ((string)(this["BooleanTrueList"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False;No;F;N;Female;F")]
+        public string BooleanFalseList {
+            get {
+                return ((string)(this["BooleanFalseList"]));
+            }
+        }
     }
 }

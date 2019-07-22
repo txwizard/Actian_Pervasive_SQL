@@ -70,6 +70,33 @@ namespace PSQLviaADOCS.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Internal error: The value in column zero of the result set returned by SQL query {0} is {1}, which cannot be converted to a long integer..
+        /// </summary>
+        internal static string ERRMSG_INTERNAL_SQL_ERROR {
+            get {
+                return ResourceManager.GetString("ERRMSG_INTERNAL_SQL_ERROR", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The specified value is not a valid Boolean string value..
+        /// </summary>
+        internal static string ERRMSG_INVALID_BOOLEAN_VALUE {
+            get {
+                return ResourceManager.GetString("ERRMSG_INVALID_BOOLEAN_VALUE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The specified input value cannot be converted to the specified numeric type..
+        /// </summary>
+        internal static string ERRMSG_INVALID_DATE_CONVERSION {
+            get {
+                return ResourceManager.GetString("ERRMSG_INVALID_DATE_CONVERSION", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {1}Table name {0} is invalid.{1}.
         /// </summary>
         internal static string ERRMSG_INVALID_NAME {
@@ -88,11 +115,29 @@ namespace PSQLviaADOCS.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The specified input value cannot be converted to the specified numeric type..
+        /// </summary>
+        internal static string ERRMSG_NUMERIC_CONVERSION {
+            get {
+                return ResourceManager.GetString("ERRMSG_NUMERIC_CONVERSION", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to is not a valid value for CrudVerb..
         /// </summary>
         internal static string ERRMSG_PREFIX_INVALID_VERB {
             get {
                 return ResourceManager.GetString("ERRMSG_PREFIX_INVALID_VERB", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Index\tName\tActualSize\tAttributes\tDataFormat\tDefinedSize\tNumericScale\tPrecision\tProperties_Count\tStatus\tType.
+        /// </summary>
+        internal static string MSG_COLUMN_PROPERTIES_LABEL_ROW {
+            get {
+                return ResourceManager.GetString("MSG_COLUMN_PROPERTIES_LABEL_ROW", resourceCulture);
             }
         }
         
@@ -108,9 +153,9 @@ namespace PSQLviaADOCS.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Processing PSQL database table {0}{2}                Action Taken = {1}{2}.
         /// </summary>
-        internal static string MSG_DISPLAY_TABLE_NAME_ON_CONSOLE {
+        internal static string MSG_DISPLAY_TABLE_NAME_AND_VERB {
             get {
-                return ResourceManager.GetString("MSG_DISPLAY_TABLE_NAME_ON_CONSOLE", resourceCulture);
+                return ResourceManager.GetString("MSG_DISPLAY_TABLE_NAME_AND_VERB", resourceCulture);
             }
         }
         
@@ -160,11 +205,29 @@ namespace PSQLviaADOCS.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to         {0}: {1} value assigned by system = {2}.
+        /// </summary>
+        internal static string MSG_INFO_ASSIGNED_COLUMN_VALUE {
+            get {
+                return ResourceManager.GetString("MSG_INFO_ASSIGNED_COLUMN_VALUE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Listing.
         /// </summary>
         internal static string MSG_LABEL_FOR_LISTING {
             get {
                 return ResourceManager.GetString("MSG_LABEL_FOR_LISTING", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Column Properties.
+        /// </summary>
+        internal static string MSG_LABEL_FOR_PROPERTIES_LIST {
+            get {
+                return ResourceManager.GetString("MSG_LABEL_FOR_PROPERTIES_LIST", resourceCulture);
             }
         }
         
@@ -183,6 +246,24 @@ namespace PSQLviaADOCS.Properties {
         internal static string MSG_PROGRESS_UPDATE {
             get {
                 return ResourceManager.GetString("MSG_PROGRESS_UPDATE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to         {0}: Enter value for field {1}: .
+        /// </summary>
+        internal static string MSG_PROMPT_FOR_FIELD_VALUE {
+            get {
+                return ResourceManager.GetString("MSG_PROMPT_FOR_FIELD_VALUE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to     Enter values for the new record in response to the following prompts.{0}.
+        /// </summary>
+        internal static string MSG_PROMPT_FOR_NEW_VALUES {
+            get {
+                return ResourceManager.GetString("MSG_PROMPT_FOR_NEW_VALUES", resourceCulture);
             }
         }
         
@@ -210,6 +291,15 @@ namespace PSQLviaADOCS.Properties {
         internal static string MSG_REPORT_HEADER {
             get {
                 return ResourceManager.GetString("MSG_REPORT_HEADER", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to     Listing Column # {0}, {1} of table {2}.
+        /// </summary>
+        internal static string MSG_SCHEMA_PROGRESS {
+            get {
+                return ResourceManager.GetString("MSG_SCHEMA_PROGRESS", resourceCulture);
             }
         }
         
