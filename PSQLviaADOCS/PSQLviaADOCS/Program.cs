@@ -393,8 +393,8 @@ namespace PSQLviaADOCS
             int intColumnCount = acolNamesAndLabels.Length;
             bool fRingTheBell = true;
 
-            string [ ] astrNameList = new string [ intColumnCount ];
-            object [ ] astrValueList = new object [ intColumnCount ];
+            object [ ] aobjNameList = new object [ intColumnCount ];
+            object [ ] aobjValueList = new object [ intColumnCount ];
 
             for ( int intCurrentColumn = ArrayInfo.ARRAY_FIRST_ELEMENT ;
                       intCurrentColumn < intColumnCount ;
@@ -428,13 +428,13 @@ namespace PSQLviaADOCS
                         acolNamesAndLabels [ intCurrentColumn ].ColumnValue );  // Format Item 2: by system = {2}
                 }   // FALSE (The program generates a value.) block, if ( acolNamesAndLabels [ intCurrentColumn ].ColumnValue == null )
 
-                astrNameList [ intCurrentColumn ] = acolNamesAndLabels [ intCurrentColumn ].ColumnName;
-                astrValueList [ intCurrentColumn ] = acolNamesAndLabels [ intCurrentColumn ].ColumnValue;
+                aobjNameList [ intCurrentColumn ] = acolNamesAndLabels [ intCurrentColumn ].ColumnName;
+                aobjValueList [ intCurrentColumn ] = acolNamesAndLabels [ intCurrentColumn ].ColumnValue;
             }   // for ( int intCurrentColumn = ArrayInfo.ARRAY_FIRST_ELEMENT ; ; intCurrentColumn < intColumnCount ; intCurrentColumn++ )
 
             pdbRecordSet.AddNew (
-                astrNameList ,
-                astrValueList );
+                aobjNameList ,
+                aobjValueList );
             pdbRecordSet.Update ( );
         }   // private static void AddNewRows
 
