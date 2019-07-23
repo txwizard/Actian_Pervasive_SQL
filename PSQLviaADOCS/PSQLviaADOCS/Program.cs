@@ -138,6 +138,39 @@ namespace PSQLviaADOCS
 
 
         /// <summary>
+        /// Inputs to ReadSomeRows are converted to members of the following
+        /// enumeration, which determines the appropriate WHERE clause to use.
+        /// </summary>
+        enum WhereCondition
+        {
+            /// <summary>
+            /// The condition is as yet unspecified, a value that is invalid as
+            /// a final value of an WhereCondition value.
+            /// </summary>
+            Undspecified,
+            /// <summary>
+            /// The right and left operands are exactly equal.
+            /// </summary>
+            IsEqualTo ,
+
+            /// <summary>
+            /// The right operand contains the text in the left operand.
+            /// </summary>
+            IsLikeContains ,
+
+            /// <summary>
+            /// The right operand begins with the text in the left operand.
+            /// </summary>
+            IsLikePrefix,
+
+            /// <summary>
+            /// The right operand ends with the text in the left operand.
+            /// </summary>
+            IsLikeSuffix,
+        }   // enum WhereCondition
+
+
+        /// <summary>
         /// Organizing the operating parameters into a small structure enables a
         /// method to return all settings.
         /// </summary>
@@ -153,6 +186,30 @@ namespace PSQLviaADOCS
             /// </summary>
             public CrudVerb Verb;
         }   // struct OperatingParameters
+
+
+        /// <summary>
+        /// It's easier to keep up with the data when it lives in a structure or
+        /// class, and a class is overkill for something this simple and local.
+        /// </summary>
+        struct SelectionCriteria
+        {
+            /// <summary>
+            /// The Condition determines the contents of the WHERE clause. 
+            /// </summary>
+            public WhereCondition Condition;
+
+            /// <summary>
+            /// The CriterionValue string is the match string. 
+            /// </summary>
+            public object CriterionValue;
+
+            /// <summary>
+            /// The MatchfieldName ADODB.Field identifies the characteristics of the
+            /// specified field.
+            /// </summary>
+            public Field MatchfieldInfo;
+        }   // struct SelectionCriteria
         #endregion  // Module Constants, Enumerations, and Structures
 
 
@@ -249,45 +306,48 @@ namespace PSQLviaADOCS
                 {
                     case CrudVerb.List:
                         ListAllRowsInTable (
-                            out swDetailsList ,
-                            out swDetailsTable ,
-                            out fcwProgress ,
-                            out cn ,
-                            out rs ,
+                            ref swDetailsList ,
+                            ref swDetailsTable ,
+                            ref fcwProgress ,
+                            ref cn ,
+                            ref rs ,
                             operatingParameters.TableName );
                         return;
 
                     case CrudVerb.TableProperties:
                         ListTableColumnProperties (
-                            out swDetailsTable ,
-                            out fcwProgress ,
-                            out cn ,
-                            out rs ,
+                            ref swDetailsTable ,
+                            ref fcwProgress ,
+                            ref cn ,
+                            ref rs ,
                             operatingParameters.TableName );
                         return;
 
                     case CrudVerb.Create:
                         AddNewRows (
-                            out cn ,
-                            out rs ,
+                            ref cn ,
+                            ref rs ,
                             operatingParameters.TableName );
                         return;
                     case CrudVerb.Update:
                         UpdateRows (
-                            out cn ,
-                            out rs ,
+                            ref cn ,
+                            ref rs ,
                             operatingParameters.TableName );
                         return;
                     case CrudVerb.Delete:
                         DeleteRows (
-                            out cn ,
-                            out rs ,
+                            ref cn ,
+                            ref rs ,
                             operatingParameters.TableName );
                         return;
                     case CrudVerb.Read:
                         ReadSomeRows (
-                            out cn ,
-                            out rs ,
+                            ref swDetailsList ,
+                            ref swDetailsTable ,
+                            ref fcwProgress ,
+                            ref cn ,
+                            ref rs ,
                             operatingParameters.TableName );
                         return;
                     default:
@@ -368,8 +428,8 @@ namespace PSQLviaADOCS
         /// </remarks>
         /// <see href="https://stackoverflow.com/questions/135234/difference-between-ref-and-out-parameters-in-net"/>
         private static void AddNewRows (
-            out Connection pdbConnection ,
-            out Recordset pdbRecordSet ,
+            ref Connection pdbConnection ,
+            ref Recordset pdbRecordSet ,
             string pstrTableName )
         {
             Console.WriteLine (
@@ -386,8 +446,8 @@ namespace PSQLviaADOCS
             //  ----------------------------------------------------------------
 
             ColumnNamesAndLabels [ ] acolNamesAndLabels = OpenTableRecordset (
-                out pdbConnection ,
-                out pdbRecordSet ,
+                ref pdbConnection ,
+                ref pdbRecordSet ,
                 pstrTableName );
 
             int intColumnCount = acolNamesAndLabels.Length;
@@ -440,35 +500,6 @@ namespace PSQLviaADOCS
 
 
         /// <summary>
-        /// Evaluate the input field, providing translation and other services
-        /// as needed.
-        /// </summary>
-        /// <param name="pstrFieldValue">
-        /// Pass in the string representation of the proposed value to assign to
-        /// the column (field). Data from the <paramref name="pdbField"/>
-        /// determines the rules that govern editing of it.
-        /// </param>
-        /// <param name="pdbField">
-        /// Pass in a reference to the ADODB.Field object that corresponds to
-        /// the value supplied in <paramref name="pstrFieldValue"/>.
-        /// </param>
-        /// <returns></returns>
-        private static object EvaluateField (
-            string pstrFieldValue ,
-            Field pdbField )
-        {
-            return ADOHelpers.ParseAndConvert (
-                pstrFieldValue ,                                                // string pstrInputValue
-                pdbField ,                                                      // Field pDBField
-                Properties.Settings.Default.BooleanTrueList.Split (             // string [ ] pastrTrueStrings = null
-                    SpecialCharacters.SEMICOLON ) ,
-                Properties.Settings.Default.BooleanFalseList.Split (            // string [ ] pastrFalseStrings = null
-                    SpecialCharacters.SEMICOLON ) ,
-                true );                                                         // bool pfThrowWhenInvalid = false
-        }   // private static object EvaluateField
-
-
-        /// <summary>
         /// Delete rows that meet specified criteria.
         /// </summary>
         /// <param name="pdbConnection">
@@ -515,8 +546,8 @@ namespace PSQLviaADOCS
         /// </remarks>
         /// <see href="https://stackoverflow.com/questions/135234/difference-between-ref-and-out-parameters-in-net"/>
         private static void DeleteRows (
-            out Connection pdbConnection ,
-            out Recordset pdbRecordSet ,
+            ref Connection pdbConnection ,
+            ref Recordset pdbRecordSet ,
             string pstrTableName )
         {
             throw new NotImplementedException ( );
@@ -604,11 +635,11 @@ namespace PSQLviaADOCS
         /// </remarks>
         /// <see href="https://stackoverflow.com/questions/135234/difference-between-ref-and-out-parameters-in-net"/>
         private static void ListAllRowsInTable (
-            out StreamWriter pswDetailsList ,
-            out StreamWriter pswDetailsTable ,
-            out FixedConsoleWriter pfcwProgress ,
-            out Connection pdbConnection ,
-            out Recordset pdbRecordSet ,
+            ref StreamWriter pswDetailsList ,
+            ref StreamWriter pswDetailsTable ,
+            ref FixedConsoleWriter pfcwProgress ,
+            ref Connection pdbConnection ,
+            ref Recordset pdbRecordSet ,
             string pstrTableName )
         {
             long lngItemNumber = ListInfo.LIST_IS_EMPTY;
@@ -618,19 +649,19 @@ namespace PSQLviaADOCS
             string strDetailTabularReportFQFN = AssembleReportFileName (
                     OutputFileType.DetailTabularReport ,
                     pstrTableName );
-            pfcwProgress = new FixedConsoleWriter (
+            pfcwProgress = pfcwProgress ?? new FixedConsoleWriter (
                 ConsoleColor.Yellow ,
                 ConsoleColor.Black );
             ColumnNamesAndLabels [ ] aobjColumnNamesAndLabels = OpenTableRecordset (
-                out pdbConnection ,
-                out pdbRecordSet ,
+                ref pdbConnection ,
+                ref pdbRecordSet ,
                 pstrTableName );
-            pswDetailsList = new StreamWriter (
+            pswDetailsList = pswDetailsList ?? new StreamWriter (
                 strDetailListReportFQFN ,
                 FileIOFlags.FILE_OUT_CREATE ,
                 Encoding.UTF8 ,
                 MagicNumbers.CAPACITY_08KB );
-            pswDetailsTable = new StreamWriter (
+            pswDetailsTable = pswDetailsTable ?? new StreamWriter (
                 strDetailTabularReportFQFN ,
                 FileIOFlags.FILE_OUT_CREATE ,
                 Encoding.UTF8 ,
@@ -744,23 +775,23 @@ namespace PSQLviaADOCS
         /// </remarks>
         /// <see href="https://stackoverflow.com/questions/135234/difference-between-ref-and-out-parameters-in-net"/>
         private static void ListTableColumnProperties (
-            out StreamWriter pswDetailsTable ,
-            out FixedConsoleWriter pfcwProgress ,
-            out Connection pdbConnection ,
-            out Recordset pdbRecordSet ,
+            ref StreamWriter pswDetailsTable ,
+            ref FixedConsoleWriter pfcwProgress ,
+            ref Connection pdbConnection ,
+            ref Recordset pdbRecordSet ,
             string pstrTableName )
         {
             string strDetailTabularReportFQFN = AssembleReportFileName (
                     OutputFileType.TablePropertiesReport ,
                     pstrTableName );
-            pfcwProgress = new FixedConsoleWriter (
+            pfcwProgress = pfcwProgress ?? new FixedConsoleWriter (
                 ConsoleColor.Yellow ,
                 ConsoleColor.Black );
             ColumnNamesAndLabels [ ] aobjColumnNamesAndLabels = OpenTableRecordset (
-                out pdbConnection ,
-                out pdbRecordSet ,
+                ref pdbConnection ,
+                ref pdbRecordSet ,
                 pstrTableName );
-            pswDetailsTable = new StreamWriter (
+            pswDetailsTable = pswDetailsTable ?? new StreamWriter (
                 strDetailTabularReportFQFN ,
                 FileIOFlags.FILE_OUT_CREATE ,
                 Encoding.UTF8 ,
@@ -789,8 +820,43 @@ namespace PSQLviaADOCS
 
 
         /// <summary>
-        /// Read rows that meet specified criteria.
+        /// Read rows that meet specified criteria. For now, this routine
+        /// prompts for the selection criteria.
         /// </summary>
+        /// <param name="pswDetailsList">
+        /// Pass in a reference to a StreamWriter object that receives the
+        /// vertically aligned list report, which is initially null.
+        /// <para>
+        /// Since the absolute name of the output file is derived internally by
+        /// calling a method that assembles it from the table name and a couple
+        /// of application-scoped settings, the Streamwriter is passed in as a
+        /// null reference. This method initializes it, and returns the open
+        /// StreamWriter for further processing, closure, and disposition by the
+        /// calling routine. Though it could have been kept entirely internal,
+        /// doing so would have prevented using a Finally block to clean it up,
+        /// since the calling routine takes responsibility for handling most of
+        /// the exceptions that may arise during execution.
+        /// </para>
+        /// </param>
+        /// <param name="pswDetailsTable">
+        /// Pass in a reference to a StreamWriter object that receives the
+        /// tab delimited list report, which is initially null.
+        /// <para>
+        /// Since the absolute name of the output file is derived internally by
+        /// calling a method that assembles it from the table name and a couple
+        /// of application-scoped settings, the Streamwriter is passed in as a
+        /// null reference. This method initializes it, and returns the open
+        /// StreamWriter for further processing, closure, and disposition by the
+        /// calling routine. Though it could have been kept entirely internal,
+        /// doing so would have prevented using a Finally block to clean it up,
+        /// since the calling routine takes responsibility for handling most of
+        /// the exceptions that may arise during execution.
+        /// </para>
+        /// </param>
+        /// <param name="pfcwProgress">
+        /// Pass in a reference to a FixedConsoleWriter that is used to report
+        /// progress during execution, which is initially null.
+        /// </param>
         /// <param name="pdbConnection">
         /// Pass in a reference to the uninitialised Connection object that
         /// manages the connection to the Pervasive data base via an ADODB COM
@@ -835,11 +901,28 @@ namespace PSQLviaADOCS
         /// </remarks>
         /// <see href="https://stackoverflow.com/questions/135234/difference-between-ref-and-out-parameters-in-net"/>
         private static void ReadSomeRows (
-            out Connection pdbConnection ,
-            out Recordset pdbRecordSet ,
+            ref StreamWriter pswDetailsList ,
+            ref StreamWriter pswDetailsTable ,
+            ref FixedConsoleWriter pfcwProgress ,
+            ref Connection pdbConnection ,
+            ref Recordset pdbRecordSet ,
             string pstrTableName )
         {
-            throw new NotImplementedException ( );
+            ColumnNamesAndLabels [ ] aobjColumnNamesAndLabels = OpenTableRecordset (
+                ref pdbConnection ,
+                ref pdbRecordSet ,
+                pstrTableName );
+            SelectionCriteria criteria = PromptForSelectionCriteria (
+                aobjColumnNamesAndLabels ,
+                pdbRecordSet );
+            string strSQLSelectQuery = AssembleSelectQuery (
+                criteria ,
+                pstrTableName );
+            criteria.MatchfieldInfo = ReOpenRecordsetAndRestoreField (
+                pdbConnection ,
+                ref pdbRecordSet ,
+                strSQLSelectQuery ,
+                criteria.MatchfieldInfo.Name );
         }   // private static void ReadSomeRows
 
 
@@ -890,8 +973,8 @@ namespace PSQLviaADOCS
         /// </remarks>
         /// <see href="https://stackoverflow.com/questions/135234/difference-between-ref-and-out-parameters-in-net"/>
         private static void UpdateRows (
-            out Connection pdbConnection ,
-            out Recordset pdbRecordSet ,
+            ref Connection pdbConnection ,
+            ref Recordset pdbRecordSet ,
             string pstrTableName )
         {
             throw new NotImplementedException ( );
@@ -939,6 +1022,80 @@ namespace PSQLviaADOCS
 
 
         /// <summary>
+        /// Assemble a SQL SELECT query from the data in the SelectionCriteria
+        /// structure passed in through <paramref name="pCriteria"/>.
+        /// </summary>
+        /// <param name="pCriteria">
+        /// Pass in the initialized SelectionCriteria structure returned by
+        /// PromptForSelectionCriteria.
+        /// </param>
+        /// <param name="pstrTableName">
+        /// Pass in the name of the table, which becomes part of the SELECT
+        /// query.
+        /// </param>
+        /// <returns>
+        /// The return value is a valid SQL SELECT query, ready to feed to the
+        /// Recordset opener.
+        /// </returns>
+        private static string AssembleSelectQuery ( 
+            SelectionCriteria pCriteria ,
+            string pstrTableName )
+        {
+            const string SQL_SELECT_ROWS = @"SELECT * FROM {0} WHERE {1}";
+            const string WHERE_EQUALS = @"{0} = {1}";
+            const string WHERE_LIKE_WILD_CARD_CONTAINS = @"{0} LIKE %{1}%";
+            const string WHERE_LIKE_WILD_CARD_PREFIX = @"{0} LIKE {1}%";
+            const string WHERE_LIKE_WILD_CARD_SUFFIX = @"{0} LIKE %{1}";
+
+            string strWhereClause = null;
+
+            switch ( pCriteria.Condition )
+            {
+                case WhereCondition.IsEqualTo:
+                    strWhereClause = string.Format (
+                        WHERE_EQUALS ,                                          // Format Control String
+                        pCriteria.MatchfieldInfo.Name ,                         // Format Item 0: {0} =
+                        pCriteria.CriterionValue );                             // Format Item 1: = {1}
+                    break;
+                case WhereCondition.IsLikePrefix:
+                    strWhereClause = string.Format (
+                        WHERE_LIKE_WILD_CARD_PREFIX ,                           // Format Control String
+                        pCriteria.MatchfieldInfo.Name ,                         // Format Item 0: {0} =
+                        pCriteria.CriterionValue );                             // Format Item 1: = {1}
+                    break;
+                case WhereCondition.IsLikeSuffix:
+                    strWhereClause = string.Format (
+                        WHERE_LIKE_WILD_CARD_SUFFIX ,                           // Format Control String
+                        pCriteria.MatchfieldInfo.Name ,                         // Format Item 0: {0} =
+                        pCriteria.CriterionValue );                             // Format Item 1: = {1}
+                    break;
+                case WhereCondition.IsLikeContains:
+                    strWhereClause = string.Format (
+                        WHERE_LIKE_WILD_CARD_CONTAINS ,                         // Format Control String
+                        pCriteria.MatchfieldInfo.Name ,                         // Format Item 0: {0} =
+                        pCriteria.CriterionValue );                             // Format Item 1: = {1}
+                    break;
+                default:
+                    throw new System.ComponentModel.InvalidEnumArgumentException (
+                        nameof ( pCriteria.Condition ) ,
+                        ( int ) pCriteria.Condition ,
+                        pCriteria.Condition.GetType ( ) );
+            }   // switch ( pCriteria.Condition )
+
+            string rstrSQLSelectQuery = string.Format (
+                SQL_SELECT_ROWS ,                                               // Format Control String
+                pstrTableName ,                                                 // Format Item 0: SELECT * FROM {0}
+                strWhereClause );                                               // Format Item 1: WHERE {1}
+            Console.WriteLine (
+                Properties.Resources.MSG_SELECT_QUERY ,                         // Format Control String
+                rstrSQLSelectQuery ,                                            // Format Item 0: SQL SELECT Query    = {0}
+                Environment.NewLine );                                          // Format Item 1: Platform-dependent newline
+
+            return rstrSQLSelectQuery;
+        }   // private static string AssembleSelectQuery
+
+
+        /// <summary>
         /// The ColumnNamesAndLabels constructor registers this routine as the
         /// ColumnValueSetter delegate to call as needed to assign the next ID
         /// column value.
@@ -975,7 +1132,7 @@ namespace PSQLviaADOCS
             Connection pdbConnection ,
             object [ ] paobjInputs )
         {
-            const string SQL = "SELECT MAX(ID) FROM \"Person\"";
+            const string SQL = "SELECT MAX ( ID ) FROM \"Person\"";
 
             Recordset rs = new Recordset ( );
             rs.Open (
@@ -1151,6 +1308,138 @@ namespace PSQLviaADOCS
         }   // private static string DeriveTableSchemaFQFN
 
 
+        /// <summary>
+        /// Evaluate the name of the field input by the user, and return the
+        /// matching ADODB.Field when the field name is valid.
+        /// </summary>
+        /// <param name="pstrFieldNameCandidate">
+        /// Pass in the string returned by the console reader.
+        /// </param>
+        /// <param name="pdbRecordSet">
+        /// Pass in a reference to the open Recordset against which to match.
+        /// </param>
+        /// <returns>
+        /// If the method succeeds, its return value is the ADODB.Field object
+        /// that represents the column (field) against which to match.
+        /// </returns>
+        private static Field EvaluateColumnName (
+            string pstrFieldNameCandidate ,
+            Recordset pdbRecordSet )
+        {
+            if ( string.IsNullOrEmpty ( pstrFieldNameCandidate ) )
+            {
+                return null;
+            }   // TRUE (unanticipated outcome) block, if ( string.IsNullOrEmpty ( pstrFieldNameCandidate ) )
+            else
+            {
+                int intColumnCount = pdbRecordSet.Fields.Count;
+
+                for ( int intColumnIndex = ArrayInfo.ARRAY_FIRST_ELEMENT ;
+                          intColumnIndex < intColumnCount ;
+                          intColumnIndex++ )
+                {
+                    if ( pdbRecordSet.Fields [ intColumnIndex ].Name == pstrFieldNameCandidate )
+                    {   // Match found. Return the Field item.
+                        return pdbRecordSet.Fields [ intColumnIndex ];
+                    }   // if ( pdbRecordSet.Fields [ intColumnIndex ].Name == pstrFieldNameCandidate )
+                }   // for ( int intColumnIndex = ArrayInfo.ARRAY_FIRST_ELEMENT ; intColumnIndex < intColumnCount ; intColumnIndex++ )
+
+                return null;                                                    // The field name is invalid.
+            }   // FALSE (anticipated outcome) block, if ( string.IsNullOrEmpty ( pstrFieldNameCandidate ) )
+        }   // private static Field EvaluateColumnName
+
+
+        /// <summary>
+        /// Parse the criterion condition string.
+        /// </summary>
+        /// <param name="pstrCondition">
+        /// Pass in the string returned by the console reader.
+        /// </param>
+        /// <returns></returns>
+        private static WhereCondition EvaluateCriterionCondtion (
+            string pstrCondition )
+        {
+            try
+            {
+                return pstrCondition.EnumFromString<WhereCondition> ( );
+            }
+            catch ( InvalidOperationException ex )
+            {
+                Console.WriteLine ( ex.Message );
+                return WhereCondition.Undspecified;
+            }
+        }   // private static WhereCondition EvaluateCriterionCondtion
+
+
+        /// <summary>
+        /// Parse the criterion value.
+        /// </summary>
+        /// <param name="pstrCriterionValue">
+        /// Pass in the string returned by the console reader.
+        /// </param>
+        /// <param name="pdbField">
+        /// Pass in a reference to the ADODB.Field object returned by EvaluateColumnName.
+        /// </param>
+        /// <returns>
+        /// If the method succeeds, its return value is the string to match
+        /// against the value of the column reprseented by
+        /// <paramref name="matchfieldName"/>. Otherwise, the return value is 
+        /// null.
+        /// </returns>
+        private static object EvaluateCriterionValue ( 
+            string pstrCriterionValue ,
+            Field pdbField )
+        {
+            if ( string.IsNullOrEmpty ( pstrCriterionValue ) )
+            {
+                return null;
+            }   // TRUE (unanticipated outcome) block, if ( string.IsNullOrEmpty ( pstrCriterionValue ) )
+            else
+            {
+                try
+                {
+                    return ADOHelpers.ParseAndConvert (
+                        pstrCriterionValue ,                                    // string pstrInputValue
+                        pdbField ,                                              // Field pDBField
+                        Properties.Settings.Default.BooleanTrueList.Split (     // string [ ] pastrTrueStrings = null
+                            SpecialCharacters.SEMICOLON ) ,
+                        Properties.Settings.Default.BooleanFalseList.Split (    // string [ ] pastrFalseStrings = null
+                            SpecialCharacters.SEMICOLON ) ,
+                        true );                                                 // bool pfThrowWhenInvalid = false
+                }
+                catch ( ArgumentOutOfRangeException exArgOutOfRange )
+                {
+                    if ( exArgOutOfRange.Message.StartsWith ( Properties.Resources.MSG_INPUT_TOO_LONG.Truncate ( Properties.Resources.MSG_INPUT_TOO_LONG.IndexOf ( Environment.NewLine ) ) ) )
+                    {
+                        Console.Write (
+                            Properties.Resources.MSG_PROMPT_TRUNCATE_OK ,       // Format control string
+                            pstrCriterionValue.Truncate (                       // Format Item 0: To make it fit, it must be truncated to {0}.
+                                pdbField.DefinedSize ) ,                        // Maximun string length.
+                            Environment.NewLine );                              // Format Item 1: The input string is too long.{1} AND To make it fit, it must be truncated to {0}.{1}
+
+                        while ( true )
+                        {
+                            string strResponse = Console.ReadLine ( ).ToLower ( );  // Make the user confirm their selection by pressing the Return key.
+
+                            switch ( strResponse [ ArrayInfo.ARRAY_FIRST_ELEMENT ] )
+                            {
+                                case 'y':
+                                    return pstrCriterionValue.Truncate ( pdbField.DefinedSize );
+                                case 'n':
+                                    return null;
+                            }   // switch ( strResponse [ ArrayInfo.ARRAY_FIRST_ELEMENT ] )                        }
+                        }   // if ( exArgOutOfRange.Message.StartsWith ( Properties.Resources.MSG_INPUT_TOO_LONG.Truncate ( Properties.Resources.MSG_INPUT_TOO_LONG.IndexOf ( Environment.NewLine ) ) ) )
+                    }   // TRUE (anticipeted outcome) block, if ( exArgOutOfRange.Message.StartsWith ( Properties.Resources.MSG_INPUT_TOO_LONG.Truncate ( Properties.Resources.MSG_INPUT_TOO_LONG.IndexOf ( Environment.NewLine ) ) ) )
+                    else
+                    {
+                        Console.WriteLine ( exArgOutOfRange.Message );
+                        return null;
+                    }   // FALSE (unanticipeted outcome) block, if ( exArgOutOfRange.Message.StartsWith ( Properties.Resources.MSG_INPUT_TOO_LONG.Truncate ( Properties.Resources.MSG_INPUT_TOO_LONG.IndexOf ( Environment.NewLine ) ) ) )
+                }   // catch ( ArgumentOutOfRangeException exArgOutOfRange )
+            }   // FALSE (anticipated outcome) block, if ( string.IsNullOrEmpty ( pstrCriterionValue ) )
+        }   // private static string EvaluateCriterionValue
+
+
         private static CrudVerb EvaluateCrudVerb ( string pstrVerb )
         {
             try
@@ -1183,6 +1472,35 @@ namespace PSQLviaADOCS
 
             return CrudVerb.List;
         }   // private static CrudVerb EvaluateCrudVerb
+
+        
+        /// <summary>
+        /// Evaluate the input field, providing translation and other services
+        /// as needed.
+        /// </summary>
+        /// <param name="pstrFieldValue">
+        /// Pass in the string representation of the proposed value to assign to
+        /// the column (field). Data from the <paramref name="pdbField"/>
+        /// determines the rules that govern editing of it.
+        /// </param>
+        /// <param name="pdbField">
+        /// Pass in a reference to the ADODB.Field object that corresponds to
+        /// the value supplied in <paramref name="pstrFieldValue"/>.
+        /// </param>
+        /// <returns></returns>
+        private static object EvaluateField (
+            string pstrFieldValue ,
+            Field pdbField )
+        {
+            return ADOHelpers.ParseAndConvert (
+                pstrFieldValue ,                                                // string pstrInputValue
+                pdbField ,                                                      // Field pDBField
+                Properties.Settings.Default.BooleanTrueList.Split (             // string [ ] pastrTrueStrings = null
+                    SpecialCharacters.SEMICOLON ) ,
+                Properties.Settings.Default.BooleanFalseList.Split (            // string [ ] pastrFalseStrings = null
+                    SpecialCharacters.SEMICOLON ) ,
+                true );                                                         // bool pfThrowWhenInvalid = false
+        }   // private static object EvaluateField
 
 
         /// <summary>
@@ -1697,12 +2015,12 @@ namespace PSQLviaADOCS
         /// </remarks>
         /// <see href="https://stackoverflow.com/questions/135234/difference-between-ref-and-out-parameters-in-net"/>
         private static ColumnNamesAndLabels [ ] OpenTableRecordset (
-            out Connection pdbConnection ,
-            out Recordset pdbRecordSet ,
+            ref Connection pdbConnection ,
+            ref Recordset pdbRecordSet ,
             string pstrTableName )
         {
-            pdbConnection = new Connection ( );
-            pdbRecordSet = new Recordset ( );
+            pdbConnection = pdbConnection ?? new Connection ( );
+            pdbRecordSet = pdbRecordSet ?? new Recordset ( );
 
             //  ------------------------------------------------------------
             //  This should always be adUseServer unless you specifically
@@ -1724,6 +2042,115 @@ namespace PSQLviaADOCS
                 pstrTableName ,
                 pdbConnection );
         }   // private static ColumnNamesAndLabels [ ] OpenTableRecordset
+
+
+        /// <summary>
+        /// Prompt for selection criteria to apply to requests to read, update,
+        /// or delete.
+        /// </summary>
+        /// <param name="paobjColumnNamesAndLabels">
+        /// Pass in a reference to the array of ColumnNamesAndLabels objects.
+        /// </param>
+        /// <param name="pdbRecordSet">
+        /// Pass in a reference to the open Recordset object.
+        /// </param>
+        /// <returns>
+        /// If the method succeeds, the return value is the initialized
+        /// SelectionCriteria structure from which to construct the SQL SELECT
+        /// query to return the row(s) to display on the report.
+        /// </returns>
+        private static SelectionCriteria PromptForSelectionCriteria (
+            ColumnNamesAndLabels [ ] paobjColumnNamesAndLabels ,
+            Recordset pdbRecordSet )
+        {
+            SelectionCriteria rCriteria = new SelectionCriteria ( );
+
+            Console.Beep (
+                BEEP_FREQUENCY ,
+                BEEP_DURATION );
+
+            while ( rCriteria.MatchfieldInfo == null )
+            {
+                Console.Write ( Properties.Resources.MSG_PROMPT_COLUMN_NAME );
+                rCriteria.MatchfieldInfo = EvaluateColumnName (
+                    Console.ReadLine ( ) , 
+                    pdbRecordSet );
+            }   // while ( rCriteria.MatchfieldName == null )
+
+            while ( rCriteria.CriterionValue == null )
+            {
+                Console.Write ( Properties.Resources.MSG_PROMPT_MATCH_STRING );
+                rCriteria.CriterionValue = EvaluateCriterionValue (
+                    Console.ReadLine ( ) ,
+                    rCriteria.MatchfieldInfo );
+            }   // while ( rCriteria.CriterionValue == null )
+
+            while ( rCriteria.Condition == WhereCondition.Undspecified )
+            {
+                Console.Write ( Properties.Resources.MSG_PROPMT_CRITERION );
+                rCriteria.Condition = EvaluateCriterionCondtion ( Console.ReadLine ( ) );
+            }   // while ( rCriteria.Condition == WhereCondition.Undspecified )
+
+            Console.WriteLine (
+                Properties.Resources.MSG_SELECTION_CRITERIA ,                   // Format control string
+                new object [ ]
+                {
+                    rCriteria.MatchfieldInfo.Name ,                             // Format Item 0: Column (Field) Name = {0}
+                    rCriteria.Condition ,                                       // Format Item 1: Criterion Condition = {1}
+                    rCriteria.CriterionValue ,                                  // Format Item 2: Criterion Value     = {2}
+                    Environment.NewLine                                         // Format Item 3: {3}Selection Criteria:{3} etc.
+                } );
+
+            return rCriteria;
+        }   // private static SelectionCriteria PromptForSelectionCriteria
+
+
+        /// <summary>
+        /// Close the existing Table Recordset, and open a new Recordset based
+        /// on the SQL Select query specified in <paramref name="pstrSQL"/>,
+        /// using the open <paramref name="pdbConnection"/> database Connection
+        /// object.
+        /// </summary>
+        /// <param name="pdbConnection">
+        /// Pass in a reference to the open database connection.
+        /// </param>
+        /// <param name="pdbRecordSet">
+        /// Pass in a reference to the existing Recordset object, which is
+        /// closed and disposed before a new Recordset object that takes its
+        /// place.
+        /// </param>
+        /// <param name="pstrSQL">
+        /// When the Recordset is re-opened, a SQL Select query is substituted
+        /// for the original Table Recordset.
+        /// </param>
+        /// <param name="pstrFieldName">
+        /// Copy the field naem off the criterion Field object, so that the
+        /// corresponding Field object on the new Recordset can be returned to
+        /// take its place, since closing the Recordset effectively destroys the
+        /// old Field object.
+        /// </param>
+        /// <returns>
+        /// The return value is the like-named Field object attached to the new
+        /// Recordset that is opened against the query specified by
+        /// <paramref name="pstrSQL"/>.
+        /// </returns>
+        private static Field ReOpenRecordsetAndRestoreField (
+            Connection pdbConnection ,
+            ref Recordset pdbRecordSet ,
+            string pstrSQL ,
+            string pstrFieldName )
+        {
+            pdbRecordSet.Close ( );
+            pdbRecordSet = null;
+            pdbRecordSet = new Recordset ( );
+            pdbRecordSet.Open (
+                pstrSQL ,
+                pdbConnection ,
+                CursorTypeEnum.adOpenDynamic ,
+                LockTypeEnum.adLockOptimistic ,
+                ( int ) CommandTypeEnum.adCmdText );
+            return pdbRecordSet.Fields [ pstrFieldName ];
+        }   // private static Recordset ReOpenRecordset
         #endregion  // Module Subroutines
     }   // class Program
 }   // partial namespace PSQLviaADOCS

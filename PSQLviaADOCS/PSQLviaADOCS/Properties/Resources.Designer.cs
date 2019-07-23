@@ -214,6 +214,15 @@ namespace PSQLviaADOCS.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The input string is too long.{4}    Input string         = {0}{4}    Input string length  = {1}{4}    Maximum field length = {2}{4}    Truncated string     = {3}{4}.
+        /// </summary>
+        internal static string MSG_INPUT_TOO_LONG {
+            get {
+                return ResourceManager.GetString("MSG_INPUT_TOO_LONG", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Listing.
         /// </summary>
         internal static string MSG_LABEL_FOR_LISTING {
@@ -250,6 +259,15 @@ namespace PSQLviaADOCS.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Enter name of column (field) against which to match. .
+        /// </summary>
+        internal static string MSG_PROMPT_COLUMN_NAME {
+            get {
+                return ResourceManager.GetString("MSG_PROMPT_COLUMN_NAME", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to         {0}: Enter value for field {1}: .
         /// </summary>
         internal static string MSG_PROMPT_FOR_FIELD_VALUE {
@@ -277,6 +295,33 @@ namespace PSQLviaADOCS.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Enter string against which to match. .
+        /// </summary>
+        internal static string MSG_PROMPT_MATCH_STRING {
+            get {
+                return ResourceManager.GetString("MSG_PROMPT_MATCH_STRING", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The input string is too long.{1}    To make it fit, it must be truncated to {0}.{1}    Is that OK (Y/N)? .
+        /// </summary>
+        internal static string MSG_PROMPT_TRUNCATE_OK {
+            get {
+                return ResourceManager.GetString("MSG_PROMPT_TRUNCATE_OK", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enter selection criterion. .
+        /// </summary>
+        internal static string MSG_PROPMT_CRITERION {
+            get {
+                return ResourceManager.GetString("MSG_PROPMT_CRITERION", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Record Number {0}: .
         /// </summary>
         internal static string MSG_RECORD_LABEL_PREFIX {
@@ -300,6 +345,24 @@ namespace PSQLviaADOCS.Properties {
         internal static string MSG_SCHEMA_PROGRESS {
             get {
                 return ResourceManager.GetString("MSG_SCHEMA_PROGRESS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to     SQL SELECT Query    = {0}{1}.
+        /// </summary>
+        internal static string MSG_SELECT_QUERY {
+            get {
+                return ResourceManager.GetString("MSG_SELECT_QUERY", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {3}Selection Criteria:{3}    Column (Field) Name = {0}{3}    Criterion Condition = {1}{3}    Criterion Value     = {2}{3}.
+        /// </summary>
+        internal static string MSG_SELECTION_CRITERIA {
+            get {
+                return ResourceManager.GetString("MSG_SELECTION_CRITERIA", resourceCulture);
             }
         }
         

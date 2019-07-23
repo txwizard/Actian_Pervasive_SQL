@@ -78,11 +78,13 @@ namespace PSQLviaADOCS
                 case DataTypeEnum.adBSTR:
                     return ParseAndConvertString (
                         pstrInputValue ,
-                        pDBField.DefinedSize );
+                        pDBField.DefinedSize ,
+                        pfThrowWhenInvalid );
                 case DataTypeEnum.adChar:
                     return ParseAndConvertString (
                         pstrInputValue ,
-                        pDBField.DefinedSize );
+                        pDBField.DefinedSize ,
+                        pfThrowWhenInvalid );
                 case DataTypeEnum.adCurrency:
                     return ParseAndConvertCurrency (
                         pstrInputValue ,
@@ -130,11 +132,13 @@ namespace PSQLviaADOCS
                 case DataTypeEnum.adLongVarChar:
                     return ParseAndConvertString (
                         pstrInputValue ,
-                        pDBField.DefinedSize );
+                        pDBField.DefinedSize ,
+                        pfThrowWhenInvalid );
                 case DataTypeEnum.adLongVarWChar:
                     return ParseAndConvertString (
                         pstrInputValue ,
-                        pDBField.DefinedSize );
+                        pDBField.DefinedSize ,
+                        pfThrowWhenInvalid );
                 case DataTypeEnum.adNumeric:
                     return ParseAndConvertNumeric (
                         pstrInputValue ,
@@ -179,7 +183,8 @@ namespace PSQLviaADOCS
                 case DataTypeEnum.adVarChar:
                     return ParseAndConvertString (
                         pstrInputValue ,
-                        pDBField.DefinedSize );
+                        pDBField.DefinedSize ,
+                        pfThrowWhenInvalid );
                 case DataTypeEnum.adVariant:
                     return ParseAndConvertVariant (
                         pstrInputValue ,
@@ -195,11 +200,13 @@ namespace PSQLviaADOCS
                 case DataTypeEnum.adVarWChar:
                     return ParseAndConvertString (
                         pstrInputValue ,
-                        pDBField.DefinedSize );
+                        pDBField.DefinedSize ,
+                        pfThrowWhenInvalid );
                 case DataTypeEnum.adWChar:
                     return ParseAndConvertString (
                         pstrInputValue ,
-                        pDBField.DefinedSize );
+                        pDBField.DefinedSize ,
+                        pfThrowWhenInvalid );
                 default:
                     throw new System.ComponentModel.InvalidEnumArgumentException (
                         nameof ( pDBField.Type ) ,
@@ -672,7 +679,8 @@ namespace PSQLviaADOCS
         /// </returns>
         public static string ParseAndConvertString (
             string pstrInputValue ,
-            int pintDefinedSize )
+            int pintDefinedSize ,
+            bool pfThrowWhenInvalid )
         {
             if ( pstrInputValue.Length <= pintDefinedSize )
             {
@@ -680,9 +688,28 @@ namespace PSQLviaADOCS
             }   // TRUE (The supplied string fits.) block, if ( pstrInputValue.Length <= pintDefinedSize )
             else
             {
-                return pstrInputValue.Substring (
-                    ListInfo.SUBSTR_BEGINNING ,
-                    pstrInputValue.Length );
+                if ( pfThrowWhenInvalid )
+                {
+                    throw new ArgumentOutOfRangeException (
+                        nameof ( pstrInputValue ) ,                             // string paramName
+                        pstrInputValue ,                                        // object paramValue
+                        string.Format (                                         // string message
+                            Properties.Resources.MSG_INPUT_TOO_LONG ,           // Format control string
+                            new object [ ]
+                            {
+                                pstrInputValue ,                                // Format Item 0: Input string         = {0}
+                                pstrInputValue.Length ,                         // Format Item 1: Input string length  = {1}
+                                pintDefinedSize ,                               // Format Item 2: Maximum field length = {2}
+                                pstrInputValue.Truncate ( pintDefinedSize ) ,   // Format Item 3: Truncated string     = {3}
+                                Environment.NewLine                             // Format Item 4: The input string is too long.{4} .. etc.
+                            } ) );
+                }   // TRUE (Caller requested to see an exception when input is invalid.) block, if ( pfThrowWhenInvalid )
+                else
+                {
+                    return pstrInputValue.Substring (
+                        ListInfo.SUBSTR_BEGINNING ,
+                        pstrInputValue.Length );
+                }   // FALSE (Caller accepts silent truncation of excess length.) block, if ( pfThrowWhenInvalid )
             }   // FALSE (The supplied string is too long.) block, if ( pstrInputValue.Length <= pintDefinedSize )
         }   // public static object ParseAndConvertString
 
