@@ -259,7 +259,7 @@ namespace PSQLviaADOCS.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Enter name of column (field) against which to match. .
+        ///   Looks up a localized string similar to Enter name of column (field) against which to match: ---&gt;&gt; .
         /// </summary>
         internal static string MSG_PROMPT_COLUMN_NAME {
             get {
@@ -295,7 +295,7 @@ namespace PSQLviaADOCS.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Enter string against which to match. .
+        ///   Looks up a localized string similar to Column Field Value:                                  ---&gt;&gt; .
         /// </summary>
         internal static string MSG_PROMPT_MATCH_STRING {
             get {
@@ -313,7 +313,7 @@ namespace PSQLviaADOCS.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Enter selection criterion. .
+        ///   Looks up a localized string similar to Enter selection criterion:                           ---&gt;&gt; .
         /// </summary>
         internal static string MSG_PROPMT_CRITERION {
             get {
@@ -358,7 +358,7 @@ namespace PSQLviaADOCS.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {3}Selection Criteria:{3}    Column (Field) Name = {0}{3}    Criterion Condition = {1}{3}    Criterion Value     = {2}{3}.
+        ///   Looks up a localized string similar to {3}Selection Criteria:{3}{3}    Column (Field) Name = {0}{3}    Criterion Value     = {2}{3}    Criterion Condition = {1}{3}.
         /// </summary>
         internal static string MSG_SELECTION_CRITERIA {
             get {

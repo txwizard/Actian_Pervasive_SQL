@@ -206,7 +206,7 @@
     <comment>Main module subroutine ListAllFieldsOnConsole uses this message to update the console.</comment>
   </data>
   <data name="MSG_PROMPT_COLUMN_NAME" xml:space="preserve">
-    <value>Enter name of column (field) against which to match. </value>
+    <value>Enter name of column (field) against which to match: ---&gt;&gt; </value>
     <comment>Method PromptForSelectionCriteria displays this prompt.</comment>
   </data>
   <data name="MSG_PROMPT_FOR_FIELD_VALUE" xml:space="preserve">
@@ -222,7 +222,7 @@
     <comment>Static method PromptForTableName in the main module displays this text to request a missing table name.</comment>
   </data>
   <data name="MSG_PROMPT_MATCH_STRING" xml:space="preserve">
-    <value>Enter string against which to match. </value>
+    <value>Column Field Value:                                  ---&gt;&gt; </value>
     <comment>Method PromptForSelectionCriteria displays this prompt.</comment>
   </data>
   <data name="MSG_PROMPT_TRUNCATE_OK" xml:space="preserve">
@@ -230,7 +230,7 @@
     <comment>Method PromptForSelectionCriteria displays this prompt.</comment>
   </data>
   <data name="MSG_PROPMT_CRITERION" xml:space="preserve">
-    <value>Enter selection criterion. </value>
+    <value>Enter selection criterion:                           ---&gt;&gt; </value>
     <comment>Method PromptForSelectionCriteria displays this prompt.</comment>
   </data>
   <data name="MSG_RECORD_LABEL_PREFIX" xml:space="preserve">
@@ -246,7 +246,7 @@
     <comment>Method ListPropertiesOfColumn uses this template for its progress messages.</comment>
   </data>
   <data name="MSG_SELECTION_CRITERIA" xml:space="preserve">
-    <value>{3}Selection Criteria:{3}    Column (Field) Name = {0}{3}    Criterion Condition = {1}{3}    Criterion Value     = {2}{3}</value>
+    <value>{3}Selection Criteria:{3}{3}    Column (Field) Name = {0}{3}    Criterion Value     = {2}{3}    Criterion Condition = {1}{3}</value>
     <comment>Method PromptForSelectionCriteria generates its summary report message from this template.</comment>
   </data>
   <data name="MSG_SELECT_QUERY" xml:space="preserve">

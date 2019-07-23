@@ -17,7 +17,7 @@
     ----------------------------------------------------------------------------
     Revision History
     ----------------------------------------------------------------------------
-'
+
     Date       Version By Description
     ---------- ------- ---------------------------------------------------------
     2019/07/12 1.0.0.0 DG Initial implementation.
@@ -642,65 +642,17 @@ namespace PSQLviaADOCS
             ref Recordset pdbRecordSet ,
             string pstrTableName )
         {
-            long lngItemNumber = ListInfo.LIST_IS_EMPTY;
-            string strDetailListReportFQFN = AssembleReportFileName (
-                    OutputFileType.DetailListReport ,
-                    pstrTableName );
-            string strDetailTabularReportFQFN = AssembleReportFileName (
-                    OutputFileType.DetailTabularReport ,
-                    pstrTableName );
-            pfcwProgress = pfcwProgress ?? new FixedConsoleWriter (
-                ConsoleColor.Yellow ,
-                ConsoleColor.Black );
             ColumnNamesAndLabels [ ] aobjColumnNamesAndLabels = OpenTableRecordset (
                 ref pdbConnection ,
                 ref pdbRecordSet ,
                 pstrTableName );
-            pswDetailsList = pswDetailsList ?? new StreamWriter (
-                strDetailListReportFQFN ,
-                FileIOFlags.FILE_OUT_CREATE ,
-                Encoding.UTF8 ,
-                MagicNumbers.CAPACITY_08KB );
-            pswDetailsTable = pswDetailsTable ?? new StreamWriter (
-                strDetailTabularReportFQFN ,
-                FileIOFlags.FILE_OUT_CREATE ,
-                Encoding.UTF8 ,
-                MagicNumbers.CAPACITY_08KB );
-            pdbRecordSet.MoveFirst ( );
-
-            while ( !pdbRecordSet.EOF )
-            {
-                ListAllFieldsOnConsole (
-                    pdbRecordSet ,
-                    aobjColumnNamesAndLabels ,
-                    MoreMath.IncrementAndReturnNewValue ( ref lngItemNumber ) ,
-                    pswDetailsList ,
-                    pswDetailsTable ,
-                    pfcwProgress );
-                pdbRecordSet.MoveNext ( );
-            }   // while ( !rs.EOF )
-
-            pswDetailsList.WriteLine (
-                Properties.Resources.REPORT_FOOTER ,
-                lngItemNumber );
-
-            //  ------------------------------------------------------------
-            //  Without ScrollUp, the next line written by Console.WriteLine
-            //  is appended to the last line written by FixedConsoleWriter
-            //  object fcwProgress.
-            //  ------------------------------------------------------------
-
-            pfcwProgress.ScrollUp ( );
-            Console.WriteLine (
-                Properties.Resources.MSG_TASK_SUMMARY ,
-                Environment.NewLine ,
-                Properties.Resources.MSG_LABEL_FOR_LISTING ,
-                strDetailListReportFQFN );
-            Console.WriteLine (
-                Properties.Resources.MSG_TASK_SUMMARY ,
-                SpecialStrings.EMPTY_STRING ,
-                Properties.Resources.MSG_LABEL_FOR_TABLE ,
-                strDetailTabularReportFQFN );
+            ListAllRowsInRecordset (
+                ref pswDetailsList ,
+                ref pswDetailsTable ,
+                ref pfcwProgress ,
+                ref pdbRecordSet ,
+                pstrTableName ,
+                aobjColumnNamesAndLabels );
         }   // private static void ListAllRowsInTable
 
 
@@ -923,6 +875,13 @@ namespace PSQLviaADOCS
                 ref pdbRecordSet ,
                 strSQLSelectQuery ,
                 criteria.MatchfieldInfo.Name );
+            ListAllRowsInRecordset (
+                ref pswDetailsList ,
+                ref pswDetailsTable ,
+                ref pfcwProgress ,
+                ref pdbRecordSet ,
+                pstrTableName ,
+                aobjColumnNamesAndLabels );
         }   // private static void ReadSomeRows
 
 
@@ -1744,11 +1703,15 @@ namespace PSQLviaADOCS
             s_intLastIndex = s_intLastIndex ?? ArrayInfo.IndexFromOrdinal ( paColumnInfo.Length );
             s_strDispMsgNRecs = s_strDispMsgNRecs ?? prs.RecordCount.ToString ( // An open ADO recordset bound to a table reports its record count.
                 DisplayFormats.NUMBER_PER_REG_SETTINGS_0D );                    // Format the integer with thousands separators per the Regional Settings in the Windows Control Panel.
-            pfcwProgress.Write (                                                // Update the status shown on the console.
-                Properties.Resources.MSG_PROGRESS_UPDATE ,                      // Format Item 0: Listing record # {0}
-                plngItemNumber.ToString (                                       // Argument plngItemNumber is the current record number.
-                    DisplayFormats.NUMBER_PER_REG_SETTINGS_0D ) ,               // Format the integer with thousands separators per the Regional Settings in the Windows Control Panel.
-                s_strDispMsgNRecs );                                            // Format Item 1: of {1}
+
+            if ( prs.RecordCount > MagicNumbers.PLUS_ONE )
+            {
+                pfcwProgress.Write (                                            // Update the status shown on the console.
+                    Properties.Resources.MSG_PROGRESS_UPDATE ,                  // Format Item 0: Listing record # {0}
+                    plngItemNumber.ToString (                                   // Argument plngItemNumber is the current record number.
+                        DisplayFormats.NUMBER_PER_REG_SETTINGS_0D ) ,           // Format the integer with thousands separators per the Regional Settings in the Windows Control Panel.
+                    s_strDispMsgNRecs );                                        // Format Item 1: of {1}
+            }   // if ( prs.RecordCount > MagicNumbers.PLUS_ONE )
 
             //  ----------------------------------------------------------------
             //  The calling routine initializes plngItemNumber to one before the
@@ -1784,6 +1747,18 @@ namespace PSQLviaADOCS
                     prs.Source ,                                                // Format Item 2: Table Name       = {2}
                     s_strDispMsgNRecs ,                                         // Format Item 3: Records in Table = {3}
                     Environment.NewLine );                                      // Format Item 4: Platform-dependent newline at end of each output line
+
+                if ( prs.RecordCount == MagicNumbers.PLUS_ONE )
+                {
+                    Console.WriteLine (
+                        Properties.Resources.MSG_REPORT_HEADER ,                // Format control string
+                        s_csm.BaseStateManager.AppStartupTimeLocal ,            // Format Item 0: Run Date: {0}
+                        s_csm.BaseStateManager.AppStartupTimeUtc ,              // Format Item 1: ({1} UTC)
+                        prs.Source ,                                            // Format Item 2: Table Name       = {2}
+                        s_strDispMsgNRecs ,                                     // Format Item 3: Records in Table = {3}
+                        Environment.NewLine );                                  // Format Item 4: Platform-dependent newline at end of each output line
+                }   // if ( prs.RecordCount == MagicNumbers.PLUS_ONE )
+
                 pswDetailsTable.WriteLine ( sbTableLabelRow.ToString ( ) );     // Since WriteLine won't convert this implicitly, ToString must be called by name.
             }   // if ( plngItemNumber == MagicNumbers.PLUS_ONE )
 
@@ -1884,6 +1859,19 @@ namespace PSQLviaADOCS
                             ? Environment.NewLine                               // The last line gets a newline.
                             : SpecialStrings.EMPTY_STRING                       // All other lines get nothing.
                     } );
+
+                if ( prs.RecordCount == MagicNumbers.PLUS_ONE )
+                {
+                    Console.WriteLine (
+                    s_strDynamicListReportFormatString ,                        // Format Control String
+                    new object [ ]                                              // Array of format items
+                    {
+                        strListTokenZero ,                                      // Format Item 0: Label Prefix
+                        paColumnInfo [ intJ ].ColumnLabel ,                     // Format Item 1: Column Label
+                        prs.Fields[paColumnInfo[intJ].ColumnName].Value ,       // Format Item 2: Column Value
+                        SpecialStrings.EMPTY_STRING                             // Format Item 3: Newline or Nothing
+                    } );
+                }   // if ( prs.RecordCount == MagicNumbers.PLUS_ONE )
             }   // for ( int intJ = ArrayInfo.ARRAY_FIRST_ELEMENT ; intJ <= intLastIndex ; intJ++ )
         }   // private static void ListAllFieldsOnConsole
 
@@ -1960,6 +1948,152 @@ namespace PSQLviaADOCS
                     field.Type
                 } );
         }   // private static void ListPropertiesOfColumn
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="pswDetailsList">
+        /// Pass in a reference to a StreamWriter object that receives the
+        /// vertically aligned list report, which is initially null.
+        /// <para>
+        /// Since the absolute name of the output file is derived internally by
+        /// calling a method that assembles it from the table name and a couple
+        /// of application-scoped settings, the Streamwriter is passed in as a
+        /// null reference. This method initializes it, and returns the open
+        /// StreamWriter for further processing, closure, and disposition by the
+        /// calling routine. Though it could have been kept entirely internal,
+        /// doing so would have prevented using a Finally block to clean it up,
+        /// since the calling routine takes responsibility for handling most of
+        /// the exceptions that may arise during execution.
+        /// </para>
+        /// </param>
+        /// <param name="pswDetailsTable">
+        /// Pass in a reference to a StreamWriter object that receives the
+        /// tab delimited list report, which is initially null.
+        /// <para>
+        /// Since the absolute name of the output file is derived internally by
+        /// calling a method that assembles it from the table name and a couple
+        /// of application-scoped settings, the Streamwriter is passed in as a
+        /// null reference. This method initializes it, and returns the open
+        /// StreamWriter for further processing, closure, and disposition by the
+        /// calling routine. Though it could have been kept entirely internal,
+        /// doing so would have prevented using a Finally block to clean it up,
+        /// since the calling routine takes responsibility for handling most of
+        /// the exceptions that may arise during execution.
+        /// </para>
+        /// </param>
+        /// <param name="pfcwProgress">
+        /// Pass in a reference to a FixedConsoleWriter that is used to report
+        /// progress during execution, which is initially null.
+        /// </param>
+        /// <param name="pdbConnection">
+        /// Pass in a reference to the uninitialised Connection object that
+        /// manages the connection to the Pervasive data base via an ADODB COM
+        /// Interop wrapper.
+        /// <para>
+        /// This object is passed in uninitialized, this method calls static
+        /// method OpenTableRecordset to initialize it and return the array of
+        /// ColumnNamesAndLabels objects that drive it. Since the method would
+        /// otherwise need an additional argument to pass in the array, in
+        /// addition to the Connection and Recordset objects, this slighly
+        /// decreases the call overhead.
+        /// </para>
+        /// </param>
+        /// <param name="pdbRecordSet">
+        /// Pass in a reference to the uninitialised Recordset object that
+        /// returns the rows (records) from a Pervasive data base table via an
+        /// ADODB COM Interop wrapper.
+        /// <para>
+        /// This object is passed in uninitialized, this method calls static
+        /// method OpenTableRecordset to initialize it and return the array of
+        /// ColumnNamesAndLabels objects that drive it. Since the method would
+        /// otherwise need an additional argument to pass in the array, in
+        /// addition to the Connection and Recordset objects, this slighly
+        /// decreases the call overhead.
+        /// </para>
+        /// <param name="pstrTableName">
+        /// Pass in a reference to the string that contains the table name, for
+        /// opening the table and displaying its name in console messages and on
+        /// reports.
+        /// <para>
+        /// The table name is either extracted from the command line or a prompt
+        /// is displayed to the operator. The main routine is responsible for
+        /// completing this task before it calls this routine.
+        /// </para>
+        /// </param>
+        /// <param name="paobjColumnNamesAndLabels">
+        /// Pass in a reference to the array of ColumnNamesAndLabels objects.
+        /// </param>
+        private static void ListAllRowsInRecordset (
+            ref StreamWriter pswDetailsList ,
+            ref StreamWriter pswDetailsTable ,
+            ref FixedConsoleWriter pfcwProgress ,
+            ref Recordset pdbRecordSet ,
+            string pstrTableName ,
+            ColumnNamesAndLabels [ ] paobjColumnNamesAndLabels )
+        {
+            long lngItemNumber = ListInfo.LIST_IS_EMPTY;
+            string strDetailListReportFQFN = AssembleReportFileName (
+                    OutputFileType.DetailListReport ,
+                    pstrTableName );
+            string strDetailTabularReportFQFN = AssembleReportFileName (
+                    OutputFileType.DetailTabularReport ,
+                    pstrTableName );
+            pfcwProgress = pfcwProgress ?? new FixedConsoleWriter (
+                ConsoleColor.Yellow ,
+                ConsoleColor.Black );
+            pswDetailsList = pswDetailsList ?? new StreamWriter (
+                strDetailListReportFQFN ,
+                FileIOFlags.FILE_OUT_CREATE ,
+                Encoding.UTF8 ,
+                MagicNumbers.CAPACITY_08KB );
+            pswDetailsTable = pswDetailsTable ?? new StreamWriter (
+                strDetailTabularReportFQFN ,
+                FileIOFlags.FILE_OUT_CREATE ,
+                Encoding.UTF8 ,
+                MagicNumbers.CAPACITY_08KB );
+            pdbRecordSet.MoveFirst ( );
+
+            while ( !pdbRecordSet.EOF )
+            {
+                ListAllFieldsOnConsole (
+                    pdbRecordSet ,
+                    paobjColumnNamesAndLabels ,
+                    MoreMath.IncrementAndReturnNewValue ( ref lngItemNumber ) ,
+                    pswDetailsList ,
+                    pswDetailsTable ,
+                    pfcwProgress );
+                pdbRecordSet.MoveNext ( );
+            }   // while ( !rs.EOF )
+
+            pswDetailsList.WriteLine (
+                Properties.Resources.REPORT_FOOTER ,
+                lngItemNumber.ToString (
+                    DisplayFormats.NUMBER_PER_REG_SETTINGS_0D ) );
+
+            //  ------------------------------------------------------------
+            //  Without ScrollUp, the next line written by Console.WriteLine
+            //  is appended to the last line written by FixedConsoleWriter
+            //  object fcwProgress.
+            //  ------------------------------------------------------------
+
+            if ( pdbRecordSet.RecordCount > MagicNumbers.PLUS_ONE )
+            {   // The fixed console writer is never used unless the recordset contains two or more rows.
+                pfcwProgress.ScrollUp ( );
+            }   // if ( pdbRecordSet.RecordCount > MagicNumbers.PLUS_ONE )
+
+            Console.WriteLine (
+                Properties.Resources.MSG_TASK_SUMMARY ,
+                Environment.NewLine ,
+                Properties.Resources.MSG_LABEL_FOR_LISTING ,
+                strDetailListReportFQFN );
+            Console.WriteLine (
+                Properties.Resources.MSG_TASK_SUMMARY ,
+                SpecialStrings.EMPTY_STRING ,
+                Properties.Resources.MSG_LABEL_FOR_TABLE ,
+                strDetailTabularReportFQFN );
+        }   // private static void ListAllRowsInRecordset
 
 
         /// <summary>
@@ -2090,6 +2224,17 @@ namespace PSQLviaADOCS
                 Console.Write ( Properties.Resources.MSG_PROPMT_CRITERION );
                 rCriteria.Condition = EvaluateCriterionCondtion ( Console.ReadLine ( ) );
             }   // while ( rCriteria.Condition == WhereCondition.Undspecified )
+
+            //  ----------------------------------------------------------------
+            //  The numbering of the format items in the following statement
+            //  reflects their order of appearance in the original rendering of
+            //  the message. Subsequent testing suggested the current ordering,
+            //  which was accomplished by splitting the string into lines,
+            //  moving them around, and reassembling the string. Since all that
+            //  matters is that their numbering corresponds to their order of
+            //  appearance in the paramater array, I didn't bother to renumber
+            //  them.
+            //  ----------------------------------------------------------------
 
             Console.WriteLine (
                 Properties.Resources.MSG_SELECTION_CRITERIA ,                   // Format control string
