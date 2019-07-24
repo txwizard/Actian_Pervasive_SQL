@@ -18,7 +18,7 @@
 
     Date       Version By Description
     ---------- ------- ---------------------------------------------------------
-    2019/07/22 1.3.0.0 DG Initial implementation.
+    2019/07/23 1.3.0.0 DG Initial implementation.
     ============================================================================
 */
 
@@ -37,6 +37,24 @@ namespace PSQLviaADOCS
     /// </summary>
     public static class ADOHelpers
     {
+        /// <summary>
+        /// Use this with StringIsInList argument pfCaseSensitive to specify
+        /// case sensitive string matching.
+        /// </summary>
+        /// <see cref="StringIsInList"/>
+        /// <seealso cref="CASE_INSENSITIVE"/>
+        public const bool CASE_SENSITIVE = true;
+
+
+        /// <summary>
+        /// Use this with StringIsInList argument pfCaseSensitive to specify
+        /// case insensitive string matching.
+        /// </summary>
+        /// <see cref="StringIsInList"/>
+        /// <seealso cref="CASE_SENSITIVE"/>
+        public const bool CASE_INSENSITIVE = false;
+
+
         /// <summary>
         /// Given an input field value and the destination Field object, parse
         /// its value, returning the value in a form that is acceptable for a
@@ -287,24 +305,24 @@ namespace PSQLviaADOCS
             }   // TRUE (Both null references and the empty string are implictly FALSE.) block, if ( string.IsNullOrEmpty ( pstrInputValue ) )
             else
             {   // Strings that contain characters are compared against two lists of strings, starting with strings that represent True.
-                if ( StringIsInList ( pstrInputValue , pastrTrueStrings , false ) )
+                if ( StringIsInList ( pstrInputValue , pastrTrueStrings , CASE_INSENSITIVE ) )
                 {   // The input string represents Boolean True.
                     return true;
-                }   // TRUE (The input string is in the list of valid True strings, pastrTrueStrings.) block, if ( StringIsInList ( pstrInputValue , pastrTrueStrings , false ) )
+                }   // TRUE (The input string is in the list of valid True strings, pastrTrueStrings.) block, if ( StringIsInList ( pstrInputValue , pastrTrueStrings , CASE_INSENSITIVE ) )
                 else
                 {   // The input string isn't in the list of valid True strings. Check the list of valid False strings.
-                    if ( StringIsInList ( pstrInputValue , pastrFalseStrings , false ) )
+                    if ( StringIsInList ( pstrInputValue , pastrFalseStrings , CASE_INSENSITIVE ) )
                     {   // The input string represents Boolean False.
                         return false;
-                    }   // TRUE (The input string is in the list of valid False strings,pastrFalseStrings.), if ( StringIsInList ( pstrInputValue , pastrFalseStrings , false ) )
+                    }   // TRUE (The input string is in the list of valid False strings,pastrFalseStrings.), if ( StringIsInList ( pstrInputValue , pastrFalseStrings , CASE_INSENSITIVE ) )
                     else
                     {   // Since I don't trust returning a nullable Boolean in an Object, I have no choice but to throw an ArgumentOutOfRangeException exception, the only kind that lets me explicitly return the parameter name and its value.
                         throw new ArgumentOutOfRangeException (
                             nameof ( pstrInputValue ) ,
                             pstrInputValue ,
                             Properties.Resources.ERRMSG_INVALID_BOOLEAN_VALUE );
-                    }   // FALSE (The input string is MOT in the list of valid False strings,pastrFalseStrings.), if ( StringIsInList ( pstrInputValue , pastrFalseStrings , false ) )
-                }   // FALSE (The input string is NOT in the list of valid True strings, pastrTrueStrings.) block, if ( StringIsInList ( pstrInputValue , pastrTrueStrings , false ) )
+                    }   // FALSE (The input string is MOT in the list of valid False strings,pastrFalseStrings.), if ( StringIsInList ( pstrInputValue , pastrFalseStrings , CASE_INSENSITIVE ) )
+                }   // FALSE (The input string is NOT in the list of valid True strings, pastrTrueStrings.) block, if ( StringIsInList ( pstrInputValue , pastrTrueStrings , CASE_INSENSITIVE ) )
             }   // FALSE (The string contains at least one character. block, if ( string.IsNullOrEmpty ( pstrInputValue ) )
         }   // public static object ParseAndConvertBoolean
 
@@ -922,7 +940,9 @@ namespace PSQLviaADOCS
         /// is in string array <paramref name="pastrValidStrings"/>. Otherwise,
         /// the return value is FALSE.
         /// </returns>
-        private static bool StringIsInList (
+        /// <see cref="CASE_INSENSITIVE"/>
+        /// <see cref="CASE_SENSITIVE"/>
+        public static bool StringIsInList (
             string pstrInputValue ,
             string [ ] pastrValidStrings ,
             bool pfCaseSensitive )
@@ -948,6 +968,6 @@ namespace PSQLviaADOCS
 
                 return false;                               // The string doesn't match anything in the list.
             }   // FALSE (anticipated case) block, if ( string.IsNullOrEmpty ( pstrInputValue ) )        
-        }   // private static bool StringIsInList
+        }   // public static bool StringIsInList
     }   // public static class ADOHelpers
 }   // partial namespace PSQLviaADOCS

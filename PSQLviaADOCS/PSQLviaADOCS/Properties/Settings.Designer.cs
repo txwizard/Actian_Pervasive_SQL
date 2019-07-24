@@ -84,18 +84,36 @@ namespace PSQLviaADOCS.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True;Yes;T;Y;Male;M")]
-        public string BooleanTrueList {
+        public string BooleanTrueListPlusM {
             get {
-                return ((string)(this["BooleanTrueList"]));
+                return ((string)(this["BooleanTrueListPlusM"]));
             }
         }
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False;No;F;N;Female;F")]
-        public string BooleanFalseList {
+        public string BooleanFalseListPlusF {
             get {
-                return ((string)(this["BooleanFalseList"]));
+                return ((string)(this["BooleanFalseListPlusF"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True;Yes;T;Y")]
+        public string BooleanTrueListGeneric {
+            get {
+                return ((string)(this["BooleanTrueListGeneric"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False;No;F;N")]
+        public string BooleanFalseListGeneric {
+            get {
+                return ((string)(this["BooleanFalseListGeneric"]));
             }
         }
     }

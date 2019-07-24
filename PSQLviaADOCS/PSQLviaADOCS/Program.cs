@@ -27,7 +27,7 @@
     2019/07/16 1.2.0.0 DG Sanity check the table name when it is read from the
                           command line.
 
-    2019/07/22 1.3.0.0 DG Implement the rest of the CRUD model.
+    2019/07/23 1.3.0.0 DG Implement the rest of the CRUD model.
     ============================================================================
 */
 
@@ -60,8 +60,24 @@ namespace PSQLviaADOCS
         /// </summary>
         const int ERROR_BAD_VERB = MagicNumbers.ERROR_RUNTIME + ArrayInfo.NEXT_INDEX;
 
-        const int BEEP_DURATION = 500;
-        const int BEEP_FREQUENCY = 440;
+
+        /// <summary>
+        /// The value of this enumeration governs the behavior of AddOrUpdateRow
+        /// method, directing it when to display current values and how to post.
+        /// </summary>
+        enum AddOrUpdateMode
+        {
+            /// <summary>
+            /// AddOneNewRow called AddOrUpdateRow.
+            /// </summary>
+            AddingOneRow,
+
+            /// <summary>
+            /// UpdateOneRow called AddOrUpdateRow.
+            /// </summary>
+            UpdatingOneRow
+        }   // enum AddOrUpdateMode
+
 
         /// <summary>
         /// The verb fed into the command line must map to one of these values.
@@ -227,7 +243,7 @@ namespace PSQLviaADOCS
         static string s_strFinalRecordLabelPrefix = null;
         static string s_strLeadingWhiteSpace = null;
         static string s_strDynamicListReportFormatString = null;
-        static string s_strDispMsgNRecs = null;
+        static long? s_lngDispMsgNRecs;
         static int? s_intLastIndex;
         #endregion  // Module Static Members
 
@@ -242,6 +258,7 @@ namespace PSQLviaADOCS
             {
                 DoTask ( args );
             }
+
             catch ( Exception ex )
             {
                 s_csm.BaseStateManager.AppExceptionLogger.ReportException ( ex );
@@ -324,13 +341,13 @@ namespace PSQLviaADOCS
                         return;
 
                     case CrudVerb.Create:
-                        AddNewRows (
+                        AddOneNewRow (
                             ref cn ,
                             ref rs ,
                             operatingParameters.TableName );
                         return;
                     case CrudVerb.Update:
-                        UpdateRows (
+                        UpdateOneRow (
                             ref cn ,
                             ref rs ,
                             operatingParameters.TableName );
@@ -427,7 +444,7 @@ namespace PSQLviaADOCS
         /// ref parameter it has to be set to something.
         /// </remarks>
         /// <see href="https://stackoverflow.com/questions/135234/difference-between-ref-and-out-parameters-in-net"/>
-        private static void AddNewRows (
+        private static void AddOneNewRow (
             ref Connection pdbConnection ,
             ref Recordset pdbRecordSet ,
             string pstrTableName )
@@ -439,64 +456,17 @@ namespace PSQLviaADOCS
             //  ----------------------------------------------------------------
             //  In addition to opening the connection and the recordset, static
             //  method OpenTableRecordset creates and initializes the array of
-            //  ColumnNamesAndLabels objects. Since every iteration of a classic
-            //  FOR loop tests it and two arrays of strings, each of which must
-            //  be the same size, are dimensioned accordingly, the length of the
-            //  array goes into an integer, intColumnCount.
+            //  ColumnNamesAndLabels objects.
             //  ----------------------------------------------------------------
 
-            ColumnNamesAndLabels [ ] acolNamesAndLabels = OpenTableRecordset (
-                ref pdbConnection ,
+            AddOrUpdateRow (
                 ref pdbRecordSet ,
-                pstrTableName );
-
-            int intColumnCount = acolNamesAndLabels.Length;
-            bool fRingTheBell = true;
-
-            object [ ] aobjNameList = new object [ intColumnCount ];
-            object [ ] aobjValueList = new object [ intColumnCount ];
-
-            for ( int intCurrentColumn = ArrayInfo.ARRAY_FIRST_ELEMENT ;
-                      intCurrentColumn < intColumnCount ;
-                      intCurrentColumn++ )
-            {
-                if ( acolNamesAndLabels [ intCurrentColumn ].ColumnValue == null )
-                {
-                    Console.Write (
-                        Properties.Resources.MSG_PROMPT_FOR_FIELD_VALUE ,       // Format control string
-                        ArrayInfo.OrdinalFromIndex ( intCurrentColumn ) ,       // Format Item 0: {0}: Enter value
-                        acolNamesAndLabels [ intCurrentColumn ].ColumnLabel );  // Format Item 1: for field {1}:
-
-                    if ( fRingTheBell )
-                    {   // One beep only.
-                        Console.Beep (
-                            BEEP_FREQUENCY ,
-                            BEEP_DURATION );
-                        fRingTheBell = false;
-                    }   // if ( fRingTheBell )
-
-                    acolNamesAndLabels [ intCurrentColumn ].ColumnValue = EvaluateField (
-                        Console.ReadLine ( ) ,                                                          // string pstrFieldValue
-                        pdbRecordSet.Fields [ acolNamesAndLabels [ intCurrentColumn ].ColumnName ] );   // Field  pdbField
-                }    // TRUE (The user must supply a value.) block, if ( acolNamesAndLabels [ intCurrentColumn ].ColumnValue == null )
-                else
-                {
-                    Console.WriteLine (
-                        Properties.Resources.MSG_INFO_ASSIGNED_COLUMN_VALUE ,   // Format control string
-                        ArrayInfo.OrdinalFromIndex ( intCurrentColumn ) ,       // Format Item 0: {0}: 
-                        acolNamesAndLabels [ intCurrentColumn ].ColumnLabel ,   // Format Item 1: : {1} value assigned
-                        acolNamesAndLabels [ intCurrentColumn ].ColumnValue );  // Format Item 2: by system = {2}
-                }   // FALSE (The program generates a value.) block, if ( acolNamesAndLabels [ intCurrentColumn ].ColumnValue == null )
-
-                aobjNameList [ intCurrentColumn ] = acolNamesAndLabels [ intCurrentColumn ].ColumnName;
-                aobjValueList [ intCurrentColumn ] = acolNamesAndLabels [ intCurrentColumn ].ColumnValue;
-            }   // for ( int intCurrentColumn = ArrayInfo.ARRAY_FIRST_ELEMENT ; ; intCurrentColumn < intColumnCount ; intCurrentColumn++ )
-
-            pdbRecordSet.AddNew (
-                aobjNameList ,
-                aobjValueList );
-            pdbRecordSet.Update ( );
-        }   // private static void AddNewRows
+                OpenTableRecordset (
+                    ref pdbConnection ,
+                    ref pdbRecordSet ,
+                    pstrTableName ) ,
+                AddOrUpdateMode.AddingOneRow );
+        }   // private static void AddOneNewRow
 
 
         /// <summary>
@@ -555,7 +525,8 @@ namespace PSQLviaADOCS
 
 
         /// <summary>
-        /// List all columns of all rows in the table named in <paramref name="pswDetailsTable"/>
+        /// List all columns of all rows in the table named in
+        /// <paramref name="pswDetailsTable"/>
         /// </summary>
         /// <param name="pswDetailsList">
         /// Pass in a reference to a StreamWriter object that receives the
@@ -867,13 +838,12 @@ namespace PSQLviaADOCS
             SelectionCriteria criteria = PromptForSelectionCriteria (
                 aobjColumnNamesAndLabels ,
                 pdbRecordSet );
-            string strSQLSelectQuery = AssembleSelectQuery (
-                criteria ,
-                pstrTableName );
             criteria.MatchfieldInfo = ReOpenRecordsetAndRestoreField (
                 pdbConnection ,
                 ref pdbRecordSet ,
-                strSQLSelectQuery ,
+                AssembleSelectQuery (
+                    criteria ,
+                    pstrTableName ) ,
                 criteria.MatchfieldInfo.Name );
             ListAllRowsInRecordset (
                 ref pswDetailsList ,
@@ -931,17 +901,186 @@ namespace PSQLviaADOCS
         /// ref parameter it has to be set to something.
         /// </remarks>
         /// <see href="https://stackoverflow.com/questions/135234/difference-between-ref-and-out-parameters-in-net"/>
-        private static void UpdateRows (
+        private static void UpdateOneRow (
             ref Connection pdbConnection ,
             ref Recordset pdbRecordSet ,
             string pstrTableName )
         {
-            throw new NotImplementedException ( );
-        }   // private static void UpdateRows
+            ColumnNamesAndLabels [ ] aobjColumnNamesAndLabels = OpenTableRecordset (
+                ref pdbConnection ,
+                ref pdbRecordSet ,
+                pstrTableName );
+
+            while ( pdbRecordSet.RecordCount != MagicNumbers.PLUS_ONE )
+            {
+                SelectionCriteria criteria = PromptForSelectionCriteria (
+                    aobjColumnNamesAndLabels ,
+                    pdbRecordSet );
+                criteria.MatchfieldInfo = ReOpenRecordsetAndRestoreField (
+                    pdbConnection ,
+                    ref pdbRecordSet ,
+                    AssembleSelectQuery (
+                        criteria ,
+                        pstrTableName ) ,
+                    criteria.MatchfieldInfo.Name );
+
+                if ( pdbRecordSet.RecordCount != MagicNumbers.PLUS_ONE )
+                {
+                    Console.WriteLine (
+                        Properties.Resources.MSG_PROMPT_ONE_ROW_ONLY ,              // this Format Control String contains everything required to format the record count per NLS settings.
+                        pdbRecordSet.RecordCount );                                 // Format Item 0: Your query returned {0::N0} rows.
+                }   // if ( pdbRecordSet.RecordCount != MagicNumbers.PLUS_ONE )
+            }   // while ( pdbRecordSet.RecordCount != MagicNumbers.PLUS_ONE )
+
+            AddOrUpdateRow (
+                ref pdbRecordSet ,
+                aobjColumnNamesAndLabels ,
+                AddOrUpdateMode.UpdatingOneRow );
+        }   // private static void UpdateOneRow
         #endregion  // Module Main Routines
 
 
         #region Module Subroutines
+        /// <summary>
+        /// Prompt for values to add to a new row or to update an existing row.
+        /// When <paramref name="penmAddOrUpdateRow"/> is TRUE, the requested operation
+        /// is adding a new record. Otherwise, it's an update.
+        /// </summary>
+        /// <param name="pdbRecordSet">
+        /// Pass in a reference to the uninitialised Recordset object that
+        /// returns the rows (records) from a Pervasive data base table via an
+        /// ADODB COM Interop wrapper.
+        /// <para>
+        /// This object is passed in uninitialized, this method calls static
+        /// method OpenTableRecordset to initialize it and return the array of
+        /// ColumnNamesAndLabels objects that drive it. Since the method would
+        /// otherwise need an additional argument to pass in the array, in
+        /// addition to the Connection and Recordset objects, this slighly
+        /// decreases the call overhead.
+        /// </para>
+        /// </param>
+        /// <param name="paobjColumnInfo">
+        /// Pass in a reference to the array of ColumnNamesAndLabels objects.
+        /// </param>
+        /// <param name="penmAddOrUpdateRow">
+        /// Set this value to indicate whether the program is adding or updating
+        /// a row (record) in the table.
+        /// </param>
+        private static void AddOrUpdateRow (
+            ref Recordset pdbRecordSet ,
+            ColumnNamesAndLabels [ ] paobjColumnInfo ,
+            AddOrUpdateMode penmAddOrUpdateRow )
+        {
+            const char KEEP_CURRENT_VALUE = SpecialCharacters.DOUBLE_QUOTE;
+
+            bool fRingTheBell = true;
+            int intColumnCount = paobjColumnInfo.Length;
+
+            object [ ] aobjNameList = new object [ intColumnCount ];
+            object [ ] aobjValueList = new object [ intColumnCount ];
+
+            for ( int intCurrentColumn = ArrayInfo.ARRAY_FIRST_ELEMENT ;
+                      intCurrentColumn < intColumnCount ;
+                      intCurrentColumn++ )
+            {
+                if ( paobjColumnInfo [ intCurrentColumn ].IsAutoNumberColumn || paobjColumnInfo [ intCurrentColumn ].IsPrimaryKeyColumn )
+                {
+                    if ( penmAddOrUpdateRow == AddOrUpdateMode.AddingOneRow )
+                    {
+                        Console.Write (
+                            Properties.Resources.MSG_PROMPT_FOR_NEW_FIELD_VALUE ,                                       // Format control string
+                            new object [ ]
+                            {
+                                ArrayInfo.OrdinalFromIndex ( intCurrentColumn ) ,                                       // Format Item 0: {0:N2}: Current value
+                                paobjColumnInfo [ intCurrentColumn ].ColumnLabel ,                                      // Format Item 1: value of field {1}
+                                pdbRecordSet.Fields [ paobjColumnInfo [ intCurrentColumn ].ColumnName ].Value ,         // Format Item 2: = {2}
+                                KEEP_CURRENT_VALUE ,                                                                    // Format Item 3: Enter new value, or '{3}' to keep
+                                Environment.NewLine } );                                                                // Format Item 4: {4}    Enter new value
+                    }   // TRUE (User editing of this column is permitted.) block, if ( paobjColumnInfo [ intCurrentColumn ].IsAutoNumberColumn || paobjColumnInfo [ intCurrentColumn ].IsPrimaryKeyColumn )
+                    else
+                    {
+                        Console.Write (
+                            Properties.Resources.MSG_PROMPT_FOR_FIELD_VALUE ,                       // Format control string
+                            ArrayInfo.OrdinalFromIndex ( intCurrentColumn ) ,                       // Format Item 0: {0}: Enter value
+                            paobjColumnInfo [ intCurrentColumn ].ColumnLabel );                     // Format Item 1: for field {1}:
+                    }   // FALSE (User editing of this column is forbidden.) block, if ( paobjColumnInfo [ intCurrentColumn ].IsAutoNumberColumn || paobjColumnInfo [ intCurrentColumn ].IsPrimaryKeyColumn )
+
+                    if ( fRingTheBell )
+                    {   // One beep only.
+                        EmitConsoleBeep ( );
+                        fRingTheBell = false;
+                    }   // if ( fRingTheBell )
+
+                    while ( true )
+                    {
+                        string strInputText = Console.ReadLine ( );
+
+                        if ( strInputText == KEEP_CURRENT_VALUE.ToString ( ) )
+                        {
+                            if ( penmAddOrUpdateRow == AddOrUpdateMode.AddingOneRow )
+                            {
+                                Console.WriteLine (
+                                    Properties.Resources.ERRMSG_INVALID_IN_THIS_CONTEXT ,                               // Format control string
+                                    KEEP_CURRENT_VALUE ,                                                                // Format Item 0: Input value '{0}' is invalid
+                                    penmAddOrUpdateRow ,                                                                // Format Item 1: during {1} operations.
+                                    Environment.NewLine );                                                              // Format Item 2: operations.{2}Please input a valid value.
+                                EmitConsoleBeep ( );
+                            }
+                        }   // TRUE (The user entered the ditto token.) block, if ( strInputText == KEEP_CURRENT_VALUE.ToString ( ) )
+                        else
+                        {
+                            paobjColumnInfo [ intCurrentColumn ].ColumnValue = EvaluateField (
+                                strInputText ,                                                                          // string pstrFieldValue
+                                pdbRecordSet.Fields [ paobjColumnInfo [ intCurrentColumn ].ColumnName ] );              // Field  pdbField
+                            break;      // Exit the While loop.
+                        }   // FALSE (The user entered a presumably valid input value.) block, if ( strInputText == KEEP_CURRENT_VALUE.ToString ( ) )
+                    }   // while ( true )
+                }    // TRUE (The user must supply a value.) block, if ( acolNamesAndLabels [ intCurrentColumn ].ColumnValue == null )
+                else
+                {
+                    Console.WriteLine (
+                        Properties.Resources.MSG_INFO_ASSIGNED_COLUMN_VALUE ,                                           // Format control string
+                        ArrayInfo.OrdinalFromIndex ( intCurrentColumn ) ,                                               // Format Item 0: {0}: 
+                        paobjColumnInfo [ intCurrentColumn ].ColumnLabel ,                                              // Format Item 1: : {1} value assigned
+                        paobjColumnInfo [ intCurrentColumn ].ColumnValue );                                             // Format Item 2: by system = {2}
+                }   // FALSE (The program generates a value.) block, if ( acolNamesAndLabels [ intCurrentColumn ].ColumnValue == null )
+
+                aobjNameList [ intCurrentColumn ] = paobjColumnInfo [ intCurrentColumn ].ColumnName;
+                aobjValueList [ intCurrentColumn ] = paobjColumnInfo [ intCurrentColumn ].ColumnValue;
+
+                if ( penmAddOrUpdateRow == AddOrUpdateMode.UpdatingOneRow )
+                {   // If updating, fix up the value in the Fields collection.
+                    pdbRecordSet.Fields [ paobjColumnInfo [ intCurrentColumn ].ColumnName ].Value = paobjColumnInfo [ intCurrentColumn ].ColumnValue;
+                }   // if ( penmAddOrUpdateRow == AddOrUpdateMode.UpdatingOneRow )
+            }   // for ( int intCurrentColumn = ArrayInfo.ARRAY_FIRST_ELEMENT ; ; intCurrentColumn < intColumnCount ; intCurrentColumn++ )
+
+            if ( penmAddOrUpdateRow == AddOrUpdateMode.AddingOneRow )
+            {
+                pdbRecordSet.AddNew (
+                    aobjNameList ,
+                    aobjValueList );
+            }   // if ( penmAddOrUpdateRow == AddOrUpdateMode.AddingOneRow )
+
+            pdbRecordSet.Update ( );
+        }   // private static void AddOrUpdateRow
+
+
+        /// <summary>
+        /// Construct the absolute (fully qualified) name of a file for the use
+        /// specified by the <paramref name="penmOutputFileType"/> enumeration
+        /// value.
+        /// </summary>
+        /// <param name="penmOutputFileType">
+        /// Pass in a member of the OutputFileType enumeration to tell the
+        /// routine how the requested file will be used.
+        /// </param>
+        /// <param name="pstrTableName">
+        /// All output file names are derived in part from the table name.
+        /// </param>
+        /// <returns>
+        /// The return value is a string representation of the absolute (fully
+        /// qualified) name of an output file to create and populate.
+        /// </returns>
         private static string AssembleReportFileName (
             OutputFileType penmOutputFileType ,
             string pstrTableName )
@@ -1087,6 +1226,11 @@ namespace PSQLviaADOCS
         /// The return value is an objectified representation of the value to assign
         /// to the column.
         /// </returns>
+        /// <remarks>
+        /// Ideally, this should be linked to the IsAutoNumberColumn property on
+        /// a ColumnNamesAndLabels instance, it isn't worth the effort for this
+        /// demonstration program.
+        /// </remarks>
         private static object AssignNextID (
             Connection pdbConnection ,
             object [ ] paobjInputs )
@@ -1142,6 +1286,26 @@ namespace PSQLviaADOCS
 
 
         /// <summary>
+        /// This method factors out a very complex test that requires as well a
+        /// cast from Object to Boolean.
+        /// </summary>
+        /// <param name="pstrAutoSequenceFlag">
+        /// Pass in the string representation of the AutoSequence property from
+        /// the input file of table properties.
+        /// </param>
+        /// <returns></returns>
+        private static bool ColumnIsAutoSequenced ( string pstrAutoSequenceFlag )
+        {
+            return ( bool ) ADOHelpers.ParseAndConvertBoolean (
+                pstrAutoSequenceFlag ,
+                Properties.Settings.Default.BooleanTrueListGeneric.Split (
+                    SpecialCharacters.SEMICOLON ) ,
+                Properties.Settings.Default.BooleanFalseListGeneric.Split (
+                    SpecialCharacters.SEMICOLON ) );
+        }   // private static bool ColumnIsAutoSequenced
+
+
+        /// <summary>
         /// Sibling method OpenTableRecordset calls this routine to create and
         /// populate the array of ColumnNamesAndLabels objects.
         /// </summary>
@@ -1181,7 +1345,9 @@ namespace PSQLviaADOCS
         {
             const int POS_COLUMN_NAME = ArrayInfo.ARRAY_FIRST_ELEMENT;
             const int POS_COLUMN_LABEL = POS_COLUMN_NAME + ArrayInfo.NEXT_INDEX;
-            const int EXPECTED_COLUMN_COUNT = POS_COLUMN_LABEL + ArrayInfo.NEXT_INDEX;
+            const int POS_COLUMN_IS_PK = POS_COLUMN_LABEL + ArrayInfo.NEXT_INDEX;
+            const int POS_COLUMN_IS_AN = POS_COLUMN_IS_PK + ArrayInfo.NEXT_INDEX;
+            const int EXPECTED_COLUMN_COUNT = POS_COLUMN_IS_AN + ArrayInfo.NEXT_INDEX;
 
             string strTableSchemaFQFN = DeriveTableSchemaFQFN ( pstrTableName );
             string [ ] astrSchemaLines = File.ReadAllLines ( strTableSchemaFQFN );
@@ -1196,7 +1362,7 @@ namespace PSQLviaADOCS
 
                 if ( astrColumnMetaData.Length == EXPECTED_COLUMN_COUNT )
                 {
-                    if ( intLineNumber == CSVFileInfo.FIRST_RECORD )
+                    if ( ColumnIsAutoSequenced (astrColumnMetaData[POS_COLUMN_IS_AN]) )
                     {
                         raColumnNamesAndLabels [ ArrayInfo.IndexFromOrdinal ( intLineNumber ) ] = new ColumnNamesAndLabels (
                             new ColumnNamesAndLabels.UniqueColumnName (
@@ -1213,7 +1379,19 @@ namespace PSQLviaADOCS
                             new ColumnNamesAndLabels.UniqueColumnName (
                                 astrColumnMetaData [ POS_COLUMN_NAME ] ,
                                 pstrTableName ) ,
-                            astrColumnMetaData [ POS_COLUMN_LABEL ] );
+                            astrColumnMetaData [ POS_COLUMN_LABEL ] ,
+                            ( bool ) ADOHelpers.ParseAndConvertBoolean (
+                                astrColumnMetaData [ POS_COLUMN_IS_PK ] ,
+                                Properties.Settings.Default.BooleanTrueListGeneric.Split (
+                                    SpecialCharacters.SEMICOLON ) ,
+                                Properties.Settings.Default.BooleanFalseListGeneric.Split (
+                                    SpecialCharacters.SEMICOLON ) ) ,
+                            ( bool ) ADOHelpers.ParseAndConvertBoolean (
+                                astrColumnMetaData [ POS_COLUMN_IS_AN ] ,
+                                Properties.Settings.Default.BooleanTrueListGeneric.Split (
+                                    SpecialCharacters.SEMICOLON ) ,
+                                Properties.Settings.Default.BooleanFalseListGeneric.Split (
+                                    SpecialCharacters.SEMICOLON ) ) );
                     }   // FALSE (regular case) block, if ( intLineNumber == CSVFileInfo.FIRST_RECORD )
                 }   // TRUE (anticipated outcome) block, if ( astrColumnMetaData.Length == EXPECTED_COLUMN_COUNT )
                 else
@@ -1265,6 +1443,25 @@ namespace PSQLviaADOCS
                         @".TSV" ) ,
                     Properties.Settings.Default.TableSchemasDirectoryName.ToString ( ) );
         }   // private static string DeriveTableSchemaFQFN
+
+
+        /// <summary>
+        /// Emit a standardized console beep.
+        /// </summary>
+        /// <remarks>
+        /// Refactoring the implementation has
+        /// no special value for the current implementation, but it permits the
+        /// signaling mechanism to be easly replaced.
+        /// </remarks>
+        private static void EmitConsoleBeep ( )
+        {
+            const int BEEP_DURATION = 500;
+            const int BEEP_FREQUENCY = 440;
+
+            Console.Beep (
+                BEEP_FREQUENCY ,
+                BEEP_DURATION );
+        }   // private static void EmitConsoleBeep
 
 
         /// <summary>
@@ -1360,9 +1557,9 @@ namespace PSQLviaADOCS
                     return ADOHelpers.ParseAndConvert (
                         pstrCriterionValue ,                                    // string pstrInputValue
                         pdbField ,                                              // Field pDBField
-                        Properties.Settings.Default.BooleanTrueList.Split (     // string [ ] pastrTrueStrings = null
+                        Properties.Settings.Default.BooleanTrueListPlusM.Split (     // string [ ] pastrTrueStrings = null
                             SpecialCharacters.SEMICOLON ) ,
-                        Properties.Settings.Default.BooleanFalseList.Split (    // string [ ] pastrFalseStrings = null
+                        Properties.Settings.Default.BooleanFalseListPlusF.Split (    // string [ ] pastrFalseStrings = null
                             SpecialCharacters.SEMICOLON ) ,
                         true );                                                 // bool pfThrowWhenInvalid = false
                 }
@@ -1454,9 +1651,9 @@ namespace PSQLviaADOCS
             return ADOHelpers.ParseAndConvert (
                 pstrFieldValue ,                                                // string pstrInputValue
                 pdbField ,                                                      // Field pDBField
-                Properties.Settings.Default.BooleanTrueList.Split (             // string [ ] pastrTrueStrings = null
+                Properties.Settings.Default.BooleanTrueListPlusM.Split (             // string [ ] pastrTrueStrings = null
                     SpecialCharacters.SEMICOLON ) ,
-                Properties.Settings.Default.BooleanFalseList.Split (            // string [ ] pastrFalseStrings = null
+                Properties.Settings.Default.BooleanFalseListPlusF.Split (            // string [ ] pastrFalseStrings = null
                     SpecialCharacters.SEMICOLON ) ,
                 true );                                                         // bool pfThrowWhenInvalid = false
         }   // private static object EvaluateField
@@ -1558,9 +1755,7 @@ namespace PSQLviaADOCS
             {
                 strPrompt = strPrompt ?? Properties.Resources.MSG_PROMPT_FOR_TABLE_NAME;
                 Console.Error.Write ( strPrompt );
-                Console.Beep (
-                    BEEP_FREQUENCY ,
-                    BEEP_DURATION );
+                EmitConsoleBeep ( );
                 strTableNameCandidate = Console.ReadLine ( );
 
                 if ( File.Exists ( DeriveTableSchemaFQFN ( strTableNameCandidate ) ) )
@@ -1701,8 +1896,7 @@ namespace PSQLviaADOCS
             //  ----------------------------------------------------------------
 
             s_intLastIndex = s_intLastIndex ?? ArrayInfo.IndexFromOrdinal ( paColumnInfo.Length );
-            s_strDispMsgNRecs = s_strDispMsgNRecs ?? prs.RecordCount.ToString ( // An open ADO recordset bound to a table reports its record count.
-                DisplayFormats.NUMBER_PER_REG_SETTINGS_0D );                    // Format the integer with thousands separators per the Regional Settings in the Windows Control Panel.
+            s_lngDispMsgNRecs = s_lngDispMsgNRecs ?? prs.RecordCount;           // An open ADO recordset bound to a table reports its record count.
 
             if ( prs.RecordCount > MagicNumbers.PLUS_ONE )
             {
@@ -1710,7 +1904,7 @@ namespace PSQLviaADOCS
                     Properties.Resources.MSG_PROGRESS_UPDATE ,                  // Format Item 0: Listing record # {0}
                     plngItemNumber.ToString (                                   // Argument plngItemNumber is the current record number.
                         DisplayFormats.NUMBER_PER_REG_SETTINGS_0D ) ,           // Format the integer with thousands separators per the Regional Settings in the Windows Control Panel.
-                    s_strDispMsgNRecs );                                        // Format Item 1: of {1}
+                    s_lngDispMsgNRecs );                                        // Format Item 1: of {1}
             }   // if ( prs.RecordCount > MagicNumbers.PLUS_ONE )
 
             //  ----------------------------------------------------------------
@@ -1745,7 +1939,7 @@ namespace PSQLviaADOCS
                     s_csm.BaseStateManager.AppStartupTimeLocal ,                // Format Item 0: Run Date: {0}
                     s_csm.BaseStateManager.AppStartupTimeUtc ,                  // Format Item 1: ({1} UTC)
                     prs.Source ,                                                // Format Item 2: Table Name       = {2}
-                    s_strDispMsgNRecs ,                                         // Format Item 3: Records in Table = {3}
+                    s_lngDispMsgNRecs ,                                         // Format Item 3: Records in Table = {3:N0}
                     Environment.NewLine );                                      // Format Item 4: Platform-dependent newline at end of each output line
 
                 if ( prs.RecordCount == MagicNumbers.PLUS_ONE )
@@ -1755,7 +1949,7 @@ namespace PSQLviaADOCS
                         s_csm.BaseStateManager.AppStartupTimeLocal ,            // Format Item 0: Run Date: {0}
                         s_csm.BaseStateManager.AppStartupTimeUtc ,              // Format Item 1: ({1} UTC)
                         prs.Source ,                                            // Format Item 2: Table Name       = {2}
-                        s_strDispMsgNRecs ,                                     // Format Item 3: Records in Table = {3}
+                        s_lngDispMsgNRecs ,                                     // Format Item 3: Records in Table = {3:N0}
                         Environment.NewLine );                                  // Format Item 4: Platform-dependent newline at end of each output line
                 }   // if ( prs.RecordCount == MagicNumbers.PLUS_ONE )
 
@@ -1951,7 +2145,11 @@ namespace PSQLviaADOCS
 
 
         /// <summary>
-        /// 
+        /// This routine is refactored out of method ListAllRowsInTable, which
+        /// implements the List verb of the CRUD verbs because ReadSomeRows,
+        /// which implements the Read verb, does almost exactly the same thing,
+        /// the difference being that Read lists selected rows (records), while
+        /// the report generated by List coveres the entire table.
         /// </summary>
         /// <param name="pswDetailsList">
         /// Pass in a reference to a StreamWriter object that receives the
@@ -2068,9 +2266,8 @@ namespace PSQLviaADOCS
             }   // while ( !rs.EOF )
 
             pswDetailsList.WriteLine (
-                Properties.Resources.REPORT_FOOTER ,
-                lngItemNumber.ToString (
-                    DisplayFormats.NUMBER_PER_REG_SETTINGS_0D ) );
+                Properties.Resources.REPORT_FOOTER ,                            // Format Control String
+                lngItemNumber );                                                // Format Item 0: End of report, Total records = {0::N0}
 
             //  ------------------------------------------------------------
             //  Without ScrollUp, the next line written by Console.WriteLine
@@ -2199,16 +2396,19 @@ namespace PSQLviaADOCS
         {
             SelectionCriteria rCriteria = new SelectionCriteria ( );
 
-            Console.Beep (
-                BEEP_FREQUENCY ,
-                BEEP_DURATION );
+            EmitConsoleBeep ( );
 
             while ( rCriteria.MatchfieldInfo == null )
             {
                 Console.Write ( Properties.Resources.MSG_PROMPT_COLUMN_NAME );
                 rCriteria.MatchfieldInfo = EvaluateColumnName (
-                    Console.ReadLine ( ) , 
+                    Console.ReadLine ( ) ,
                     pdbRecordSet );
+
+                if ( rCriteria.MatchfieldInfo == null )
+                {
+                    EmitConsoleBeep ( );
+                }   // if ( rCriteria.MatchfieldInfo == null )
             }   // while ( rCriteria.MatchfieldName == null )
 
             while ( rCriteria.CriterionValue == null )
@@ -2217,12 +2417,22 @@ namespace PSQLviaADOCS
                 rCriteria.CriterionValue = EvaluateCriterionValue (
                     Console.ReadLine ( ) ,
                     rCriteria.MatchfieldInfo );
+
+                if ( rCriteria.CriterionValue == null )
+                {
+                    EmitConsoleBeep ( );
+                }   // if ( rCriteria.CriterionValue == null )
             }   // while ( rCriteria.CriterionValue == null )
 
             while ( rCriteria.Condition == WhereCondition.Undspecified )
             {
                 Console.Write ( Properties.Resources.MSG_PROPMT_CRITERION );
                 rCriteria.Condition = EvaluateCriterionCondtion ( Console.ReadLine ( ) );
+
+                if ( rCriteria.Condition == WhereCondition.Undspecified )
+                {   // Alert the operator to the error.
+                    EmitConsoleBeep ( );
+                }   // if ( rCriteria.Condition == WhereCondition.Undspecified )
             }   // while ( rCriteria.Condition == WhereCondition.Undspecified )
 
             //  ----------------------------------------------------------------

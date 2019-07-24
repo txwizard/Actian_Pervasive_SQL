@@ -133,6 +133,10 @@
     <value>The specified input value cannot be converted to the specified numeric type.</value>
     <comment>Static method ADOHelpers.ParseAndConvertDBDate attaches this to the ArgumentOutOfRangeException exception that it throws when instructed to report invalid inputs through an exception.</comment>
   </data>
+  <data name="ERRMSG_INVALID_IN_THIS_CONTEXT" xml:space="preserve">
+    <value>Input value '{0}' is invalid during {1} operations.{2}Please input a valid value.</value>
+    <comment>Main module subroutine AddOrUpdateRow displays this message when the duplication token is entered during new record input.</comment>
+  </data>
   <data name="ERRMSG_INVALID_NAME" xml:space="preserve">
     <value>{1}Table name {0} is invalid.{1}</value>
     <comment>Main module helper routine PromptForTableName formats a message when the specified table name is invalid.</comment>
@@ -150,7 +154,7 @@
     <comment>EvaluateCrudVerb examines the exception to confirm that it contains this string, which is expected when the routine gets an invalid verb.</comment>
   </data>
   <data name="MSG_COLUMNNAMESANDLABELS_TOSTRING" xml:space="preserve">
-    <value>TableName = {0}, ColumnName = {1}, ColumnIndex = {2}, ColumnValue = {3}, ColumnLabel = {4}</value>
+    <value>TableName = {0}, ColumnIndex = {1}, ColumnName = {2}, ColumnValue = {3}, ColumnLabel = {4}, IsAutoNumberKeyColumn = {5}, IsPrimaryKeyColumn = {6}</value>
     <comment>The ToString method on FieldNamesAndLabels formats its output from this template.</comment>
   </data>
   <data name="MSG_COLUMN_PROPERTIES_LABEL_ROW" xml:space="preserve">
@@ -213,6 +217,10 @@
     <value>        {0}: Enter value for field {1}: </value>
     <comment>Method AddNewRows displays this message once for each column (field) in the table.</comment>
   </data>
+  <data name="MSG_PROMPT_FOR_NEW_FIELD_VALUE" xml:space="preserve">
+    <value>{0:N2}: Current value of field {1} = {2}{4}    Enter new value, or '{3}' to keep the existing value. ---&gt;&gt;</value>
+    <comment>Method AddOrUpdateRow uses this template for its prompt when it runs in Update maode.</comment>
+  </data>
   <data name="MSG_PROMPT_FOR_NEW_VALUES" xml:space="preserve">
     <value>    Enter values for the new record in response to the following prompts.{0}</value>
     <comment>Method AddNewRows displayss this message once before it begins prompting for new field values.</comment>
@@ -225,6 +233,10 @@
     <value>Column Field Value:                                  ---&gt;&gt; </value>
     <comment>Method PromptForSelectionCriteria displays this prompt.</comment>
   </data>
+  <data name="MSG_PROMPT_ONE_ROW_ONLY" xml:space="preserve">
+    <value>The update routine supports updating only one row at a time. Your query returned {0:N0} rows.</value>
+    <comment>Method UpdateOneRow displays this message when the selection matches two or more rows or zero rows.</comment>
+  </data>
   <data name="MSG_PROMPT_TRUNCATE_OK" xml:space="preserve">
     <value>The input string is too long.{1}    To make it fit, it must be truncated to {0}.{1}    Is that OK (Y/N)? </value>
     <comment>Method PromptForSelectionCriteria displays this prompt.</comment>
@@ -235,10 +247,10 @@
   </data>
   <data name="MSG_RECORD_LABEL_PREFIX" xml:space="preserve">
     <value>Record Number {0}: </value>
-    <comment>The first column (field) shown on the report is the record ID, which has this as its prefix. Everything else gets whitespace.</comment>
+    <comment>The first column (field) shown on the report is the record ID, which has this as its prefix. Everything else gets whitespace. NOTE: Leaft this format as is; FormatItem.UpgradeFormatItem fixes it up.</comment>
   </data>
   <data name="MSG_REPORT_HEADER" xml:space="preserve">
-    <value>Report Name: Listing of Everything in a PSQL Table{4}Run Date: {0} ({1} UTC){4}{4}Table Name       = {2}{4}Records in Table = {3}{4}</value>
+    <value>Report Name: Listing of Everything in a PSQL Table{4}Run Date: {0} ({1} UTC){4}{4}Table Name       = {2}{4}Records in Table = {3:N0}{4}</value>
     <comment>Main module subroutine ListAllFieldsOnConsole uses this message to label the detail report.</comment>
   </data>
   <data name="MSG_SCHEMA_PROGRESS" xml:space="preserve">
@@ -270,8 +282,8 @@
     <comment>Helper method WaitForCarbonUnit formats its prompt from this template.</comment>
   </data>
   <data name="REPORT_FOOTER" xml:space="preserve">
-    <value>End of report, Total records = {0}</value>
-    <comment>Main module subroutine ListAllFieldsOnConsole uses this message to mark the end of the itemized listing report.</comment>
+    <value>End of report, Total records = {0:N0}</value>
+    <comment>Main module subroutine ListAllFieldsOnConsole uses this message to mark the end of the itemized listing report. NOTE: This format string manages its own numeric formatting.</comment>
   </data>
   <data name="UNIQUE_COLUMN_NAME_TOSTRING" xml:space="preserve">
     <value>ColumnName = {0}, ColumnLabel = {1}</value>

@@ -20,11 +20,17 @@
     <Setting Name="TableColumnPropertiesFileNameTemplate" Type="System.String" Scope="Application">
       <Value Profile="(Default)">$$AssemblyTitle$$_$$TableName$$_Properties.TSV</Value>
     </Setting>
-    <Setting Name="BooleanTrueList" Type="System.String" Scope="Application">
+    <Setting Name="BooleanTrueListPlusM" Type="System.String" Scope="Application">
       <Value Profile="(Default)">True;Yes;T;Y;Male;M</Value>
     </Setting>
-    <Setting Name="BooleanFalseList" Type="System.String" Scope="Application">
+    <Setting Name="BooleanFalseListPlusF" Type="System.String" Scope="Application">
       <Value Profile="(Default)">False;No;F;N;Female;F</Value>
+    </Setting>
+    <Setting Name="BooleanTrueListGeneric" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">True;Yes;T;Y</Value>
+    </Setting>
+    <Setting Name="BooleanFalseListGeneric" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">False;No;F;N</Value>
     </Setting>
   </Settings>
 </SettingsFile>

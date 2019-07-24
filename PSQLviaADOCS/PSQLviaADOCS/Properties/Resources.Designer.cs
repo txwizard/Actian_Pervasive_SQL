@@ -97,6 +97,15 @@ namespace PSQLviaADOCS.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Input value &apos;{0}&apos; is invalid during {1} operations.{2}Please input a valid value..
+        /// </summary>
+        internal static string ERRMSG_INVALID_IN_THIS_CONTEXT {
+            get {
+                return ResourceManager.GetString("ERRMSG_INVALID_IN_THIS_CONTEXT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {1}Table name {0} is invalid.{1}.
         /// </summary>
         internal static string ERRMSG_INVALID_NAME {
@@ -142,7 +151,7 @@ namespace PSQLviaADOCS.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to TableName = {0}, ColumnName = {1}, ColumnIndex = {2}, ColumnValue = {3}, ColumnLabel = {4}.
+        ///   Looks up a localized string similar to TableName = {0}, ColumnIndex = {1}, ColumnName = {2}, ColumnValue = {3}, ColumnLabel = {4}, IsAutoNumberKeyColumn = {5}, IsPrimaryKeyColumn = {6}.
         /// </summary>
         internal static string MSG_COLUMNNAMESANDLABELS_TOSTRING {
             get {
@@ -277,6 +286,15 @@ namespace PSQLviaADOCS.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0:N2}: Current value of field {1} = {2}{4}    Enter new value, or &apos;{3}&apos; to keep the existing value. ---&gt;&gt;.
+        /// </summary>
+        internal static string MSG_PROMPT_FOR_NEW_FIELD_VALUE {
+            get {
+                return ResourceManager.GetString("MSG_PROMPT_FOR_NEW_FIELD_VALUE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to     Enter values for the new record in response to the following prompts.{0}.
         /// </summary>
         internal static string MSG_PROMPT_FOR_NEW_VALUES {
@@ -300,6 +318,15 @@ namespace PSQLviaADOCS.Properties {
         internal static string MSG_PROMPT_MATCH_STRING {
             get {
                 return ResourceManager.GetString("MSG_PROMPT_MATCH_STRING", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The update routine supports updating only one row at a time. Your query returned {0:N0} rows..
+        /// </summary>
+        internal static string MSG_PROMPT_ONE_ROW_ONLY {
+            get {
+                return ResourceManager.GetString("MSG_PROMPT_ONE_ROW_ONLY", resourceCulture);
             }
         }
         
@@ -331,7 +358,7 @@ namespace PSQLviaADOCS.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Report Name: Listing of Everything in a PSQL Table{4}Run Date: {0} ({1} UTC){4}{4}Table Name       = {2}{4}Records in Table = {3}{4}.
+        ///   Looks up a localized string similar to Report Name: Listing of Everything in a PSQL Table{4}Run Date: {0} ({1} UTC){4}{4}Table Name       = {2}{4}Records in Table = {3:N0}{4}.
         /// </summary>
         internal static string MSG_REPORT_HEADER {
             get {
@@ -403,7 +430,7 @@ namespace PSQLviaADOCS.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to End of report, Total records = {0}.
+        ///   Looks up a localized string similar to End of report, Total records = {0:N0}.
         /// </summary>
         internal static string REPORT_FOOTER {
             get {

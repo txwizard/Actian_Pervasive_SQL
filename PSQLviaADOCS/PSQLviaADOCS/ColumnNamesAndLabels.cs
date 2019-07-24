@@ -25,12 +25,15 @@
     2019/07/16 1.2.0.0 DG Break the code into regions, and add missing XML code
                           documentation.
 
-    2019/07/22 1.3.0.0 DG 1) Make ColumnValue a read/write member, and add
+    2019/07/24 1.3.0.0 DG 1) Make ColumnValue a read/write member, and add
                              static methods to return lists of column (field)
                              names and values as separate arrays for feeding
                              into the ADODB record input and update methods.
 
                           2) Define a delegate that generates column values.
+
+                          3) Set the AutoNumber and PrimaryKey flags to TRUE if
+                             the delegate is defined and called.
     ============================================================================
 */
 
@@ -99,20 +102,35 @@ namespace PSQLviaADOCS
         /// Specify an objectified value to assign to the column, which may be
         /// used for reporting or other processing.
         /// </param>
+        /// <param name="pfIsPrimparyKey">
+        /// This argument is TRUE for any column (field) that is in the Primary
+        /// Key, and, therefore, cannot be changed once set.
+        /// </param>
+        /// <param name="pfIsAutoNumber">
+        /// This argument is TRUE for any column (field) that is antomatically
+        /// sequenced by the data base engine, and, therefore, cannot be changed
+        /// by a user.
+        /// </param>
         public ColumnNamesAndLabels (
             UniqueColumnName pucnColumnName ,
             string pstrColumnLabel ,
-            object pobjColumnValue )
+            object pobjColumnValue ,
+            bool pfIsPrimparyKey ,
+            bool pfIsAutoNumber )
         {
             _ucnColumnName = pucnColumnName;
             _strColumnLabel = pstrColumnLabel;
             _objColumnValue = pobjColumnValue;
+            _fIsPrimparyKeyColumn = pfIsPrimparyKey;
+            _fIsAutoNumberColumn = pfIsAutoNumber;
 
             if ( s_fIndexIncrementIsEnabled )
             {
                 _intColumnIndex = MoreMath.IncrementAndReturnNewValue ( ref s_intNextIndex );
             }   // if ( s_fIndexIncrementIsEnabled )
         }   // public ColumnNamesAndLabels constructor (2 of 7)
+        
+        
         /// <summary>
         /// Construct an instance that identifies a table by name, has a value,
         /// and has an automatically generated index number.
@@ -150,14 +168,14 @@ namespace PSQLviaADOCS
             //  terse, and less obvious, simplification suggested by the editor.
             //  ----------------------------------------------------------------
 
-#pragma warning disable
             if ( pcolumnValueSetter != null )
             {
                 _objColumnValue = pcolumnValueSetter (
                     pdbConnection ,
                     paobjInputs );
+                _fIsAutoNumberColumn = true;
+                _fIsPrimparyKeyColumn = true;
             }   // if ( pcolumnValueSetter != null )
-#pragma warning restore
 
             if ( s_fIndexIncrementIsEnabled )
             {
@@ -188,16 +206,29 @@ namespace PSQLviaADOCS
         /// Specify an objectified value to assign to the column, which may be
         /// used for reporting or other processing.
         /// </param>
+        /// <param name="pfIsPrimparyKey">
+        /// This argument is TRUE for any column (field) that is in the Primary
+        /// Key, and, therefore, cannot be changed once set.
+        /// </param>
+        /// <param name="pfIsAutoNumber">
+        /// This argument is TRUE for any column (field) that is antomatically
+        /// sequenced by the data base engine, and, therefore, cannot be changed
+        /// by a user.
+        /// </param>
         public ColumnNamesAndLabels (
             int pintColumnIndex ,
             UniqueColumnName pucnColumnName ,
             string pstrColumnLabel ,
-            object pobjColumnValue )
+            object pobjColumnValue ,
+            bool pfIsPrimparyKey ,
+            bool pfIsAutoNumber )
         {
             _intColumnIndex = pintColumnIndex;
             _ucnColumnName = pucnColumnName;
             _strColumnLabel = pstrColumnLabel;
             _objColumnValue = pobjColumnValue;
+            _fIsPrimparyKeyColumn = pfIsPrimparyKey;
+            _fIsAutoNumberColumn = pfIsAutoNumber;
 
             s_fIndexIncrementIsEnabled = false;
         }   // public ColumnNamesAndLabels constructor (4 of 7)
@@ -278,12 +309,25 @@ namespace PSQLviaADOCS
         /// Specify a string containing the column label, which is not
         /// sanity-checked for uniqueness.
         /// </param>
+        /// <param name="pfIsPrimparyKey">
+        /// This argument is TRUE for any column (field) that is in the Primary
+        /// Key, and, therefore, cannot be changed once set.
+        /// </param>
+        /// <param name="pfIsAutoNumber">
+        /// This argument is TRUE for any column (field) that is antomatically
+        /// sequenced by the data base engine, and, therefore, cannot be changed
+        /// by a user.
+        /// </param>
         public ColumnNamesAndLabels (
             UniqueColumnName pucnColumnName ,
-            string pstrColumnLabel )
+            string pstrColumnLabel ,
+            bool pfIsPrimparyKey ,
+            bool pfIsAutoNumber )
         {
             _ucnColumnName = pucnColumnName;
             _strColumnLabel = pstrColumnLabel;
+            _fIsPrimparyKeyColumn = pfIsPrimparyKey;
+            _fIsAutoNumberColumn = pfIsAutoNumber;
 
             if ( s_fIndexIncrementIsEnabled )
             {
@@ -307,21 +351,34 @@ namespace PSQLviaADOCS
         /// unique with respect to the table named by the
         /// <paramref name="pstrTableName"/> parameter.
         /// </param>
+        /// <param name="pcolumnValueSetter">
+        /// Pass in the routine to register as the value source of the column.
+        /// </param>
         /// <param name="pstrColumnLabel">
         /// Specify a string containing the column label, which is not
         /// sanity-checked for uniqueness.
         /// </param>
-        /// <param name="pcolumnValueSetter">
-        /// Pass in the routine to register as the value source of the column.
+        /// <param name="pfIsPrimparyKey">
+        /// This argument is TRUE for any column (field) that is in the Primary
+        /// Key, and, therefore, cannot be changed once set.
+        /// </param>
+        /// <param name="pfIsAutoNumber">
+        /// This argument is TRUE for any column (field) that is antomatically
+        /// sequenced by the data base engine, and, therefore, cannot be changed
+        /// by a user.
         /// </param>
         public ColumnNamesAndLabels (
             int pintColumnIndex ,
             UniqueColumnName pucnColumnName ,
-            string pstrColumnLabel )
+            string pstrColumnLabel ,
+            bool pfIsPrimparyKey ,
+            bool pfIsAutoNumber )
         {
             _intColumnIndex = pintColumnIndex;
             _ucnColumnName = pucnColumnName;
             _strColumnLabel = pstrColumnLabel;
+            _fIsPrimparyKeyColumn = pfIsPrimparyKey;
+            _fIsAutoNumberColumn = pfIsAutoNumber;
 
             s_fIndexIncrementIsEnabled = false;
         }   // public ColumnNamesAndLabels constructor (7 of 7)
@@ -382,6 +439,32 @@ namespace PSQLviaADOCS
                 _objColumnValue = value;
             }   // public string ColumnValue property setter method
         }   // public read-write string ColumnValue property
+
+
+        /// <summary>
+        /// Get the Boolean IsAutoNumber flag. When True, the associated column
+        /// cannot be changed by a user.
+        /// </summary>
+        public bool IsAutoNumberColumn
+        {
+            get
+            {
+                return _fIsAutoNumberColumn;
+            }   // public bool IsAutoNumberColumn property getter method
+        }   // public read-only bool IsAutoNumberColumn
+
+
+        /// <summary>
+        /// Get the Boolean IsPrimaryKey flag. When True, the associated column
+        /// cannot be changed by a user.
+        /// </summary>
+        public bool IsPrimaryKeyColumn
+        {
+            get
+            {
+                return _fIsPrimparyKeyColumn;
+            }   // public read-only bool IsPrimaryKeyColumn property
+        }   // public read-only bool IsPrimaryKeyColumn property getter method
 
 
         /// <summary>
@@ -469,10 +552,12 @@ namespace PSQLviaADOCS
             return string.Format (
                 Properties.Resources.MSG_COLUMNNAMESANDLABELS_TOSTRING ,        // Format Control String    
                 StringTricks.DisplayNullSafely ( _ucnColumnName.TableName ) ,   // Format Item 0: TableName = {0}
-                _ucnColumnName.ColumnName ,                                     // Format Item 0: ColumnName = {1}
-                _intColumnIndex ,                                               // Format Item 1: ColumnIndex = {2}    
-                _objColumnValue ,                                               // Format Item 2: ColumnValue = {3}    
-                _strColumnLabel );                                              // Format Item 3: ColumnLabel = {4}
+                _intColumnIndex ,                                               // Format Item 2: ColumnIndex = {1}    
+                _ucnColumnName.ColumnName ,                                     // Format Item 1: ColumnName = {2}
+                _objColumnValue ,                                               // Format Item 3: ColumnValue = {3}    
+                _strColumnLabel ,                                               // Format Item 4: ColumnLabel = {4}
+                _fIsAutoNumberColumn ,                                          // Format Item 5: IsAutoNumberKeyColumn = {5}
+                _fIsPrimparyKeyColumn );                                        // Format Item 6: IsPrimaryKeyColumn = {6}
         }   // public override string ToString
         #endregion  // Overridden Base Class Methods
 
@@ -642,6 +727,8 @@ namespace PSQLviaADOCS
         private readonly ColumnValueSetter _columnValueSetter;
         private readonly int _intColumnIndex = WizardWrx.ArrayInfo.ARRAY_INVALID_INDEX;
         private readonly string _strColumnLabel;
+        private readonly bool _fIsPrimparyKeyColumn;
+        private readonly bool _fIsAutoNumberColumn;
         private object _objColumnValue;
         #endregion  // Private Instance Storage
 
