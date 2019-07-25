@@ -63,387 +63,432 @@ namespace PSQLviaADOCS.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Duplicate column name.
         /// </summary>
-        internal static string ERRMSG_DUPLICATE_COLUMN_NAME {
+        internal static string IDS_ERRMSG_DUPLICATE_COLUMN_NAME {
             get {
-                return ResourceManager.GetString("ERRMSG_DUPLICATE_COLUMN_NAME", resourceCulture);
+                return ResourceManager.GetString("IDS_ERRMSG_DUPLICATE_COLUMN_NAME", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Internal error: The value in column zero of the result set returned by SQL query {0} is {1}, which cannot be converted to a long integer..
         /// </summary>
-        internal static string ERRMSG_INTERNAL_SQL_ERROR {
+        internal static string IDS_ERRMSG_INTERNAL_SQL_ERROR {
             get {
-                return ResourceManager.GetString("ERRMSG_INTERNAL_SQL_ERROR", resourceCulture);
+                return ResourceManager.GetString("IDS_ERRMSG_INTERNAL_SQL_ERROR", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to The specified value is not a valid Boolean string value..
         /// </summary>
-        internal static string ERRMSG_INVALID_BOOLEAN_VALUE {
+        internal static string IDS_ERRMSG_INVALID_BOOLEAN_VALUE {
             get {
-                return ResourceManager.GetString("ERRMSG_INVALID_BOOLEAN_VALUE", resourceCulture);
+                return ResourceManager.GetString("IDS_ERRMSG_INVALID_BOOLEAN_VALUE", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to The specified input value cannot be converted to the specified numeric type..
         /// </summary>
-        internal static string ERRMSG_INVALID_DATE_CONVERSION {
+        internal static string IDS_ERRMSG_INVALID_DATE_CONVERSION {
             get {
-                return ResourceManager.GetString("ERRMSG_INVALID_DATE_CONVERSION", resourceCulture);
+                return ResourceManager.GetString("IDS_ERRMSG_INVALID_DATE_CONVERSION", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Input value &apos;{0}&apos; is invalid during {1} operations.{2}Please input a valid value..
         /// </summary>
-        internal static string ERRMSG_INVALID_IN_THIS_CONTEXT {
+        internal static string IDS_ERRMSG_INVALID_IN_THIS_CONTEXT {
             get {
-                return ResourceManager.GetString("ERRMSG_INVALID_IN_THIS_CONTEXT", resourceCulture);
+                return ResourceManager.GetString("IDS_ERRMSG_INVALID_IN_THIS_CONTEXT", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to {1}Table name {0} is invalid.{1}.
         /// </summary>
-        internal static string ERRMSG_INVALID_NAME {
+        internal static string IDS_ERRMSG_INVALID_NAME {
             get {
-                return ResourceManager.GetString("ERRMSG_INVALID_NAME", resourceCulture);
+                return ResourceManager.GetString("IDS_ERRMSG_INVALID_NAME", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Line {0} in {1} table schema file {2} is invalid.{6}    Expected Column Count = {3}{6}    Actual Column Count   = {4}{6}    Text of Invalid Line  = {5}{6}.
         /// </summary>
-        internal static string ERRMSG_INVALID_SCHEMA_LINE {
+        internal static string IDS_ERRMSG_INVALID_SCHEMA_LINE {
             get {
-                return ResourceManager.GetString("ERRMSG_INVALID_SCHEMA_LINE", resourceCulture);
+                return ResourceManager.GetString("IDS_ERRMSG_INVALID_SCHEMA_LINE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to There is no reasonable default value; the match string is required..
+        /// </summary>
+        internal static string IDS_ERRMSG_MATCH_STRING_IS_REQUIRED {
+            get {
+                return ResourceManager.GetString("IDS_ERRMSG_MATCH_STRING_IS_REQUIRED", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to The specified input value cannot be converted to the specified numeric type..
         /// </summary>
-        internal static string ERRMSG_NUMERIC_CONVERSION {
+        internal static string IDS_ERRMSG_NUMERIC_CONVERSION {
             get {
-                return ResourceManager.GetString("ERRMSG_NUMERIC_CONVERSION", resourceCulture);
+                return ResourceManager.GetString("IDS_ERRMSG_NUMERIC_CONVERSION", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to is not a valid value for CrudVerb..
         /// </summary>
-        internal static string ERRMSG_PREFIX_INVALID_VERB {
+        internal static string IDS_ERRMSG_PREFIX_INVALID_VERB {
             get {
-                return ResourceManager.GetString("ERRMSG_PREFIX_INVALID_VERB", resourceCulture);
+                return ResourceManager.GetString("IDS_ERRMSG_PREFIX_INVALID_VERB", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Index\tName\tActualSize\tAttributes\tDataFormat\tDefinedSize\tNumericScale\tPrecision\tProperties_Count\tStatus\tType.
         /// </summary>
-        internal static string MSG_COLUMN_PROPERTIES_LABEL_ROW {
+        internal static string IDS_MSG_COLUMN_PROPERTIES_LABEL_ROW {
             get {
-                return ResourceManager.GetString("MSG_COLUMN_PROPERTIES_LABEL_ROW", resourceCulture);
+                return ResourceManager.GetString("IDS_MSG_COLUMN_PROPERTIES_LABEL_ROW", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to TableName = {0}, ColumnIndex = {1}, ColumnName = {2}, ColumnValue = {3}, ColumnLabel = {4}, IsAutoNumberKeyColumn = {5}, IsPrimaryKeyColumn = {6}.
         /// </summary>
-        internal static string MSG_COLUMNNAMESANDLABELS_TOSTRING {
+        internal static string IDS_MSG_COLUMNNAMESANDLABELS_TOSTRING {
             get {
-                return ResourceManager.GetString("MSG_COLUMNNAMESANDLABELS_TOSTRING", resourceCulture);
+                return ResourceManager.GetString("IDS_MSG_COLUMNNAMESANDLABELS_TOSTRING", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Operation completed: total records deleted = {0:N0}.
+        /// </summary>
+        internal static string IDS_MSG_DELETED_RECORDS_SUMMARY {
+            get {
+                return ResourceManager.GetString("IDS_MSG_DELETED_RECORDS_SUMMARY", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Record deletion aborted by operator..
+        /// </summary>
+        internal static string IDS_MSG_DELETION_ABORTED {
+            get {
+                return ResourceManager.GetString("IDS_MSG_DELETION_ABORTED", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Processing PSQL database table {0}{2}                Action Taken = {1}{2}.
         /// </summary>
-        internal static string MSG_DISPLAY_TABLE_NAME_AND_VERB {
+        internal static string IDS_MSG_DISPLAY_TABLE_NAME_AND_VERB {
             get {
-                return ResourceManager.GetString("MSG_DISPLAY_TABLE_NAME_AND_VERB", resourceCulture);
+                return ResourceManager.GetString("IDS_MSG_DISPLAY_TABLE_NAME_AND_VERB", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to     Exception HResult: {0}.
         /// </summary>
-        internal static string MSG_EXCEPTION_HRESULT {
+        internal static string IDS_MSG_EXCEPTION_HRESULT {
             get {
-                return ResourceManager.GetString("MSG_EXCEPTION_HRESULT", resourceCulture);
+                return ResourceManager.GetString("IDS_MSG_EXCEPTION_HRESULT", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to     Exception Source: {0}.
         /// </summary>
-        internal static string MSG_EXCEPTION_SOURCE {
+        internal static string IDS_MSG_EXCEPTION_SOURCE {
             get {
-                return ResourceManager.GetString("MSG_EXCEPTION_SOURCE", resourceCulture);
+                return ResourceManager.GetString("IDS_MSG_EXCEPTION_SOURCE", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to     Exception StackTrace: {0}{1}.
         /// </summary>
-        internal static string MSG_EXCEPTION_STACKTRACE {
+        internal static string IDS_MSG_EXCEPTION_STACKTRACE {
             get {
-                return ResourceManager.GetString("MSG_EXCEPTION_STACKTRACE", resourceCulture);
+                return ResourceManager.GetString("IDS_MSG_EXCEPTION_STACKTRACE", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to     Exception TargetSite: {0}.
         /// </summary>
-        internal static string MSG_EXCEPTION_TARGETSITE {
+        internal static string IDS_MSG_EXCEPTION_TARGETSITE {
             get {
-                return ResourceManager.GetString("MSG_EXCEPTION_TARGETSITE", resourceCulture);
+                return ResourceManager.GetString("IDS_MSG_EXCEPTION_TARGETSITE", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to An {0} exception arose.{2}{2}    Exception Message: {1}.
         /// </summary>
-        internal static string MSG_EXCEPTION_TYPE_AND_MESSAGE {
+        internal static string IDS_MSG_EXCEPTION_TYPE_AND_MESSAGE {
             get {
-                return ResourceManager.GetString("MSG_EXCEPTION_TYPE_AND_MESSAGE", resourceCulture);
+                return ResourceManager.GetString("IDS_MSG_EXCEPTION_TYPE_AND_MESSAGE", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to         {0}: {1} value assigned by system = {2}.
         /// </summary>
-        internal static string MSG_INFO_ASSIGNED_COLUMN_VALUE {
+        internal static string IDS_MSG_INFO_ASSIGNED_COLUMN_VALUE {
             get {
-                return ResourceManager.GetString("MSG_INFO_ASSIGNED_COLUMN_VALUE", resourceCulture);
+                return ResourceManager.GetString("IDS_MSG_INFO_ASSIGNED_COLUMN_VALUE", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to The input string is too long.{4}    Input string         = {0}{4}    Input string length  = {1}{4}    Maximum field length = {2}{4}    Truncated string     = {3}{4}.
         /// </summary>
-        internal static string MSG_INPUT_TOO_LONG {
+        internal static string IDS_MSG_INPUT_TOO_LONG {
             get {
-                return ResourceManager.GetString("MSG_INPUT_TOO_LONG", resourceCulture);
+                return ResourceManager.GetString("IDS_MSG_INPUT_TOO_LONG", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Listing.
         /// </summary>
-        internal static string MSG_LABEL_FOR_LISTING {
+        internal static string IDS_MSG_LABEL_FOR_LISTING {
             get {
-                return ResourceManager.GetString("MSG_LABEL_FOR_LISTING", resourceCulture);
+                return ResourceManager.GetString("IDS_MSG_LABEL_FOR_LISTING", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Column Properties.
         /// </summary>
-        internal static string MSG_LABEL_FOR_PROPERTIES_LIST {
+        internal static string IDS_MSG_LABEL_FOR_PROPERTIES_LIST {
             get {
-                return ResourceManager.GetString("MSG_LABEL_FOR_PROPERTIES_LIST", resourceCulture);
+                return ResourceManager.GetString("IDS_MSG_LABEL_FOR_PROPERTIES_LIST", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Table  .
         /// </summary>
-        internal static string MSG_LABEL_FOR_TABLE {
+        internal static string IDS_MSG_LABEL_FOR_TABLE {
             get {
-                return ResourceManager.GetString("MSG_LABEL_FOR_TABLE", resourceCulture);
+                return ResourceManager.GetString("IDS_MSG_LABEL_FOR_TABLE", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to     Listing record # {0} of {1}.
         /// </summary>
-        internal static string MSG_PROGRESS_UPDATE {
+        internal static string IDS_MSG_PROGRESS_UPDATE {
             get {
-                return ResourceManager.GetString("MSG_PROGRESS_UPDATE", resourceCulture);
+                return ResourceManager.GetString("IDS_MSG_PROGRESS_UPDATE", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Enter name of column (field) against which to match: ---&gt;&gt; .
+        ///   Looks up a localized string similar to Column Neme against which to match (CR for default value, ID): ---&gt;&gt; .
         /// </summary>
-        internal static string MSG_PROMPT_COLUMN_NAME {
+        internal static string IDS_MSG_PROMPT_COLUMN_NAME {
             get {
-                return ResourceManager.GetString("MSG_PROMPT_COLUMN_NAME", resourceCulture);
+                return ResourceManager.GetString("IDS_MSG_PROMPT_COLUMN_NAME", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enter selection criterion (CR for default value, IsEqualTo):   ---&gt;&gt; .
+        /// </summary>
+        internal static string IDS_MSG_PROMPT_CRITERION {
+            get {
+                return ResourceManager.GetString("IDS_MSG_PROMPT_CRITERION", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to         {0}: Enter value for field {1}: .
         /// </summary>
-        internal static string MSG_PROMPT_FOR_FIELD_VALUE {
+        internal static string IDS_MSG_PROMPT_FOR_FIELD_VALUE {
             get {
-                return ResourceManager.GetString("MSG_PROMPT_FOR_FIELD_VALUE", resourceCulture);
+                return ResourceManager.GetString("IDS_MSG_PROMPT_FOR_FIELD_VALUE", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0:N2}: Current value of field {1} = {2}{4}    Enter new value, or &apos;{3}&apos; to keep the existing value. ---&gt;&gt;.
+        ///   Looks up a localized string similar to        {0,2:N0}: Current value of field {1} = {2}{4}           Enter new value, or &apos;{3}&apos; to keep the existing value. ---&gt;&gt;.
         /// </summary>
-        internal static string MSG_PROMPT_FOR_NEW_FIELD_VALUE {
+        internal static string IDS_MSG_PROMPT_FOR_NEW_FIELD_VALUE {
             get {
-                return ResourceManager.GetString("MSG_PROMPT_FOR_NEW_FIELD_VALUE", resourceCulture);
+                return ResourceManager.GetString("IDS_MSG_PROMPT_FOR_NEW_FIELD_VALUE", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to     Enter values for the new record in response to the following prompts.{0}.
         /// </summary>
-        internal static string MSG_PROMPT_FOR_NEW_VALUES {
+        internal static string IDS_MSG_PROMPT_FOR_NEW_VALUES {
             get {
-                return ResourceManager.GetString("MSG_PROMPT_FOR_NEW_VALUES", resourceCulture);
+                return ResourceManager.GetString("IDS_MSG_PROMPT_FOR_NEW_VALUES", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to     Specify which table to process..
         /// </summary>
-        internal static string MSG_PROMPT_FOR_TABLE_NAME {
+        internal static string IDS_MSG_PROMPT_FOR_TABLE_NAME {
             get {
-                return ResourceManager.GetString("MSG_PROMPT_FOR_TABLE_NAME", resourceCulture);
+                return ResourceManager.GetString("IDS_MSG_PROMPT_FOR_TABLE_NAME", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Column Field Value:                                  ---&gt;&gt; .
+        ///   Looks up a localized string similar to Column Value (There is no default. You must enter a value.):   ---&gt;&gt; .
         /// </summary>
-        internal static string MSG_PROMPT_MATCH_STRING {
+        internal static string IDS_MSG_PROMPT_MATCH_STRING {
             get {
-                return ResourceManager.GetString("MSG_PROMPT_MATCH_STRING", resourceCulture);
+                return ResourceManager.GetString("IDS_MSG_PROMPT_MATCH_STRING", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to The update routine supports updating only one row at a time. Your query returned {0:N0} rows..
         /// </summary>
-        internal static string MSG_PROMPT_ONE_ROW_ONLY {
+        internal static string IDS_MSG_PROMPT_ONE_ROW_ONLY {
             get {
-                return ResourceManager.GetString("MSG_PROMPT_ONE_ROW_ONLY", resourceCulture);
+                return ResourceManager.GetString("IDS_MSG_PROMPT_ONE_ROW_ONLY", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to The input string is too long.{1}    To make it fit, it must be truncated to {0}.{1}    Is that OK (Y/N)? .
         /// </summary>
-        internal static string MSG_PROMPT_TRUNCATE_OK {
+        internal static string IDS_MSG_PROMPT_TRUNCATE_OK {
             get {
-                return ResourceManager.GetString("MSG_PROMPT_TRUNCATE_OK", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Enter selection criterion:                           ---&gt;&gt; .
-        /// </summary>
-        internal static string MSG_PROPMT_CRITERION {
-            get {
-                return ResourceManager.GetString("MSG_PROPMT_CRITERION", resourceCulture);
+                return ResourceManager.GetString("IDS_MSG_PROMPT_TRUNCATE_OK", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Record Number {0}: .
         /// </summary>
-        internal static string MSG_RECORD_LABEL_PREFIX {
+        internal static string IDS_MSG_RECORD_LABEL_PREFIX {
             get {
-                return ResourceManager.GetString("MSG_RECORD_LABEL_PREFIX", resourceCulture);
+                return ResourceManager.GetString("IDS_MSG_RECORD_LABEL_PREFIX", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Report Name: Listing of Everything in a PSQL Table{4}Run Date: {0} ({1} UTC){4}{4}Table Name       = {2}{4}Records in Table = {3:N0}{4}.
         /// </summary>
-        internal static string MSG_REPORT_HEADER {
+        internal static string IDS_MSG_REPORT_HEADER {
             get {
-                return ResourceManager.GetString("MSG_REPORT_HEADER", resourceCulture);
+                return ResourceManager.GetString("IDS_MSG_REPORT_HEADER", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to     Listing Column # {0}, {1} of table {2}.
         /// </summary>
-        internal static string MSG_SCHEMA_PROGRESS {
+        internal static string IDS_MSG_SCHEMA_PROGRESS {
             get {
-                return ResourceManager.GetString("MSG_SCHEMA_PROGRESS", resourceCulture);
+                return ResourceManager.GetString("IDS_MSG_SCHEMA_PROGRESS", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to     SQL SELECT Query    = {0}{1}.
         /// </summary>
-        internal static string MSG_SELECT_QUERY {
+        internal static string IDS_MSG_SELECT_QUERY {
             get {
-                return ResourceManager.GetString("MSG_SELECT_QUERY", resourceCulture);
+                return ResourceManager.GetString("IDS_MSG_SELECT_QUERY", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0:N0} records meet the selection criteria? OK to delete them? (Y/N) ---&gt;&gt; .
+        /// </summary>
+        internal static string IDS_MSG_SELECTION_COUNT_AND_PROMPT {
+            get {
+                return ResourceManager.GetString("IDS_MSG_SELECTION_COUNT_AND_PROMPT", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to {3}Selection Criteria:{3}{3}    Column (Field) Name = {0}{3}    Criterion Value     = {2}{3}    Criterion Condition = {1}{3}.
         /// </summary>
-        internal static string MSG_SELECTION_CRITERIA {
+        internal static string IDS_MSG_SELECTION_CRITERIA {
             get {
-                return ResourceManager.GetString("MSG_SELECTION_CRITERIA", resourceCulture);
+                return ResourceManager.GetString("IDS_MSG_SELECTION_CRITERIA", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Execution succeeded..
         /// </summary>
-        internal static string MSG_SHUTDOWN_NORMALLY {
+        internal static string IDS_MSG_SHUTDOWN_NORMALLY {
             get {
-                return ResourceManager.GetString("MSG_SHUTDOWN_NORMALLY", resourceCulture);
+                return ResourceManager.GetString("IDS_MSG_SHUTDOWN_NORMALLY", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Execution failed with status code {0:0x8x} ({1} decimal)..
         /// </summary>
-        internal static string MSG_SHUTDOWN_WITH_ERROR {
+        internal static string IDS_MSG_SHUTDOWN_WITH_ERROR {
             get {
-                return ResourceManager.GetString("MSG_SHUTDOWN_WITH_ERROR", resourceCulture);
+                return ResourceManager.GetString("IDS_MSG_SHUTDOWN_WITH_ERROR", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to {0}{1} File Name = {2}.
         /// </summary>
-        internal static string MSG_TASK_SUMMARY {
+        internal static string IDS_MSG_TASK_SUMMARY {
             get {
-                return ResourceManager.GetString("MSG_TASK_SUMMARY", resourceCulture);
+                return ResourceManager.GetString("IDS_MSG_TASK_SUMMARY", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Press the RETURN key to return to Windows..
         /// </summary>
-        internal static string MSG_WAIT_FOR_CARBON_UNIT {
+        internal static string IDS_MSG_WAIT_FOR_CARBON_UNIT {
             get {
-                return ResourceManager.GetString("MSG_WAIT_FOR_CARBON_UNIT", resourceCulture);
+                return ResourceManager.GetString("IDS_MSG_WAIT_FOR_CARBON_UNIT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Your selection matched no records. Nothing will happen..
+        /// </summary>
+        internal static string IDS_PROMPT_NO_ROWS_SELECTED {
+            get {
+                return ResourceManager.GetString("IDS_PROMPT_NO_ROWS_SELECTED", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to End of report, Total records = {0:N0}.
         /// </summary>
-        internal static string REPORT_FOOTER {
+        internal static string IDS_REPORT_FOOTER {
             get {
-                return ResourceManager.GetString("REPORT_FOOTER", resourceCulture);
+                return ResourceManager.GetString("IDS_REPORT_FOOTER", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to ColumnName = {0}, ColumnLabel = {1}.
+        ///   Looks up a localized string similar to TableName = {1}, ColumnName = {0}.
         /// </summary>
-        internal static string UNIQUE_COLUMN_NAME_TOSTRING {
+        internal static string IDS_UNIQUE_COLUMN_NAME_TOSTRING {
             get {
-                return ResourceManager.GetString("UNIQUE_COLUMN_NAME_TOSTRING", resourceCulture);
+                return ResourceManager.GetString("IDS_UNIQUE_COLUMN_NAME_TOSTRING", resourceCulture);
             }
         }
     }

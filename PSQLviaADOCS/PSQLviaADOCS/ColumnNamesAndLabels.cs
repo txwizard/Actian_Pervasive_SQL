@@ -550,7 +550,7 @@ namespace PSQLviaADOCS
         public override string ToString ( )
         {
             return string.Format (
-                Properties.Resources.MSG_COLUMNNAMESANDLABELS_TOSTRING ,        // Format Control String    
+                Properties.Resources.IDS_MSG_COLUMNNAMESANDLABELS_TOSTRING ,    // Format Control String    
                 StringTricks.DisplayNullSafely ( _ucnColumnName.TableName ) ,   // Format Item 0: TableName = {0}
                 _intColumnIndex ,                                               // Format Item 2: ColumnIndex = {1}    
                 _ucnColumnName.ColumnName ,                                     // Format Item 1: ColumnName = {2}
@@ -888,7 +888,7 @@ namespace PSQLviaADOCS
             public override string ToString ( )
             {
                 return string.Format (
-                    Properties.Resources.UNIQUE_COLUMN_NAME_TOSTRING ,          // Format control string
+                    Properties.Resources.IDS_UNIQUE_COLUMN_NAME_TOSTRING ,      // Format control string
                     ColumnName ,                                                // Format Item 0: ColumnName = {0}
                     TableName );                                                // Format Item 1: ColumnLabel = {1}
             }   // public override string ToString
@@ -998,7 +998,7 @@ namespace PSQLviaADOCS
                         throw new ArgumentOutOfRangeException (
                             nameof ( pstrColumnName ) ,
                             pstrColumnName ,
-                            Properties.Resources.ERRMSG_DUPLICATE_COLUMN_NAME );
+                            Properties.Resources.IDS_ERRMSG_DUPLICATE_COLUMN_NAME );
                     }   // FALSE (unanticipated outcome) block, if ( s_alstUsedNames.BinarySearch ( strUniqueColumnName ) <= ListInfo.BINARY_SEARCH_NOT_FOUND )
                 }   // FALSE (Subsequent passes) block, if ( s_alstUsedNames == null )
             }   // private static void IsColumnNameGloballyUnique

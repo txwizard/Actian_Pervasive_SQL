@@ -27,7 +27,7 @@
     2019/07/16 1.2.0.0 DG Sanity check the table name when it is read from the
                           command line.
 
-    2019/07/23 1.3.0.0 DG Implement the rest of the CRUD model.
+    2019/07/24 1.3.0.0 DG Implement the rest of the CRUD model.
     ============================================================================
 */
 
@@ -353,7 +353,7 @@ namespace PSQLviaADOCS
                             operatingParameters.TableName );
                         return;
                     case CrudVerb.Delete:
-                        DeleteRows (
+                        DeleteSelectedRows (
                             ref cn ,
                             ref rs ,
                             operatingParameters.TableName );
@@ -450,7 +450,7 @@ namespace PSQLviaADOCS
             string pstrTableName )
         {
             Console.WriteLine (
-                Properties.Resources.MSG_PROMPT_FOR_NEW_VALUES ,                // Format control string
+                Properties.Resources.IDS_MSG_PROMPT_FOR_NEW_VALUES ,            // Format control string
                 Environment.NewLine );                                          // Format Item 0: prompts.{0}
 
             //  ----------------------------------------------------------------
@@ -515,13 +515,86 @@ namespace PSQLviaADOCS
         /// ref parameter it has to be set to something.
         /// </remarks>
         /// <see href="https://stackoverflow.com/questions/135234/difference-between-ref-and-out-parameters-in-net"/>
-        private static void DeleteRows (
+        private static void DeleteSelectedRows (
             ref Connection pdbConnection ,
             ref Recordset pdbRecordSet ,
             string pstrTableName )
         {
-            throw new NotImplementedException ( );
-        }   // private static void DeleteRows
+            ColumnNamesAndLabels [ ] aobjColumnNamesAndLabels = OpenTableRecordset (
+                ref pdbConnection ,
+                ref pdbRecordSet ,
+                pstrTableName );
+
+            bool fUnmetCondtions = true;
+
+            while ( fUnmetCondtions )
+            {
+                SelectionCriteria criteria = PromptForSelectionCriteria (
+                    aobjColumnNamesAndLabels ,
+                    pdbRecordSet );
+                criteria.MatchfieldInfo = ReOpenRecordsetAndRestoreField (
+                    pdbConnection ,
+                    ref pdbRecordSet ,
+                    AssembleSelectQuery (
+                        criteria ,
+                        pstrTableName ) ,
+                    criteria.MatchfieldInfo.Name );
+
+                if ( pdbRecordSet.RecordCount > ListInfo.LIST_IS_EMPTY )
+                {
+                    bool fResponseIsInValid = true;
+
+                    while ( fResponseIsInValid )
+                    {
+                        Console.Write (
+                            Properties.Resources.IDS_MSG_SELECTION_COUNT_AND_PROMPT ,
+                            pdbRecordSet.RecordCount );
+                        string strResponse = Console.ReadLine ( );
+
+                        switch ( strResponse.ToLower ( ) )
+                        {
+                            case @"yes":
+                            case @"y":
+                                fResponseIsInValid = false;                     // Satisfy while ( fResponseIsInValid ).
+                                fUnmetCondtions = false;                        // Satisfy while ( fUnmetCondtions ), too.
+                                break;                                          // Break out of the switch block, so that the loops can end.
+                            case "@no":
+                            case "n":
+                                Console.WriteLine ( Properties.Resources.IDS_MSG_DELETION_ABORTED );
+                                return;                                         // Leap out of the whole routine.
+                        }   // switch ( strResponse.ToLower ( ) )
+                    }   // while ( fResponseIsInValid )
+                }   // TRUE (anticipated outcome) block, if ( pdbRecordSet.RecordCount > ListInfo.LIST_IS_EMPTY )
+                else
+                {
+                    Console.WriteLine ( Properties.Resources.IDS_PROMPT_NO_ROWS_SELECTED );
+                    EmitConsoleBeep ( );
+                    return;
+                }   // FALSE (unanticipated outcome) block, if ( pdbRecordSet.RecordCount > ListInfo.LIST_IS_EMPTY )
+            }   // while ( fUnmetCondtions )
+
+            //  ----------------------------------------------------------------
+            //  Though deletion by SQL query is more efficient, deleting records
+            //  individually is compatible with the BTrieve API, which behaves
+            //  more like an IMS or ISAM data base.
+            //  ----------------------------------------------------------------
+
+            pdbRecordSet.MoveFirst ( );
+
+            int intRowsDeleted = ListInfo.LIST_IS_EMPTY;
+
+            while ( !pdbRecordSet.EOF )
+            {
+                pdbRecordSet.Delete ( AffectEnum.adAffectCurrent );
+                intRowsDeleted++;
+                pdbRecordSet.Update ( );
+                pdbRecordSet.MoveNext ( );
+            }   // while ( !pdbRecordSet.EOF )
+
+            Console.WriteLine (
+                Properties.Resources.IDS_MSG_DELETED_RECORDS_SUMMARY ,
+                intRowsDeleted );
+        }   // private static void DeleteSelectedRows
 
 
         /// <summary>
@@ -606,12 +679,12 @@ namespace PSQLviaADOCS
         /// </remarks>
         /// <see href="https://stackoverflow.com/questions/135234/difference-between-ref-and-out-parameters-in-net"/>
         private static void ListAllRowsInTable (
-            ref StreamWriter pswDetailsList ,
-            ref StreamWriter pswDetailsTable ,
-            ref FixedConsoleWriter pfcwProgress ,
-            ref Connection pdbConnection ,
-            ref Recordset pdbRecordSet ,
-            string pstrTableName )
+        ref StreamWriter pswDetailsList ,
+        ref StreamWriter pswDetailsTable ,
+        ref FixedConsoleWriter pfcwProgress ,
+        ref Connection pdbConnection ,
+        ref Recordset pdbRecordSet ,
+        string pstrTableName )
         {
             ColumnNamesAndLabels [ ] aobjColumnNamesAndLabels = OpenTableRecordset (
                 ref pdbConnection ,
@@ -735,9 +808,9 @@ namespace PSQLviaADOCS
             pfcwProgress.ScrollUp ( );
 
             Console.WriteLine (
-                Properties.Resources.MSG_TASK_SUMMARY ,
+                Properties.Resources.IDS_MSG_TASK_SUMMARY ,
                 Environment.NewLine ,
-                Properties.Resources.MSG_LABEL_FOR_PROPERTIES_LIST ,
+                Properties.Resources.IDS_MSG_LABEL_FOR_PROPERTIES_LIST ,
                 strDetailTabularReportFQFN );
         }  // private static void ListTableColumnProperties
 
@@ -927,8 +1000,9 @@ namespace PSQLviaADOCS
                 if ( pdbRecordSet.RecordCount != MagicNumbers.PLUS_ONE )
                 {
                     Console.WriteLine (
-                        Properties.Resources.MSG_PROMPT_ONE_ROW_ONLY ,              // this Format Control String contains everything required to format the record count per NLS settings.
+                        Properties.Resources.IDS_MSG_PROMPT_ONE_ROW_ONLY ,          // this Format Control String contains everything required to format the record count per NLS settings.
                         pdbRecordSet.RecordCount );                                 // Format Item 0: Your query returned {0::N0} rows.
+                    EmitConsoleBeep ( );
                 }   // if ( pdbRecordSet.RecordCount != MagicNumbers.PLUS_ONE )
             }   // while ( pdbRecordSet.RecordCount != MagicNumbers.PLUS_ONE )
 
@@ -983,26 +1057,45 @@ namespace PSQLviaADOCS
                       intCurrentColumn < intColumnCount ;
                       intCurrentColumn++ )
             {
-                if ( paobjColumnInfo [ intCurrentColumn ].IsAutoNumberColumn || paobjColumnInfo [ intCurrentColumn ].IsPrimaryKeyColumn )
+                bool fValueIsNew = false;
+
+                if ( IsColumnSystemMaintained ( paobjColumnInfo , intCurrentColumn ) )
                 {
-                    if ( penmAddOrUpdateRow == AddOrUpdateMode.AddingOneRow )
+                    if ( penmAddOrUpdateRow == AddOrUpdateMode.UpdatingOneRow )
+                    {   // The value in the input array is that which would be assigned to the next row if we were appending one. Substitute the column value in the recordset.
+                        OverwriteAutoValueInUserInputArrayWithValueInRecordset (
+                            pdbRecordSet ,
+                            paobjColumnInfo ,
+                            intCurrentColumn );
+                    }   // if ( penmAddOrUpdateRow == AddOrUpdateMode.UpdatingOneRow )
+
+                    Console.WriteLine (
+                        Properties.Resources.IDS_MSG_INFO_ASSIGNED_COLUMN_VALUE ,                                           // Format control string    ArrayInfo.OrdinalFromIndex ( intCurrentColumn ) ,                                               // Format Control String
+                        ArrayInfo.OrdinalFromIndex ( intCurrentColumn ) ,                                               // Format Item 0: {0}:
+                        paobjColumnInfo [ intCurrentColumn ].ColumnLabel ,                                              // Format Item 1: {1} value assigned
+                        paobjColumnInfo [ intCurrentColumn ].ColumnValue );                                             // Format Item 2: by system = {2}
+                }   // TRUE (User editing of this column is forbidden.) block, if ( paobjColumnInfo [ intCurrentColumn ].IsAutoNumberColumn || paobjColumnInfo [ intCurrentColumn ].IsPrimaryKeyColumn )
+                else
+                {
+                    if ( penmAddOrUpdateRow == AddOrUpdateMode.UpdatingOneRow )
                     {
                         Console.Write (
-                            Properties.Resources.MSG_PROMPT_FOR_NEW_FIELD_VALUE ,                                       // Format control string
+                            Properties.Resources.IDS_MSG_PROMPT_FOR_NEW_FIELD_VALUE ,                                       // Format control string
                             new object [ ]
                             {
                                 ArrayInfo.OrdinalFromIndex ( intCurrentColumn ) ,                                       // Format Item 0: {0:N2}: Current value
                                 paobjColumnInfo [ intCurrentColumn ].ColumnLabel ,                                      // Format Item 1: value of field {1}
                                 pdbRecordSet.Fields [ paobjColumnInfo [ intCurrentColumn ].ColumnName ].Value ,         // Format Item 2: = {2}
                                 KEEP_CURRENT_VALUE ,                                                                    // Format Item 3: Enter new value, or '{3}' to keep
-                                Environment.NewLine } );                                                                // Format Item 4: {4}    Enter new value
-                    }   // TRUE (User editing of this column is permitted.) block, if ( paobjColumnInfo [ intCurrentColumn ].IsAutoNumberColumn || paobjColumnInfo [ intCurrentColumn ].IsPrimaryKeyColumn )
+                                Environment.NewLine                                                                     // Format Item 4: {4}    Enter new value
+                            } );
+                    }   // TRUE (User editing of this column is permitted.) block, if ( penmAddOrUpdateRow == AddOrUpdateMode.UpdatingOneRow )
                     else
                     {
                         Console.Write (
-                            Properties.Resources.MSG_PROMPT_FOR_FIELD_VALUE ,                       // Format control string
-                            ArrayInfo.OrdinalFromIndex ( intCurrentColumn ) ,                       // Format Item 0: {0}: Enter value
-                            paobjColumnInfo [ intCurrentColumn ].ColumnLabel );                     // Format Item 1: for field {1}:
+                            Properties.Resources.IDS_MSG_PROMPT_FOR_FIELD_VALUE ,                                           // Format control string
+                            ArrayInfo.OrdinalFromIndex ( intCurrentColumn ) ,                                           // Format Item 0: {0}: Enter value
+                            paobjColumnInfo [ intCurrentColumn ].ColumnLabel );                                         // Format Item 1: for field {1}:
                     }   // FALSE (User editing of this column is forbidden.) block, if ( paobjColumnInfo [ intCurrentColumn ].IsAutoNumberColumn || paobjColumnInfo [ intCurrentColumn ].IsPrimaryKeyColumn )
 
                     if ( fRingTheBell )
@@ -1017,41 +1110,67 @@ namespace PSQLviaADOCS
 
                         if ( strInputText == KEEP_CURRENT_VALUE.ToString ( ) )
                         {
-                            if ( penmAddOrUpdateRow == AddOrUpdateMode.AddingOneRow )
+                            if ( penmAddOrUpdateRow == AddOrUpdateMode.UpdatingOneRow )
+                            {
+                                break;
+                            }   // if ( penmAddOrUpdateRow == AddOrUpdateMode.UpdatingOneRow )
+                            else if ( penmAddOrUpdateRow == AddOrUpdateMode.AddingOneRow )
                             {
                                 Console.WriteLine (
-                                    Properties.Resources.ERRMSG_INVALID_IN_THIS_CONTEXT ,                               // Format control string
+                                    Properties.Resources.IDS_ERRMSG_INVALID_IN_THIS_CONTEXT ,                               // Format control string
                                     KEEP_CURRENT_VALUE ,                                                                // Format Item 0: Input value '{0}' is invalid
                                     penmAddOrUpdateRow ,                                                                // Format Item 1: during {1} operations.
                                     Environment.NewLine );                                                              // Format Item 2: operations.{2}Please input a valid value.
                                 EmitConsoleBeep ( );
-                            }
+                            }   // else if ( penmAddOrUpdateRow == AddOrUpdateMode.AddingOneRow )
                         }   // TRUE (The user entered the ditto token.) block, if ( strInputText == KEEP_CURRENT_VALUE.ToString ( ) )
                         else
                         {
-                            paobjColumnInfo [ intCurrentColumn ].ColumnValue = EvaluateField (
-                                strInputText ,                                                                          // string pstrFieldValue
-                                pdbRecordSet.Fields [ paobjColumnInfo [ intCurrentColumn ].ColumnName ] );              // Field  pdbField
-                            break;      // Exit the While loop.
+                            try
+                            {
+                                paobjColumnInfo [ intCurrentColumn ].ColumnValue = EvaluateField (
+                                    strInputText ,                                                                          // string pstrFieldValue
+                                    pdbRecordSet.Fields [ paobjColumnInfo [ intCurrentColumn ].ColumnName ] );              // Field  pdbField
+                                fValueIsNew = true;
+                                break;      // Exit the While loop.
+                            }
+                            catch ( Exception exAllKinds )
+                            {
+                                if ( exAllKinds.GetType ( ).FullName == typeof ( ArgumentOutOfRangeException ).FullName )
+                                {
+                                    string strExceptionDescription = exAllKinds.Message.IndexOf ( Environment.NewLine ) > ListInfo.INDEXOF_NOT_FOUND
+                                                                     ? exAllKinds.Message.Substring (
+                                                                         ListInfo.SUBSTR_BEGINNING ,
+                                                                         exAllKinds.Message.IndexOf (
+                                                                             Environment.NewLine ) )
+                                                                     : SpecialStrings.EMPTY_STRING;
+
+                                    if ( Properties.Resources.IDS_MSG_INPUT_TOO_LONG.StartsWith ( strExceptionDescription ) )
+                                    {
+                                        continue;   // Start a new iteration.
+                                    }   // if ( Properties.Resources.MSG_INPUT_TOO_LONG.StartsWith ( strExceptionDescription ) )
+                                }   // if ( exAllKinds.GetType ( ).FullName == typeof ( ArgumentOutOfRangeException ).FullName )
+                            }
                         }   // FALSE (The user entered a presumably valid input value.) block, if ( strInputText == KEEP_CURRENT_VALUE.ToString ( ) )
                     }   // while ( true )
-                }    // TRUE (The user must supply a value.) block, if ( acolNamesAndLabels [ intCurrentColumn ].ColumnValue == null )
-                else
-                {
-                    Console.WriteLine (
-                        Properties.Resources.MSG_INFO_ASSIGNED_COLUMN_VALUE ,                                           // Format control string
-                        ArrayInfo.OrdinalFromIndex ( intCurrentColumn ) ,                                               // Format Item 0: {0}: 
-                        paobjColumnInfo [ intCurrentColumn ].ColumnLabel ,                                              // Format Item 1: : {1} value assigned
-                        paobjColumnInfo [ intCurrentColumn ].ColumnValue );                                             // Format Item 2: by system = {2}
-                }   // FALSE (The program generates a value.) block, if ( acolNamesAndLabels [ intCurrentColumn ].ColumnValue == null )
+                }   // FALSE (User editing is conditionally permitted.) block, if ( paobjColumnInfo [ intCurrentColumn ].IsAutoNumberColumn || paobjColumnInfo [ intCurrentColumn ].IsPrimaryKeyColumn )
 
                 aobjNameList [ intCurrentColumn ] = paobjColumnInfo [ intCurrentColumn ].ColumnName;
                 aobjValueList [ intCurrentColumn ] = paobjColumnInfo [ intCurrentColumn ].ColumnValue;
 
-                if ( penmAddOrUpdateRow == AddOrUpdateMode.UpdatingOneRow )
-                {   // If updating, fix up the value in the Fields collection.
-                    pdbRecordSet.Fields [ paobjColumnInfo [ intCurrentColumn ].ColumnName ].Value = paobjColumnInfo [ intCurrentColumn ].ColumnValue;
-                }   // if ( penmAddOrUpdateRow == AddOrUpdateMode.UpdatingOneRow )
+                if ( IsColumnSystemMaintained ( paobjColumnInfo , intCurrentColumn ) == false )
+                {   // Skip system-maintained columns, since their values are manifestly correct.
+                    if ( penmAddOrUpdateRow == AddOrUpdateMode.UpdatingOneRow )
+                    {   // If updating, fix up the value in the Fields collection.
+                        if ( fValueIsNew )
+                        {   // Unless the user input an acceptable new value, the input array value is null, and would trample the current value that the user wants to keep.
+                            OverwriteValueInRecordsetFromUserInput (
+                                pdbRecordSet ,
+                                paobjColumnInfo ,
+                                intCurrentColumn );
+                        }   // if ( fValueIsNew )
+                    }   // if ( penmAddOrUpdateRow == AddOrUpdateMode.UpdatingOneRow )
+                }   // if ( IsColumnSystemMaintained ( paobjColumnInfo , intCurrentColumn ) == false )
             }   // for ( int intCurrentColumn = ArrayInfo.ARRAY_FIRST_ELEMENT ; ; intCurrentColumn < intColumnCount ; intCurrentColumn++ )
 
             if ( penmAddOrUpdateRow == AddOrUpdateMode.AddingOneRow )
@@ -1135,7 +1254,7 @@ namespace PSQLviaADOCS
         /// The return value is a valid SQL SELECT query, ready to feed to the
         /// Recordset opener.
         /// </returns>
-        private static string AssembleSelectQuery ( 
+        private static string AssembleSelectQuery (
             SelectionCriteria pCriteria ,
             string pstrTableName )
         {
@@ -1185,7 +1304,7 @@ namespace PSQLviaADOCS
                 pstrTableName ,                                                 // Format Item 0: SELECT * FROM {0}
                 strWhereClause );                                               // Format Item 1: WHERE {1}
             Console.WriteLine (
-                Properties.Resources.MSG_SELECT_QUERY ,                         // Format Control String
+                Properties.Resources.IDS_MSG_SELECT_QUERY ,                         // Format Control String
                 rstrSQLSelectQuery ,                                            // Format Item 0: SQL SELECT Query    = {0}
                 Environment.NewLine );                                          // Format Item 1: Platform-dependent newline
 
@@ -1254,7 +1373,7 @@ namespace PSQLviaADOCS
             {
                 throw new InvalidOperationException (
                     string.Format (
-                        Properties.Resources.ERRMSG_INTERNAL_SQL_ERROR ,                                                // Format control string
+                        Properties.Resources.IDS_ERRMSG_INTERNAL_SQL_ERROR ,                                            // Format control string
                         SQL ,                                                                                           // Format Item 0: returned by SQL query {0}
                         rs.Fields [ ArrayInfo.ARRAY_FIRST_ELEMENT ].Value.ToString ( ).QuoteString ( ) ) );             // Format Item 1: is {1}, which
             }   // FALSE (unanticipated outcome) block, if ( long.TryParse ( rs.Fields [ ArrayInfo.ARRAY_FIRST_ELEMENT ].Value.ToString ( ) , out long lngNextId ) )
@@ -1398,7 +1517,7 @@ namespace PSQLviaADOCS
                 {
                     throw new InvalidOperationException (
                         string.Format (
-                            Properties.Resources.ERRMSG_INVALID_SCHEMA_LINE ,   // Format Control String
+                            Properties.Resources.IDS_ERRMSG_INVALID_SCHEMA_LINE ,// Format Control String
                             new object [ ]
                             {
                                 intLineNumber ,                                 // Format Item 0: Line {0}
@@ -1483,11 +1602,11 @@ namespace PSQLviaADOCS
             Recordset pdbRecordSet )
         {
             if ( string.IsNullOrEmpty ( pstrFieldNameCandidate ) )
-            {
-                return null;
+            {   // This is hard coded to the conventional name for autonumber columns.
+                return pdbRecordSet.Fields [ @"ID" ];
             }   // TRUE (unanticipated outcome) block, if ( string.IsNullOrEmpty ( pstrFieldNameCandidate ) )
             else
-            {
+            {   // Since the user input a name, it must be validated against the list of columns (fields) in the Recordset.
                 int intColumnCount = pdbRecordSet.Fields.Count;
 
                 for ( int intColumnIndex = ArrayInfo.ARRAY_FIRST_ELEMENT ;
@@ -1517,7 +1636,15 @@ namespace PSQLviaADOCS
         {
             try
             {
-                return pstrCondition.EnumFromString<WhereCondition> ( );
+                if ( string.IsNullOrEmpty ( pstrCondition ) )
+                {
+                    return WhereCondition.IsEqualTo;
+                }   // TRUE (The user accepted the default value.) block, if ( string.IsNullOrEmpty ( pstrCondition ) )
+                else
+                {
+                    return pstrCondition.EnumFromString<WhereCondition> ( );
+                }   // FALSE (The user overrode the default value.) block, if ( string.IsNullOrEmpty ( pstrCondition ) )
+
             }
             catch ( InvalidOperationException ex )
             {
@@ -1548,6 +1675,7 @@ namespace PSQLviaADOCS
         {
             if ( string.IsNullOrEmpty ( pstrCriterionValue ) )
             {
+                Console.WriteLine ( Properties.Resources.IDS_ERRMSG_MATCH_STRING_IS_REQUIRED );
                 return null;
             }   // TRUE (unanticipated outcome) block, if ( string.IsNullOrEmpty ( pstrCriterionValue ) )
             else
@@ -1555,27 +1683,27 @@ namespace PSQLviaADOCS
                 try
                 {
                     return ADOHelpers.ParseAndConvert (
-                        pstrCriterionValue ,                                    // string pstrInputValue
-                        pdbField ,                                              // Field pDBField
-                        Properties.Settings.Default.BooleanTrueListPlusM.Split (     // string [ ] pastrTrueStrings = null
+                        pstrCriterionValue ,                                                        // string pstrInputValue
+                        pdbField ,                                                                  // Field pDBField
+                        Properties.Settings.Default.BooleanTrueListPlusM.Split (                    // string [ ] pastrTrueStrings = null
                             SpecialCharacters.SEMICOLON ) ,
-                        Properties.Settings.Default.BooleanFalseListPlusF.Split (    // string [ ] pastrFalseStrings = null
+                        Properties.Settings.Default.BooleanFalseListPlusF.Split (                   // string [ ] pastrFalseStrings = null
                             SpecialCharacters.SEMICOLON ) ,
-                        true );                                                 // bool pfThrowWhenInvalid = false
+                        true );                                                                     // bool pfThrowWhenInvalid = false
                 }
                 catch ( ArgumentOutOfRangeException exArgOutOfRange )
                 {
-                    if ( exArgOutOfRange.Message.StartsWith ( Properties.Resources.MSG_INPUT_TOO_LONG.Truncate ( Properties.Resources.MSG_INPUT_TOO_LONG.IndexOf ( Environment.NewLine ) ) ) )
+                    if ( exArgOutOfRange.Message.StartsWith ( Properties.Resources.IDS_MSG_INPUT_TOO_LONG.Truncate ( Properties.Resources.IDS_MSG_INPUT_TOO_LONG.IndexOf ( Environment.NewLine ) ) ) )
                     {
                         Console.Write (
-                            Properties.Resources.MSG_PROMPT_TRUNCATE_OK ,       // Format control string
-                            pstrCriterionValue.Truncate (                       // Format Item 0: To make it fit, it must be truncated to {0}.
-                                pdbField.DefinedSize ) ,                        // Maximun string length.
-                            Environment.NewLine );                              // Format Item 1: The input string is too long.{1} AND To make it fit, it must be truncated to {0}.{1}
+                            Properties.Resources.IDS_MSG_PROMPT_TRUNCATE_OK ,                       // Format control string
+                            pstrCriterionValue.Truncate (                                           // Format Item 0: To make it fit, it must be truncated to {0}.
+                                pdbField.DefinedSize ) ,                                            // Maximun string length.
+                            Environment.NewLine );                                                  // Format Item 1: The input string is too long.{1} AND To make it fit, it must be truncated to {0}.{1}
 
                         while ( true )
                         {
-                            string strResponse = Console.ReadLine ( ).ToLower ( );  // Make the user confirm their selection by pressing the Return key.
+                            string strResponse = Console.ReadLine ( ).ToLower ( );                  // Make the user confirm their selection by pressing the Return key.
 
                             switch ( strResponse [ ArrayInfo.ARRAY_FIRST_ELEMENT ] )
                             {
@@ -1604,7 +1732,7 @@ namespace PSQLviaADOCS
             }
             catch ( InvalidOperationException exInvOper )
             {
-                string strExpectedMessageText = Properties.Resources.ERRMSG_PREFIX_INVALID_VERB;
+                string strExpectedMessageText = Properties.Resources.IDS_ERRMSG_PREFIX_INVALID_VERB;
                 int intExpectedMessageStartPos = exInvOper.Message.IndexOf ( strExpectedMessageText );
 
                 if ( intExpectedMessageStartPos > ListInfo.INDEXOF_NOT_FOUND )
@@ -1651,9 +1779,9 @@ namespace PSQLviaADOCS
             return ADOHelpers.ParseAndConvert (
                 pstrFieldValue ,                                                // string pstrInputValue
                 pdbField ,                                                      // Field pDBField
-                Properties.Settings.Default.BooleanTrueListPlusM.Split (             // string [ ] pastrTrueStrings = null
+                Properties.Settings.Default.BooleanTrueListPlusM.Split (        // string [ ] pastrTrueStrings = null
                     SpecialCharacters.SEMICOLON ) ,
-                Properties.Settings.Default.BooleanFalseListPlusF.Split (            // string [ ] pastrFalseStrings = null
+                Properties.Settings.Default.BooleanFalseListPlusF.Split (       // string [ ] pastrFalseStrings = null
                     SpecialCharacters.SEMICOLON ) ,
                 true );                                                         // bool pfThrowWhenInvalid = false
         }   // private static object EvaluateField
@@ -1742,7 +1870,7 @@ namespace PSQLviaADOCS
 
                 if ( strErrorPrompt == null )
                 {   // Defer loading until needed.
-                    strErrorPrompt = Properties.Resources.ERRMSG_INVALID_NAME;
+                    strErrorPrompt = Properties.Resources.IDS_ERRMSG_INVALID_NAME;
                 }   // if ( strErrorPrompt == null )
 
                 messagesInColor.WriteLine (
@@ -1753,7 +1881,7 @@ namespace PSQLviaADOCS
 
             while ( rparameters.TableName == null )
             {
-                strPrompt = strPrompt ?? Properties.Resources.MSG_PROMPT_FOR_TABLE_NAME;
+                strPrompt = strPrompt ?? Properties.Resources.IDS_MSG_PROMPT_FOR_TABLE_NAME;
                 Console.Error.Write ( strPrompt );
                 EmitConsoleBeep ( );
                 strTableNameCandidate = Console.ReadLine ( );
@@ -1766,7 +1894,7 @@ namespace PSQLviaADOCS
                 {   // Perform just-in-time object initializations.
                     if ( strErrorPrompt == null )
                     {   // Defer loading until needed.
-                        strErrorPrompt = Properties.Resources.ERRMSG_INVALID_NAME;
+                        strErrorPrompt = Properties.Resources.IDS_ERRMSG_INVALID_NAME;
                     }   // if ( strErrorPrompt == null )
 
                     if ( messagesInColor == null )
@@ -1797,13 +1925,42 @@ namespace PSQLviaADOCS
             }   // FALSE (The command tail omits a verb.) block, if ( pastrArgs.Length > CRUD_VERB )
 
             Console.WriteLine (
-                Properties.Resources.MSG_DISPLAY_TABLE_NAME_AND_VERB ,          // Format control string read from managed resource table
+                Properties.Resources.IDS_MSG_DISPLAY_TABLE_NAME_AND_VERB ,      // Format control string read from managed resource table
                 rparameters.TableName ,                                         // Format Item 0: Processing PSQL database table {0}
                 rparameters.Verb ,                                              // Format Item 1: Action Taken = {1}
                 Environment.NewLine );                                          // Format Item 1: Platform depdent newline database table {0}{2} AND Action Taken = {1}{2}
 
             return rparameters;
         }   // private static string GetOperatingParamerters
+
+
+        /// <summary>
+        /// Return TRUE when the column identified by the ColumnNamesAndLabels
+        /// array element at index (subscript) <paramref name="pintCurrentColumn"/>
+        /// of the array to which <paramref name="paobjColumnInfo"/> refers.
+        /// </summary>
+        /// <param name="paobjColumnInfo">
+        /// Pass in a reference to the populated ColumnNamesAndLabels array to
+        /// evaluate. Integer <paramref name="pintCurrentColumn"/> identifies the
+        /// element to evaluate.
+        /// </param>
+        /// <param name="pintCurrentColumn">
+        /// Pass in the index (subscript) into the array of ColumnNamesAndLabels
+        /// objects to which <paramref name="paobjColumnInfo"/> refers. The
+        /// indicated array element is evaluated.
+        /// </param>
+        /// <returns>
+        /// The method returns TRUE when either the IsAutoNumberColumn or
+        /// IsPrimaryKeyColumn property of <paramref name="paobjColumnInfo"/>
+        /// ColumnNamesAndLabels array element <paramref name="pintCurrentColumn"/>
+        /// is TRUE. When both are FALSE, the return value is likewise FALSE.
+        /// </returns>
+        private static bool IsColumnSystemMaintained (
+            ColumnNamesAndLabels [ ] paobjColumnInfo ,
+            int pintCurrentColumn )
+        {
+            return paobjColumnInfo [ pintCurrentColumn ].IsAutoNumberColumn || paobjColumnInfo [ pintCurrentColumn ].IsPrimaryKeyColumn;
+        }   // private static bool IsColumnSystemMaintained
 
 
         /// <summary>
@@ -1901,7 +2058,7 @@ namespace PSQLviaADOCS
             if ( prs.RecordCount > MagicNumbers.PLUS_ONE )
             {
                 pfcwProgress.Write (                                            // Update the status shown on the console.
-                    Properties.Resources.MSG_PROGRESS_UPDATE ,                  // Format Item 0: Listing record # {0}
+                    Properties.Resources.IDS_MSG_PROGRESS_UPDATE ,              // Format Item 0: Listing record # {0}
                     plngItemNumber.ToString (                                   // Argument plngItemNumber is the current record number.
                         DisplayFormats.NUMBER_PER_REG_SETTINGS_0D ) ,           // Format the integer with thousands separators per the Regional Settings in the Windows Control Panel.
                     s_lngDispMsgNRecs );                                        // Format Item 1: of {1}
@@ -1935,7 +2092,7 @@ namespace PSQLviaADOCS
                 }   // for ( int intJ = ArrayInfo.ARRAY_FIRST_ELEMENT ; intJ <= s_intLastIndex ; intJ++ )
 
                 pswDetailsList.WriteLine (
-                    Properties.Resources.MSG_REPORT_HEADER ,                    // Format control string
+                    Properties.Resources.IDS_MSG_REPORT_HEADER ,                // Format control string
                     s_csm.BaseStateManager.AppStartupTimeLocal ,                // Format Item 0: Run Date: {0}
                     s_csm.BaseStateManager.AppStartupTimeUtc ,                  // Format Item 1: ({1} UTC)
                     prs.Source ,                                                // Format Item 2: Table Name       = {2}
@@ -1945,7 +2102,7 @@ namespace PSQLviaADOCS
                 if ( prs.RecordCount == MagicNumbers.PLUS_ONE )
                 {
                     Console.WriteLine (
-                        Properties.Resources.MSG_REPORT_HEADER ,                // Format control string
+                        Properties.Resources.IDS_MSG_REPORT_HEADER ,            // Format control string
                         s_csm.BaseStateManager.AppStartupTimeLocal ,            // Format Item 0: Run Date: {0}
                         s_csm.BaseStateManager.AppStartupTimeUtc ,              // Format Item 1: ({1} UTC)
                         prs.Source ,                                            // Format Item 2: Table Name       = {2}
@@ -2000,7 +2157,7 @@ namespace PSQLviaADOCS
                 {   // Process the first column.
                     s_strFinalRecordLabelPrefix = s_strFinalRecordLabelPrefix ??
                         FormatItem.UpgradeFormatItem (
-                            Properties.Resources.MSG_RECORD_LABEL_PREFIX ,      // System.String        pstrFormat          Specify a valid format string to upgrade. The string must contain a token of the form {n}, where n is equal to pintItemIndex.
+                            Properties.Resources.IDS_MSG_RECORD_LABEL_PREFIX ,  // System.String        pstrFormat          Specify a valid format string to upgrade. The string must contain a token of the form {n}, where n is equal to pintItemIndex.
                             ArrayInfo.ARRAY_FIRST_ELEMENT ,                     // System.Int32         pintItemIndex       Specify the index of the item to be upgraded. The integer must be positive, and pstrFormat must contain at least once instance of a correspondingly numbered format item.
                             FormatItem.AdjustToMaximumWidth (                   // System.String        pstrFormatString    Specify a standard or custom Numeric or DateTime format string.Contrast this with pstrUpgrade , which expects you to supply the entire format item , ready for substitution.
                                 ArrayInfo.ARRAY_FIRST_ELEMENT ,                 // System.Int32         pintItemIndex       The index is a standard zero based array subscript which corresponds to the position of an item in a list of objects.The list happens to be the items that correspond to the format items in a format string.
@@ -2112,14 +2269,14 @@ namespace PSQLviaADOCS
             FixedConsoleWriter pfcwProgress )                                   // Use this special object to update the console without scrolling its buffer up.
         {
             pfcwProgress.Write (                                                // Create or update the progress report on the console.
-                Properties.Resources.MSG_SCHEMA_PROGRESS ,                      // Format control string
+                Properties.Resources.IDS_MSG_SCHEMA_PROGRESS ,                  // Format control string
                 plngItemNumber + ArrayInfo.ORDINAL_FROM_INDEX ,                 // Format Item 0: Listing Column # {0} - Since plngItemNumber is a long integer, ArrayInfo.OrdinalFromIndex requires a downcast. Inline addition is safer.
                 paColumnInfo [ plngItemNumber ].ColumnName ,                    // Format Item 1: , {1} of
                 pdbRecordSet.Source );                                          // Format Item 2: table {2}
 
             if ( plngItemNumber == ArrayInfo.ARRAY_FIRST_ELEMENT )
             {   // Create the label row. Argument plngItemNumber is the index (subscript) of the array subscript.
-                string strLabelRow = Properties.Resources.MSG_COLUMN_PROPERTIES_LABEL_ROW.ReplaceEscapedTabsInStringFromResX ( );
+                string strLabelRow = Properties.Resources.IDS_MSG_COLUMN_PROPERTIES_LABEL_ROW.ReplaceEscapedTabsInStringFromResX ( );
                 pswDetailsTable.WriteLine ( strLabelRow );
                 s_strDynamicListReportFormatString = ReportHelpers.DetailTemplateFromLabels ( strLabelRow );
             }   // if ( plngItemNumber == ArrayInfo.ARRAY_FIRST_ELEMENT )
@@ -2266,7 +2423,7 @@ namespace PSQLviaADOCS
             }   // while ( !rs.EOF )
 
             pswDetailsList.WriteLine (
-                Properties.Resources.REPORT_FOOTER ,                            // Format Control String
+                Properties.Resources.IDS_REPORT_FOOTER ,                        // Format Control String
                 lngItemNumber );                                                // Format Item 0: End of report, Total records = {0::N0}
 
             //  ------------------------------------------------------------
@@ -2281,14 +2438,14 @@ namespace PSQLviaADOCS
             }   // if ( pdbRecordSet.RecordCount > MagicNumbers.PLUS_ONE )
 
             Console.WriteLine (
-                Properties.Resources.MSG_TASK_SUMMARY ,
+                Properties.Resources.IDS_MSG_TASK_SUMMARY ,
                 Environment.NewLine ,
-                Properties.Resources.MSG_LABEL_FOR_LISTING ,
+                Properties.Resources.IDS_MSG_LABEL_FOR_LISTING ,
                 strDetailListReportFQFN );
             Console.WriteLine (
-                Properties.Resources.MSG_TASK_SUMMARY ,
+                Properties.Resources.IDS_MSG_TASK_SUMMARY ,
                 SpecialStrings.EMPTY_STRING ,
-                Properties.Resources.MSG_LABEL_FOR_TABLE ,
+                Properties.Resources.IDS_MSG_LABEL_FOR_TABLE ,
                 strDetailTabularReportFQFN );
         }   // private static void ListAllRowsInRecordset
 
@@ -2376,6 +2533,80 @@ namespace PSQLviaADOCS
 
 
         /// <summary>
+        /// Override the auto-generated value stored in the user input array
+        /// with the value returned in the Recordset.
+        /// </summary>
+        /// <param name="pdbRecordSet">
+        /// This argument receives a reference to the ADODB.Recordset containing
+        /// the row (record) from which to copy the input value.
+        /// <para>
+        /// The ColumnName property of the ColumnNamesAndLabels array element in
+        /// <paramref name="paobjColumnInfo"/> at index <paramref name="pintCurrentColumn"/>
+        /// identifies the column in <paramref name="pdbRecordSet"/> from which
+        /// to copy the value into the ColumnValue member of the ColumnNamesAndLabels
+        /// array element at index <paramref name="pintCurrentColumn"/>.
+        /// </para>
+        /// </param>
+        /// <param name="paobjColumnInfo">
+        /// The ColumnNamesAndLabels array element at index (subscript)
+        /// <paramref name="pintCurrentColumn"/> identifies by name the column
+        /// (field) in ADODB.Recordset <paramref name="pdbRecordSet"/> from
+        /// which to copy its Value property into the ColumnValue of the
+        /// ColumnNamesAndLabels array element.
+        /// </param>
+        /// <param name="pintCurrentColumn">
+        /// This value is the index (subscript) into the array of ColumnNamesAndLabels
+        /// objects in <paramref name="paobjColumnInfo"/> to be updated from the
+        /// <paramref name="pdbRecordSet"/> ADODB.Recordset.
+        /// </param>
+        private static void OverwriteAutoValueInUserInputArrayWithValueInRecordset (
+            Recordset pdbRecordSet ,
+            ColumnNamesAndLabels [ ] paobjColumnInfo ,
+            int pintCurrentColumn )
+        {
+            paobjColumnInfo [ pintCurrentColumn ].ColumnValue = pdbRecordSet.Fields [ paobjColumnInfo [ pintCurrentColumn ].ColumnName ].Value;
+        }   // private static void OverwriteAutoValueInUserInputArrayWithValueInRecordset
+
+
+        /// <summary>
+        /// Override the value read from the table with the new value input by
+        /// the user.
+        /// </summary>
+        /// <param name="pdbRecordSet">
+        /// This argument receives a reference to the ADODB.Recordset containing
+        /// the row (record) to update.
+        /// </param>
+        /// <param name="paobjColumnInfo">
+        /// This argument receives a reference to the array of input values, of
+        /// which the element at the subscript specified in argument
+        /// <paramref name="pintCurrentColumn"/> contains the name of the column
+        /// in the ADODB.Recordset object specified by <paramref name="pdbRecordSet"/>
+        /// to be updated with the new value specified by the user, which was
+        /// copied into the ColumnValue member of the ColumnNamesAndLabels array
+        /// specified in argument <paramref name="paobjColumnInfo"/>.
+        /// </param>
+        /// <param name="pintCurrentColumn">
+        /// This argument receives the index (subscript) of the
+        /// <paramref name="paobjColumnInfo"/> array, which is used to to look
+        /// up the name of the column as it appears in ADODB.Recordset object
+        /// <paramref name="pdbRecordSet"/> and to override the value stored in
+        /// the ColumnValue property of the ColumnNamesAndLabels array element
+        /// stored at the subscript in this argument.
+        /// <para>
+        /// The column name is in the ColumnName property of the ColumnNamesAndLabels
+        /// element at this subscript in the <paramref name="paobjColumnInfo"/> array.
+        /// </para>
+        /// </param>
+        private static void OverwriteValueInRecordsetFromUserInput (
+            Recordset pdbRecordSet ,
+            ColumnNamesAndLabels [ ] paobjColumnInfo ,
+            int pintCurrentColumn )
+        {
+            pdbRecordSet.Fields [ paobjColumnInfo [ pintCurrentColumn ].ColumnName ].Value = paobjColumnInfo [ pintCurrentColumn ].ColumnValue;
+        }   // private static void OverwriteValueInRecordsetFromUserInput
+
+
+        /// <summary>
         /// Prompt for selection criteria to apply to requests to read, update,
         /// or delete.
         /// </summary>
@@ -2400,7 +2631,7 @@ namespace PSQLviaADOCS
 
             while ( rCriteria.MatchfieldInfo == null )
             {
-                Console.Write ( Properties.Resources.MSG_PROMPT_COLUMN_NAME );
+                Console.Write ( Properties.Resources.IDS_MSG_PROMPT_COLUMN_NAME );
                 rCriteria.MatchfieldInfo = EvaluateColumnName (
                     Console.ReadLine ( ) ,
                     pdbRecordSet );
@@ -2413,7 +2644,7 @@ namespace PSQLviaADOCS
 
             while ( rCriteria.CriterionValue == null )
             {
-                Console.Write ( Properties.Resources.MSG_PROMPT_MATCH_STRING );
+                Console.Write ( Properties.Resources.IDS_MSG_PROMPT_MATCH_STRING );
                 rCriteria.CriterionValue = EvaluateCriterionValue (
                     Console.ReadLine ( ) ,
                     rCriteria.MatchfieldInfo );
@@ -2426,7 +2657,7 @@ namespace PSQLviaADOCS
 
             while ( rCriteria.Condition == WhereCondition.Undspecified )
             {
-                Console.Write ( Properties.Resources.MSG_PROPMT_CRITERION );
+                Console.Write ( Properties.Resources.IDS_MSG_PROMPT_CRITERION );
                 rCriteria.Condition = EvaluateCriterionCondtion ( Console.ReadLine ( ) );
 
                 if ( rCriteria.Condition == WhereCondition.Undspecified )
@@ -2447,7 +2678,7 @@ namespace PSQLviaADOCS
             //  ----------------------------------------------------------------
 
             Console.WriteLine (
-                Properties.Resources.MSG_SELECTION_CRITERIA ,                   // Format control string
+                Properties.Resources.IDS_MSG_SELECTION_CRITERIA ,               // Format control string
                 new object [ ]
                 {
                     rCriteria.MatchfieldInfo.Name ,                             // Format Item 0: Column (Field) Name = {0}
