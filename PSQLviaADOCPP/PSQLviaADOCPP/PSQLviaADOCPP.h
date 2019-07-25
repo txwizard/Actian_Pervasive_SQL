@@ -6,9 +6,16 @@
 //   5. Go to Project > Add New Item to create new code files, or Project > Add Existing Item to add existing code files to the project
 //   6. In the future, to open this project again, go to File > Open > Project and select the .sln file
 
-#ifndef PCH_H
-#define PCH_H
+#if !defined ( PSQLVIAADOCPP_H )
+#define PSQLVIAADOCPP_H
+#if defined ( _MSC_VER ) && ( _MSC_VER >= 1020 )
+	#pragma once
+#endif  /* #if defined ( _MSC_VER ) && ( _MSC_VER >= 1020 ) */
 
-// TODO: add headers that you want to pre-compile here
+#include <StandardMacros_DAG.H>
 
-#endif //PCH_H
+#include <CRTTime.H>
+#include <NativeConssoleAppAids.h>
+#include <NativeStringAids.h>
+
+#endif // PSQLVIAADOCPP_H
