@@ -273,28 +273,28 @@
     <ClCompile Include="PSQLviaADOCPP.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="PSQLviaADOCPP.rc" />
-  </ItemGroup>
-  <ItemGroup>
     <CustomBuild Include="PSQLviaADOCPP.mc">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
       <FileType>Document</FileType>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">mc -v -n -h $(ProjectDir)\res\ %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">mc -v -n -h $(ProjectDir)\res\ -r $(ProjectDir)\res\ %(FullPath)</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compiling Message Resources</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectDir)\res\%(Filename).rc;$(ProjectDir)\res\%(Filename).h;$(ProjectDir)\res\%(Filename)_1033.bin</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">mc -v -n -h $(ProjectDir)\res\ %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">mc -v -n -h $(ProjectDir)\res\ -r $(ProjectDir)\res\ %(FullPath)</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compiling Message Resources</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ProjectDir)\res\%(Filename).rc;$(ProjectDir)\res\%(Filename).h;$(ProjectDir)\res\%(Filename)_1033.bin</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">mc -v -n -h $(ProjectDir)\res\ %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">mc -v -n -h $(ProjectDir)\res\ -r $(ProjectDir)\res\ %(FullPath)</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compiling Message Resources</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)\res\%(Filename).rc;$(ProjectDir)\res\%(Filename).h;$(ProjectDir)\res\%(Filename)_1033.bin</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">mc -v -n -h $(ProjectDir)\res\ %(FullPath)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">mc -v -n -h $(ProjectDir)\res\ -r $(ProjectDir)\res\ %(FullPath)</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compiling Message Resources</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)\res\%(Filename).rc;$(ProjectDir)\res\%(Filename).h;$(ProjectDir)\res\%(Filename)_1033.bin</Outputs>
     </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="PSQLviaADOCPP.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
