@@ -19,6 +19,8 @@
     Date       Version By Description
     ---------- ------- ---------------------------------------------------------
     2019/07/24 1.3.0.0 DG Initial implementation.
+
+    2019/07/25 1.4.0.0 DG Revise the naming scheme for managed resource strings.
     ============================================================================
 */
 
@@ -273,7 +275,7 @@ namespace PSQLviaADOCS
                 throw new ArgumentOutOfRangeException (
                     nameof ( pstrInputValue ) ,
                     pstrInputValue ,
-                    Properties.Resources.IDS_ERRMSG_NUMERIC_CONVERSION );
+                    Properties.Resources.MSG_ERR_NUMERIC_CONVERSION );
             }   // FALSE (unanticipated outcome) block, if ( ulong.TryParse ( pstrInputValue , out ulong rulngRetVal ) )
         }   // public static object ParseAndConvertUnsignedBigInteger
 
@@ -320,7 +322,7 @@ namespace PSQLviaADOCS
                         throw new ArgumentOutOfRangeException (
                             nameof ( pstrInputValue ) ,
                             pstrInputValue ,
-                            Properties.Resources.IDS_ERRMSG_INVALID_BOOLEAN_VALUE );
+                            Properties.Resources.MSG_ERR_INVALID_BOOLEAN_VALUE );
                     }   // FALSE (The input string is MOT in the list of valid False strings,pastrFalseStrings.), if ( StringIsInList ( pstrInputValue , pastrFalseStrings , CASE_INSENSITIVE ) )
                 }   // FALSE (The input string is NOT in the list of valid True strings, pastrTrueStrings.) block, if ( StringIsInList ( pstrInputValue , pastrTrueStrings , CASE_INSENSITIVE ) )
             }   // FALSE (The string contains at least one character. block, if ( string.IsNullOrEmpty ( pstrInputValue ) )
@@ -393,7 +395,7 @@ namespace PSQLviaADOCS
                         throw new ArgumentOutOfRangeException (
                             nameof ( pstrInputValue ) ,
                             pstrInputValue ,
-                            Properties.Resources.IDS_ERRMSG_INVALID_DATE_CONVERSION );
+                            Properties.Resources.MSG_ERR_INVALID_DATE_CONVERSION );
                     }   // TRUE (The caller wants an exception when the date won't parse.) block, if ( pfThrowWhenInvalid )
                     else
                     {
@@ -712,7 +714,7 @@ namespace PSQLviaADOCS
                         nameof ( pstrInputValue ) ,                             // string paramName
                         pstrInputValue ,                                        // object paramValue
                         string.Format (                                         // string message
-                            Properties.Resources.IDS_MSG_INPUT_TOO_LONG ,       // Format control string
+                            Properties.Resources.MSG_INPUT_TOO_LONG ,       // Format control string
                             new object [ ]
                             {
                                 pstrInputValue ,                                // Format Item 0: Input string         = {0}

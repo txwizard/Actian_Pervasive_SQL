@@ -28,6 +28,8 @@
                           command line.
 
     2019/07/24 1.3.0.0 DG Implement the rest of the CRUD model.
+
+    2019/07/25 1.4.0.0 DG Revise the naming scheme for managed resource strings.
     ============================================================================
 */
 
@@ -450,7 +452,7 @@ namespace PSQLviaADOCS
             string pstrTableName )
         {
             Console.WriteLine (
-                Properties.Resources.IDS_MSG_PROMPT_FOR_NEW_VALUES ,            // Format control string
+                Properties.Resources.MSG_PROMPT_FOR_NEW_VALUES ,            // Format control string
                 Environment.NewLine );                                          // Format Item 0: prompts.{0}
 
             //  ----------------------------------------------------------------
@@ -547,7 +549,7 @@ namespace PSQLviaADOCS
                     while ( fResponseIsInValid )
                     {
                         Console.Write (
-                            Properties.Resources.IDS_MSG_SELECTION_COUNT_AND_PROMPT ,
+                            Properties.Resources.MSG_SELECTION_COUNT_AND_PROMPT ,
                             pdbRecordSet.RecordCount );
                         string strResponse = Console.ReadLine ( );
 
@@ -560,14 +562,14 @@ namespace PSQLviaADOCS
                                 break;                                          // Break out of the switch block, so that the loops can end.
                             case "@no":
                             case "n":
-                                Console.WriteLine ( Properties.Resources.IDS_MSG_DELETION_ABORTED );
+                                Console.WriteLine ( Properties.Resources.MSG_DELETION_ABORTED );
                                 return;                                         // Leap out of the whole routine.
                         }   // switch ( strResponse.ToLower ( ) )
                     }   // while ( fResponseIsInValid )
                 }   // TRUE (anticipated outcome) block, if ( pdbRecordSet.RecordCount > ListInfo.LIST_IS_EMPTY )
                 else
                 {
-                    Console.WriteLine ( Properties.Resources.IDS_PROMPT_NO_ROWS_SELECTED );
+                    Console.WriteLine ( Properties.Resources.PROMPT_NO_ROWS_SELECTED );
                     EmitConsoleBeep ( );
                     return;
                 }   // FALSE (unanticipated outcome) block, if ( pdbRecordSet.RecordCount > ListInfo.LIST_IS_EMPTY )
@@ -592,7 +594,7 @@ namespace PSQLviaADOCS
             }   // while ( !pdbRecordSet.EOF )
 
             Console.WriteLine (
-                Properties.Resources.IDS_MSG_DELETED_RECORDS_SUMMARY ,
+                Properties.Resources.MSG_DELETED_RECORDS_SUMMARY ,
                 intRowsDeleted );
         }   // private static void DeleteSelectedRows
 
@@ -808,9 +810,9 @@ namespace PSQLviaADOCS
             pfcwProgress.ScrollUp ( );
 
             Console.WriteLine (
-                Properties.Resources.IDS_MSG_TASK_SUMMARY ,
+                Properties.Resources.MSG_TASK_SUMMARY ,
                 Environment.NewLine ,
-                Properties.Resources.IDS_MSG_LABEL_FOR_PROPERTIES_LIST ,
+                Properties.Resources.MSG_LABEL_FOR_PROPERTIES_LIST ,
                 strDetailTabularReportFQFN );
         }  // private static void ListTableColumnProperties
 
@@ -1000,7 +1002,7 @@ namespace PSQLviaADOCS
                 if ( pdbRecordSet.RecordCount != MagicNumbers.PLUS_ONE )
                 {
                     Console.WriteLine (
-                        Properties.Resources.IDS_MSG_PROMPT_ONE_ROW_ONLY ,          // this Format Control String contains everything required to format the record count per NLS settings.
+                        Properties.Resources.MSG_PROMPT_ONE_ROW_ONLY ,          // this Format Control String contains everything required to format the record count per NLS settings.
                         pdbRecordSet.RecordCount );                                 // Format Item 0: Your query returned {0::N0} rows.
                     EmitConsoleBeep ( );
                 }   // if ( pdbRecordSet.RecordCount != MagicNumbers.PLUS_ONE )
@@ -1070,7 +1072,7 @@ namespace PSQLviaADOCS
                     }   // if ( penmAddOrUpdateRow == AddOrUpdateMode.UpdatingOneRow )
 
                     Console.WriteLine (
-                        Properties.Resources.IDS_MSG_INFO_ASSIGNED_COLUMN_VALUE ,                                           // Format control string    ArrayInfo.OrdinalFromIndex ( intCurrentColumn ) ,                                               // Format Control String
+                        Properties.Resources.MSG_INFO_ASSIGNED_COLUMN_VALUE ,                                           // Format control string    ArrayInfo.OrdinalFromIndex ( intCurrentColumn ) ,                                               // Format Control String
                         ArrayInfo.OrdinalFromIndex ( intCurrentColumn ) ,                                               // Format Item 0: {0}:
                         paobjColumnInfo [ intCurrentColumn ].ColumnLabel ,                                              // Format Item 1: {1} value assigned
                         paobjColumnInfo [ intCurrentColumn ].ColumnValue );                                             // Format Item 2: by system = {2}
@@ -1080,7 +1082,7 @@ namespace PSQLviaADOCS
                     if ( penmAddOrUpdateRow == AddOrUpdateMode.UpdatingOneRow )
                     {
                         Console.Write (
-                            Properties.Resources.IDS_MSG_PROMPT_FOR_NEW_FIELD_VALUE ,                                       // Format control string
+                            Properties.Resources.MSG_PROMPT_FOR_NEW_FIELD_VALUE ,                                       // Format control string
                             new object [ ]
                             {
                                 ArrayInfo.OrdinalFromIndex ( intCurrentColumn ) ,                                       // Format Item 0: {0:N2}: Current value
@@ -1093,7 +1095,7 @@ namespace PSQLviaADOCS
                     else
                     {
                         Console.Write (
-                            Properties.Resources.IDS_MSG_PROMPT_FOR_FIELD_VALUE ,                                           // Format control string
+                            Properties.Resources.MSG_PROMPT_FOR_FIELD_VALUE ,                                           // Format control string
                             ArrayInfo.OrdinalFromIndex ( intCurrentColumn ) ,                                           // Format Item 0: {0}: Enter value
                             paobjColumnInfo [ intCurrentColumn ].ColumnLabel );                                         // Format Item 1: for field {1}:
                     }   // FALSE (User editing of this column is forbidden.) block, if ( paobjColumnInfo [ intCurrentColumn ].IsAutoNumberColumn || paobjColumnInfo [ intCurrentColumn ].IsPrimaryKeyColumn )
@@ -1117,7 +1119,7 @@ namespace PSQLviaADOCS
                             else if ( penmAddOrUpdateRow == AddOrUpdateMode.AddingOneRow )
                             {
                                 Console.WriteLine (
-                                    Properties.Resources.IDS_ERRMSG_INVALID_IN_THIS_CONTEXT ,                               // Format control string
+                                    Properties.Resources.MSG_ERR_INVALID_IN_THIS_CONTEXT ,                               // Format control string
                                     KEEP_CURRENT_VALUE ,                                                                // Format Item 0: Input value '{0}' is invalid
                                     penmAddOrUpdateRow ,                                                                // Format Item 1: during {1} operations.
                                     Environment.NewLine );                                                              // Format Item 2: operations.{2}Please input a valid value.
@@ -1145,7 +1147,7 @@ namespace PSQLviaADOCS
                                                                              Environment.NewLine ) )
                                                                      : SpecialStrings.EMPTY_STRING;
 
-                                    if ( Properties.Resources.IDS_MSG_INPUT_TOO_LONG.StartsWith ( strExceptionDescription ) )
+                                    if ( Properties.Resources.MSG_INPUT_TOO_LONG.StartsWith ( strExceptionDescription ) )
                                     {
                                         continue;   // Start a new iteration.
                                     }   // if ( Properties.Resources.MSG_INPUT_TOO_LONG.StartsWith ( strExceptionDescription ) )
@@ -1304,7 +1306,7 @@ namespace PSQLviaADOCS
                 pstrTableName ,                                                 // Format Item 0: SELECT * FROM {0}
                 strWhereClause );                                               // Format Item 1: WHERE {1}
             Console.WriteLine (
-                Properties.Resources.IDS_MSG_SELECT_QUERY ,                         // Format Control String
+                Properties.Resources.MSG_SELECT_QUERY ,                         // Format Control String
                 rstrSQLSelectQuery ,                                            // Format Item 0: SQL SELECT Query    = {0}
                 Environment.NewLine );                                          // Format Item 1: Platform-dependent newline
 
@@ -1373,7 +1375,7 @@ namespace PSQLviaADOCS
             {
                 throw new InvalidOperationException (
                     string.Format (
-                        Properties.Resources.IDS_ERRMSG_INTERNAL_SQL_ERROR ,                                            // Format control string
+                        Properties.Resources.MSG_ERR_INTERNAL_SQL_ERROR ,                                            // Format control string
                         SQL ,                                                                                           // Format Item 0: returned by SQL query {0}
                         rs.Fields [ ArrayInfo.ARRAY_FIRST_ELEMENT ].Value.ToString ( ).QuoteString ( ) ) );             // Format Item 1: is {1}, which
             }   // FALSE (unanticipated outcome) block, if ( long.TryParse ( rs.Fields [ ArrayInfo.ARRAY_FIRST_ELEMENT ].Value.ToString ( ) , out long lngNextId ) )
@@ -1517,7 +1519,7 @@ namespace PSQLviaADOCS
                 {
                     throw new InvalidOperationException (
                         string.Format (
-                            Properties.Resources.IDS_ERRMSG_INVALID_SCHEMA_LINE ,// Format Control String
+                            Properties.Resources.MSG_ERR_INVALID_SCHEMA_LINE ,// Format Control String
                             new object [ ]
                             {
                                 intLineNumber ,                                 // Format Item 0: Line {0}
@@ -1675,7 +1677,7 @@ namespace PSQLviaADOCS
         {
             if ( string.IsNullOrEmpty ( pstrCriterionValue ) )
             {
-                Console.WriteLine ( Properties.Resources.IDS_ERRMSG_MATCH_STRING_IS_REQUIRED );
+                Console.WriteLine ( Properties.Resources.MSG_ERR_MATCH_STRING_IS_REQUIRED );
                 return null;
             }   // TRUE (unanticipated outcome) block, if ( string.IsNullOrEmpty ( pstrCriterionValue ) )
             else
@@ -1693,10 +1695,10 @@ namespace PSQLviaADOCS
                 }
                 catch ( ArgumentOutOfRangeException exArgOutOfRange )
                 {
-                    if ( exArgOutOfRange.Message.StartsWith ( Properties.Resources.IDS_MSG_INPUT_TOO_LONG.Truncate ( Properties.Resources.IDS_MSG_INPUT_TOO_LONG.IndexOf ( Environment.NewLine ) ) ) )
+                    if ( exArgOutOfRange.Message.StartsWith ( Properties.Resources.MSG_INPUT_TOO_LONG.Truncate ( Properties.Resources.MSG_INPUT_TOO_LONG.IndexOf ( Environment.NewLine ) ) ) )
                     {
                         Console.Write (
-                            Properties.Resources.IDS_MSG_PROMPT_TRUNCATE_OK ,                       // Format control string
+                            Properties.Resources.MSG_PROMPT_TRUNCATE_OK ,                       // Format control string
                             pstrCriterionValue.Truncate (                                           // Format Item 0: To make it fit, it must be truncated to {0}.
                                 pdbField.DefinedSize ) ,                                            // Maximun string length.
                             Environment.NewLine );                                                  // Format Item 1: The input string is too long.{1} AND To make it fit, it must be truncated to {0}.{1}
@@ -1732,7 +1734,7 @@ namespace PSQLviaADOCS
             }
             catch ( InvalidOperationException exInvOper )
             {
-                string strExpectedMessageText = Properties.Resources.IDS_ERRMSG_PREFIX_INVALID_VERB;
+                string strExpectedMessageText = Properties.Resources.MSG_ERR_PREFIX_INVALID_VERB;
                 int intExpectedMessageStartPos = exInvOper.Message.IndexOf ( strExpectedMessageText );
 
                 if ( intExpectedMessageStartPos > ListInfo.INDEXOF_NOT_FOUND )
@@ -1870,7 +1872,7 @@ namespace PSQLviaADOCS
 
                 if ( strErrorPrompt == null )
                 {   // Defer loading until needed.
-                    strErrorPrompt = Properties.Resources.IDS_ERRMSG_INVALID_NAME;
+                    strErrorPrompt = Properties.Resources.MSG_ERR_INVALID_NAME;
                 }   // if ( strErrorPrompt == null )
 
                 messagesInColor.WriteLine (
@@ -1881,7 +1883,7 @@ namespace PSQLviaADOCS
 
             while ( rparameters.TableName == null )
             {
-                strPrompt = strPrompt ?? Properties.Resources.IDS_MSG_PROMPT_FOR_TABLE_NAME;
+                strPrompt = strPrompt ?? Properties.Resources.MSG_PROMPT_FOR_TABLE_NAME;
                 Console.Error.Write ( strPrompt );
                 EmitConsoleBeep ( );
                 strTableNameCandidate = Console.ReadLine ( );
@@ -1894,7 +1896,7 @@ namespace PSQLviaADOCS
                 {   // Perform just-in-time object initializations.
                     if ( strErrorPrompt == null )
                     {   // Defer loading until needed.
-                        strErrorPrompt = Properties.Resources.IDS_ERRMSG_INVALID_NAME;
+                        strErrorPrompt = Properties.Resources.MSG_ERR_INVALID_NAME;
                     }   // if ( strErrorPrompt == null )
 
                     if ( messagesInColor == null )
@@ -1925,7 +1927,7 @@ namespace PSQLviaADOCS
             }   // FALSE (The command tail omits a verb.) block, if ( pastrArgs.Length > CRUD_VERB )
 
             Console.WriteLine (
-                Properties.Resources.IDS_MSG_DISPLAY_TABLE_NAME_AND_VERB ,      // Format control string read from managed resource table
+                Properties.Resources.MSG_DISPLAY_TABLE_NAME_AND_VERB ,      // Format control string read from managed resource table
                 rparameters.TableName ,                                         // Format Item 0: Processing PSQL database table {0}
                 rparameters.Verb ,                                              // Format Item 1: Action Taken = {1}
                 Environment.NewLine );                                          // Format Item 1: Platform depdent newline database table {0}{2} AND Action Taken = {1}{2}
@@ -2058,7 +2060,7 @@ namespace PSQLviaADOCS
             if ( prs.RecordCount > MagicNumbers.PLUS_ONE )
             {
                 pfcwProgress.Write (                                            // Update the status shown on the console.
-                    Properties.Resources.IDS_MSG_PROGRESS_UPDATE ,              // Format Item 0: Listing record # {0}
+                    Properties.Resources.MSG_PROGRESS_UPDATE ,              // Format Item 0: Listing record # {0}
                     plngItemNumber.ToString (                                   // Argument plngItemNumber is the current record number.
                         DisplayFormats.NUMBER_PER_REG_SETTINGS_0D ) ,           // Format the integer with thousands separators per the Regional Settings in the Windows Control Panel.
                     s_lngDispMsgNRecs );                                        // Format Item 1: of {1}
@@ -2092,7 +2094,7 @@ namespace PSQLviaADOCS
                 }   // for ( int intJ = ArrayInfo.ARRAY_FIRST_ELEMENT ; intJ <= s_intLastIndex ; intJ++ )
 
                 pswDetailsList.WriteLine (
-                    Properties.Resources.IDS_MSG_REPORT_HEADER ,                // Format control string
+                    Properties.Resources.MSG_REPORT_HEADER ,                // Format control string
                     s_csm.BaseStateManager.AppStartupTimeLocal ,                // Format Item 0: Run Date: {0}
                     s_csm.BaseStateManager.AppStartupTimeUtc ,                  // Format Item 1: ({1} UTC)
                     prs.Source ,                                                // Format Item 2: Table Name       = {2}
@@ -2102,7 +2104,7 @@ namespace PSQLviaADOCS
                 if ( prs.RecordCount == MagicNumbers.PLUS_ONE )
                 {
                     Console.WriteLine (
-                        Properties.Resources.IDS_MSG_REPORT_HEADER ,            // Format control string
+                        Properties.Resources.MSG_REPORT_HEADER ,            // Format control string
                         s_csm.BaseStateManager.AppStartupTimeLocal ,            // Format Item 0: Run Date: {0}
                         s_csm.BaseStateManager.AppStartupTimeUtc ,              // Format Item 1: ({1} UTC)
                         prs.Source ,                                            // Format Item 2: Table Name       = {2}
@@ -2269,14 +2271,14 @@ namespace PSQLviaADOCS
             FixedConsoleWriter pfcwProgress )                                   // Use this special object to update the console without scrolling its buffer up.
         {
             pfcwProgress.Write (                                                // Create or update the progress report on the console.
-                Properties.Resources.IDS_MSG_SCHEMA_PROGRESS ,                  // Format control string
+                Properties.Resources.MSG_SCHEMA_PROGRESS ,                  // Format control string
                 plngItemNumber + ArrayInfo.ORDINAL_FROM_INDEX ,                 // Format Item 0: Listing Column # {0} - Since plngItemNumber is a long integer, ArrayInfo.OrdinalFromIndex requires a downcast. Inline addition is safer.
                 paColumnInfo [ plngItemNumber ].ColumnName ,                    // Format Item 1: , {1} of
                 pdbRecordSet.Source );                                          // Format Item 2: table {2}
 
             if ( plngItemNumber == ArrayInfo.ARRAY_FIRST_ELEMENT )
             {   // Create the label row. Argument plngItemNumber is the index (subscript) of the array subscript.
-                string strLabelRow = Properties.Resources.IDS_MSG_COLUMN_PROPERTIES_LABEL_ROW.ReplaceEscapedTabsInStringFromResX ( );
+                string strLabelRow = Properties.Resources.MSG_COLUMN_PROPERTIES_LABEL_ROW.ReplaceEscapedTabsInStringFromResX ( );
                 pswDetailsTable.WriteLine ( strLabelRow );
                 s_strDynamicListReportFormatString = ReportHelpers.DetailTemplateFromLabels ( strLabelRow );
             }   // if ( plngItemNumber == ArrayInfo.ARRAY_FIRST_ELEMENT )
@@ -2423,7 +2425,7 @@ namespace PSQLviaADOCS
             }   // while ( !rs.EOF )
 
             pswDetailsList.WriteLine (
-                Properties.Resources.IDS_REPORT_FOOTER ,                        // Format Control String
+                Properties.Resources.REPORT_FOOTER ,                        // Format Control String
                 lngItemNumber );                                                // Format Item 0: End of report, Total records = {0::N0}
 
             //  ------------------------------------------------------------
@@ -2438,14 +2440,14 @@ namespace PSQLviaADOCS
             }   // if ( pdbRecordSet.RecordCount > MagicNumbers.PLUS_ONE )
 
             Console.WriteLine (
-                Properties.Resources.IDS_MSG_TASK_SUMMARY ,
+                Properties.Resources.MSG_TASK_SUMMARY ,
                 Environment.NewLine ,
-                Properties.Resources.IDS_MSG_LABEL_FOR_LISTING ,
+                Properties.Resources.MSG_LABEL_FOR_LISTING ,
                 strDetailListReportFQFN );
             Console.WriteLine (
-                Properties.Resources.IDS_MSG_TASK_SUMMARY ,
+                Properties.Resources.MSG_TASK_SUMMARY ,
                 SpecialStrings.EMPTY_STRING ,
-                Properties.Resources.IDS_MSG_LABEL_FOR_TABLE ,
+                Properties.Resources.MSG_LABEL_FOR_TABLE ,
                 strDetailTabularReportFQFN );
         }   // private static void ListAllRowsInRecordset
 
@@ -2631,7 +2633,7 @@ namespace PSQLviaADOCS
 
             while ( rCriteria.MatchfieldInfo == null )
             {
-                Console.Write ( Properties.Resources.IDS_MSG_PROMPT_COLUMN_NAME );
+                Console.Write ( Properties.Resources.MSG_PROMPT_COLUMN_NAME );
                 rCriteria.MatchfieldInfo = EvaluateColumnName (
                     Console.ReadLine ( ) ,
                     pdbRecordSet );
@@ -2644,7 +2646,7 @@ namespace PSQLviaADOCS
 
             while ( rCriteria.CriterionValue == null )
             {
-                Console.Write ( Properties.Resources.IDS_MSG_PROMPT_MATCH_STRING );
+                Console.Write ( Properties.Resources.MSG_PROMPT_MATCH_STRING );
                 rCriteria.CriterionValue = EvaluateCriterionValue (
                     Console.ReadLine ( ) ,
                     rCriteria.MatchfieldInfo );
@@ -2657,7 +2659,7 @@ namespace PSQLviaADOCS
 
             while ( rCriteria.Condition == WhereCondition.Undspecified )
             {
-                Console.Write ( Properties.Resources.IDS_MSG_PROMPT_CRITERION );
+                Console.Write ( Properties.Resources.MSG_PROMPT_CRITERION );
                 rCriteria.Condition = EvaluateCriterionCondtion ( Console.ReadLine ( ) );
 
                 if ( rCriteria.Condition == WhereCondition.Undspecified )
@@ -2678,7 +2680,7 @@ namespace PSQLviaADOCS
             //  ----------------------------------------------------------------
 
             Console.WriteLine (
-                Properties.Resources.IDS_MSG_SELECTION_CRITERIA ,               // Format control string
+                Properties.Resources.MSG_SELECTION_CRITERIA ,               // Format control string
                 new object [ ]
                 {
                     rCriteria.MatchfieldInfo.Name ,                             // Format Item 0: Column (Field) Name = {0}

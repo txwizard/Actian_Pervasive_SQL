@@ -117,195 +117,163 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="IDS_ERRMSG_DUPLICATE_COLUMN_NAME" xml:space="preserve">
-    <value>Duplicate column name</value>
-    <comment>The public ValidColumnName constructor uses this message to report a duplicate column name.</comment>
-  </data>
-  <data name="IDS_ERRMSG_INTERNAL_SQL_ERROR" xml:space="preserve">
-    <value>Internal error: The value in column zero of the result set returned by SQL query {0} is {1}, which cannot be converted to a long integer.</value>
-    <comment>Callback routine AssignNextID formats an error message from this string to repost that the value returned by the SQL query that it sent to the data base returned an invalid integral value.</comment>
-  </data>
-  <data name="IDS_ERRMSG_INVALID_BOOLEAN_VALUE" xml:space="preserve">
-    <value>The specified value is not a valid Boolean string value.</value>
-    <comment>static Method ADOHelpers.ParseAndConvertBoolean attaches this string to its ArgumentOutOfRange exception reports.</comment>
-  </data>
-  <data name="IDS_ERRMSG_INVALID_DATE_CONVERSION" xml:space="preserve">
-    <value>The specified input value cannot be converted to the specified numeric type.</value>
-    <comment>Static method ADOHelpers.ParseAndConvertDBDate attaches this to the ArgumentOutOfRangeException exception that it throws when instructed to report invalid inputs through an exception.</comment>
-  </data>
-  <data name="IDS_ERRMSG_INVALID_IN_THIS_CONTEXT" xml:space="preserve">
-    <value>Input value '{0}' is invalid during {1} operations.{2}Please input a valid value.</value>
-    <comment>Main module subroutine AddOrUpdateRow displays this message when the duplication token is entered during new record input.</comment>
-  </data>
-  <data name="IDS_ERRMSG_INVALID_NAME" xml:space="preserve">
-    <value>{1}Table name {0} is invalid.{1}</value>
-    <comment>Main module helper routine PromptForTableName formats a message when the specified table name is invalid.</comment>
-  </data>
-  <data name="IDS_ERRMSG_INVALID_SCHEMA_LINE" xml:space="preserve">
-    <value>Line {0} in {1} table schema file {2} is invalid.{6}    Expected Column Count = {3}{6}    Actual Column Count   = {4}{6}    Text of Invalid Line  = {5}{6}</value>
-    <comment>In the unlikely event that the schema file becomes corrupted, this message identifies the affected line and the cause of the corruption.</comment>
-  </data>
-  <data name="IDS_ERRMSG_MATCH_STRING_IS_REQUIRED" xml:space="preserve">
-    <value>There is no reasonable default value; the match string is required.</value>
-    <comment>Main module subroutine PromptForSelectionCriteria displays this message when the operator neglects to input a valid string.</comment>
-  </data>
-  <data name="IDS_ERRMSG_NUMERIC_CONVERSION" xml:space="preserve">
-    <value>The specified input value cannot be converted to the specified numeric type.</value>
-    <comment>Static methods on the ADOHelpers class use this message to report numeric conversion errors.</comment>
-  </data>
-  <data name="IDS_ERRMSG_PREFIX_INVALID_VERB" xml:space="preserve">
-    <value>is not a valid value for CrudVerb.</value>
-    <comment>Main module subroutine EvaluateCrudVerb examines the exception to confirm that it contains this string, which is expected when the routine gets an invalid verb.</comment>
-  </data>
-  <data name="IDS_MSG_COLUMNNAMESANDLABELS_TOSTRING" xml:space="preserve">
-    <value>TableName = {0}, ColumnIndex = {1}, ColumnName = {2}, ColumnValue = {3}, ColumnLabel = {4}, IsAutoNumberKeyColumn = {5}, IsPrimaryKeyColumn = {6}</value>
-    <comment>The ToString method on FieldNamesAndLabels formats its output from this template.</comment>
-  </data>
-  <data name="IDS_MSG_COLUMN_PROPERTIES_LABEL_ROW" xml:space="preserve">
-    <value>Index\tName\tActualSize\tAttributes\tDataFormat\tDefinedSize\tNumericScale\tPrecision\tProperties_Count\tStatus\tType</value>
-    <comment>Main module subroutine  ListTableColumnProperties uses this string as its label row.</comment>
-  </data>
-  <data name="IDS_MSG_DELETED_RECORDS_SUMMARY" xml:space="preserve">
-    <value>Operation completed: total records deleted = {0:N0}</value>
-    <comment>Main module subroutine DeleteSelectedRows displays this summary report when it finished running through the recordset. This format string incorporates NLS-aware integer formatting.</comment>
-  </data>
-  <data name="IDS_MSG_DELETION_ABORTED" xml:space="preserve">
-    <value>Record deletion aborted by operator.</value>
-    <comment>Main module subroutine DeleteSelectedRows displays this summary when the operator answers No to the prompt for permission to delete records.</comment>
-  </data>
-  <data name="IDS_MSG_DISPLAY_TABLE_NAME_AND_VERB" xml:space="preserve">
-    <value>Processing PSQL database table {0}{2}                Action Taken = {1}{2}</value>
-    <comment>The main routine formats a message that displays the name of the table being processed on the console output stream.</comment>
-  </data>
-  <data name="IDS_MSG_EXCEPTION_HRESULT" xml:space="preserve">
-    <value>    Exception HResult: {0}</value>
-    <comment>The exception handler in the catch block of the main routine uses these string to construct the exception report that it displays on the application's console.</comment>
-  </data>
-  <data name="IDS_MSG_EXCEPTION_SOURCE" xml:space="preserve">
-    <value>    Exception Source: {0}</value>
-    <comment>The exception handler in the catch block of the main routine uses these string to construct the exception report that it displays on the application's console.</comment>
-  </data>
-  <data name="IDS_MSG_EXCEPTION_STACKTRACE" xml:space="preserve">
-    <value>    Exception StackTrace: {0}{1}</value>
-    <comment>The exception handler in the catch block of the main routine uses these string to construct the exception report that it displays on the application's console.</comment>
-  </data>
-  <data name="IDS_MSG_EXCEPTION_TARGETSITE" xml:space="preserve">
-    <value>    Exception TargetSite: {0}</value>
-    <comment>The exception handler in the catch block of the main routine uses these string to construct the exception report that it displays on the application's console.</comment>
-  </data>
-  <data name="IDS_MSG_EXCEPTION_TYPE_AND_MESSAGE" xml:space="preserve">
-    <value>An {0} exception arose.{2}{2}    Exception Message: {1}</value>
-    <comment>The exception handler in the catch block of the main routine uses these string to construct the exception report that it displays on the application's console.</comment>
-  </data>
-  <data name="IDS_MSG_INFO_ASSIGNED_COLUMN_VALUE" xml:space="preserve">
-    <value>        {0}: {1} value assigned by system = {2}</value>
-    <comment>Method AddNewRows displays this message once for each column (field) that gets its value assigned by the program.</comment>
-  </data>
-  <data name="IDS_MSG_INPUT_TOO_LONG" xml:space="preserve">
-    <value>The input string is too long.{4}    Input string         = {0}{4}    Input string length  = {1}{4}    Maximum field length = {2}{4}    Truncated string     = {3}{4}</value>
-    <comment>Static ADOHelpers method ParseAndConvertString formats its exception report from this string.</comment>
-  </data>
-  <data name="IDS_MSG_LABEL_FOR_LISTING" xml:space="preserve">
-    <value>Listing</value>
-    <comment>The DoTask routine on the main module constructs its summary report from this template.</comment>
-  </data>
-  <data name="IDS_MSG_LABEL_FOR_PROPERTIES_LIST" xml:space="preserve">
-    <value>Column Properties</value>
-    <comment>Static method ListTableColumnProperties uses this template to make its final report.</comment>
-  </data>
-  <data name="IDS_MSG_LABEL_FOR_TABLE" xml:space="preserve">
-    <value>Table  </value>
-    <comment>Main module subroutine DoTask constructs its summary report from this template.</comment>
-  </data>
-  <data name="IDS_MSG_PROGRESS_UPDATE" xml:space="preserve">
-    <value>    Listing record # {0} of {1}</value>
-    <comment>Main module subroutine ListAllFieldsOnConsole uses this message to update the console.</comment>
-  </data>
-  <data name="IDS_MSG_PROMPT_COLUMN_NAME" xml:space="preserve">
-    <value>Column Neme against which to match (CR for default value, ID): ---&gt;&gt; </value>
-    <comment>Main module subroutine PromptForSelectionCriteria displays this prompt.</comment>
-  </data>
-  <data name="IDS_MSG_PROMPT_CRITERION" xml:space="preserve">
-    <value>Enter selection criterion (CR for default value, IsEqualTo):   ---&gt;&gt; </value>
-    <comment>Main module subroutine PromptForSelectionCriteria displays this prompt.</comment>
-  </data>
-  <data name="IDS_MSG_PROMPT_FOR_FIELD_VALUE" xml:space="preserve">
-    <value>        {0}: Enter value for field {1}: </value>
-    <comment>Main module subroutine AddNewRows displays this message once for each column (field) in the table.</comment>
-  </data>
-  <data name="IDS_MSG_PROMPT_FOR_NEW_FIELD_VALUE" xml:space="preserve">
-    <value>       {0,2:N0}: Current value of field {1} = {2}{4}           Enter new value, or '{3}' to keep the existing value. ---&gt;&gt;</value>
-    <comment>Main module subroutine AddOrUpdateRow uses this template for its prompt when it runs in Update maode.</comment>
-  </data>
-  <data name="IDS_MSG_PROMPT_FOR_NEW_VALUES" xml:space="preserve">
-    <value>    Enter values for the new record in response to the following prompts.{0}</value>
-    <comment>Main module subroutine AddNewRows displayss this message once before it begins prompting for new field values.</comment>
-  </data>
-  <data name="IDS_MSG_PROMPT_FOR_TABLE_NAME" xml:space="preserve">
-    <value>    Specify which table to process.</value>
-    <comment>Main module subroutine PromptForTableName in the main module displays this text to request a missing table name.</comment>
-  </data>
-  <data name="IDS_MSG_PROMPT_MATCH_STRING" xml:space="preserve">
-    <value>Column Value (There is no default. You must enter a value.):   ---&gt;&gt; </value>
-    <comment>Main module subroutine PromptForSelectionCriteria displays this prompt.</comment>
-  </data>
-  <data name="IDS_MSG_PROMPT_ONE_ROW_ONLY" xml:space="preserve">
-    <value>The update routine supports updating only one row at a time. Your query returned {0:N0} rows.</value>
-    <comment>Main module subroutine UpdateOneRow displays this message when the selection matches two or more rows or zero rows.</comment>
-  </data>
-  <data name="IDS_MSG_PROMPT_TRUNCATE_OK" xml:space="preserve">
-    <value>The input string is too long.{1}    To make it fit, it must be truncated to {0}.{1}    Is that OK (Y/N)? </value>
-    <comment>Main module subroutine PromptForSelectionCriteria displays this prompt.</comment>
-  </data>
   <data name="IDS_MSG_RECORD_LABEL_PREFIX" xml:space="preserve">
     <value>Record Number {0}: </value>
     <comment>The first column (field) shown on the report is the record ID, which has this as its prefix. Everything else gets whitespace. NOTE: Leaft this format as is; FormatItem.UpgradeFormatItem fixes it up.</comment>
   </data>
-  <data name="IDS_MSG_REPORT_HEADER" xml:space="preserve">
+  <data name="MSG_COLUMNNAMESANDLABELS_TOSTRING" xml:space="preserve">
+    <value>TableName = {0}, ColumnIndex = {1}, ColumnName = {2}, ColumnValue = {3}, ColumnLabel = {4}, IsAutoNumberKeyColumn = {5}, IsPrimaryKeyColumn = {6}</value>
+    <comment>The ToString method on FieldNamesAndLabels formats its output from this template.</comment>
+  </data>
+  <data name="MSG_COLUMN_PROPERTIES_LABEL_ROW" xml:space="preserve">
+    <value>Index\tName\tActualSize\tAttributes\tDataFormat\tDefinedSize\tNumericScale\tPrecision\tProperties_Count\tStatus\tType</value>
+    <comment>Main module subroutine  ListTableColumnProperties uses this string as its label row.</comment>
+  </data>
+  <data name="MSG_DELETED_RECORDS_SUMMARY" xml:space="preserve">
+    <value>Operation completed: total records deleted = {0:N0}</value>
+    <comment>Main module subroutine DeleteSelectedRows displays this summary report when it finished running through the recordset. This format string incorporates NLS-aware integer formatting.</comment>
+  </data>
+  <data name="MSG_DELETION_ABORTED" xml:space="preserve">
+    <value>Record deletion aborted by operator.</value>
+    <comment>Main module subroutine DeleteSelectedRows displays this summary when the operator answers No to the prompt for permission to delete records.</comment>
+  </data>
+  <data name="MSG_DISPLAY_TABLE_NAME_AND_VERB" xml:space="preserve">
+    <value>Processing PSQL database table {0}{2}                Action Taken = {1}{2}</value>
+    <comment>The main routine formats a message that displays the name of the table being processed on the console output stream.</comment>
+  </data>
+  <data name="MSG_ERR_DUPLICATE_COLUMN_NAME" xml:space="preserve">
+    <value>Duplicate column name</value>
+    <comment>The public ValidColumnName constructor uses this message to report a duplicate column name.</comment>
+  </data>
+  <data name="MSG_ERR_INTERNAL_SQL_ERROR" xml:space="preserve">
+    <value>Internal error: The value in column zero of the result set returned by SQL query {0} is {1}, which cannot be converted to a long integer.</value>
+    <comment>Callback routine AssignNextID formats an error message from this string to repost that the value returned by the SQL query that it sent to the data base returned an invalid integral value.</comment>
+  </data>
+  <data name="MSG_ERR_INVALID_BOOLEAN_VALUE" xml:space="preserve">
+    <value>The specified value is not a valid Boolean string value.</value>
+    <comment>static Method ADOHelpers.ParseAndConvertBoolean attaches this string to its ArgumentOutOfRange exception reports.</comment>
+  </data>
+  <data name="MSG_ERR_INVALID_DATE_CONVERSION" xml:space="preserve">
+    <value>The specified input value cannot be converted to the specified numeric type.</value>
+    <comment>Static method ADOHelpers.ParseAndConvertDBDate attaches this to the ArgumentOutOfRangeException exception that it throws when instructed to report invalid inputs through an exception.</comment>
+  </data>
+  <data name="MSG_ERR_INVALID_IN_THIS_CONTEXT" xml:space="preserve">
+    <value>Input value '{0}' is invalid during {1} operations.{2}Please input a valid value.</value>
+    <comment>Main module subroutine AddOrUpdateRow displays this message when the duplication token is entered during new record input.</comment>
+  </data>
+  <data name="MSG_ERR_INVALID_NAME" xml:space="preserve">
+    <value>{1}Table name {0} is invalid.{1}</value>
+    <comment>Main module helper routine PromptForTableName formats a message when the specified table name is invalid.</comment>
+  </data>
+  <data name="MSG_ERR_INVALID_SCHEMA_LINE" xml:space="preserve">
+    <value>Line {0} in {1} table schema file {2} is invalid.{6}    Expected Column Count = {3}{6}    Actual Column Count   = {4}{6}    Text of Invalid Line  = {5}{6}</value>
+    <comment>In the unlikely event that the schema file becomes corrupted, this message identifies the affected line and the cause of the corruption.</comment>
+  </data>
+  <data name="MSG_ERR_MATCH_STRING_IS_REQUIRED" xml:space="preserve">
+    <value>There is no reasonable default value; the match string is required.</value>
+    <comment>Main module subroutine PromptForSelectionCriteria displays this message when the operator neglects to input a valid string.</comment>
+  </data>
+  <data name="MSG_ERR_NUMERIC_CONVERSION" xml:space="preserve">
+    <value>The specified input value cannot be converted to the specified numeric type.</value>
+    <comment>Static methods on the ADOHelpers class use this message to report numeric conversion errors.</comment>
+  </data>
+  <data name="MSG_ERR_PREFIX_INVALID_VERB" xml:space="preserve">
+    <value>is not a valid value for CrudVerb.</value>
+    <comment>Main module subroutine EvaluateCrudVerb examines the exception to confirm that it contains this string, which is expected when the routine gets an invalid verb.</comment>
+  </data>
+  <data name="MSG_INFO_ASSIGNED_COLUMN_VALUE" xml:space="preserve">
+    <value>        {0}: {1} value assigned by system = {2}</value>
+    <comment>Method AddNewRows displays this message once for each column (field) that gets its value assigned by the program.</comment>
+  </data>
+  <data name="MSG_INPUT_TOO_LONG" xml:space="preserve">
+    <value>The input string is too long.{4}    Input string         = {0}{4}    Input string length  = {1}{4}    Maximum field length = {2}{4}    Truncated string     = {3}{4}</value>
+    <comment>Static ADOHelpers method ParseAndConvertString formats its exception report from this string.</comment>
+  </data>
+  <data name="MSG_LABEL_FOR_LISTING" xml:space="preserve">
+    <value>Listing</value>
+    <comment>The DoTask routine on the main module constructs its summary report from this template.</comment>
+  </data>
+  <data name="MSG_LABEL_FOR_PROPERTIES_LIST" xml:space="preserve">
+    <value>Column Properties</value>
+    <comment>Static method ListTableColumnProperties uses this template to make its final report.</comment>
+  </data>
+  <data name="MSG_LABEL_FOR_TABLE" xml:space="preserve">
+    <value>Table  </value>
+    <comment>Main module subroutine DoTask constructs its summary report from this template.</comment>
+  </data>
+  <data name="MSG_PROGRESS_UPDATE" xml:space="preserve">
+    <value>    Listing record # {0} of {1}</value>
+    <comment>Main module subroutine ListAllFieldsOnConsole uses this message to update the console.</comment>
+  </data>
+  <data name="MSG_PROMPT_COLUMN_NAME" xml:space="preserve">
+    <value>Column Neme against which to match (CR for default value, ID): ---&gt;&gt; </value>
+    <comment>Main module subroutine PromptForSelectionCriteria displays this prompt.</comment>
+  </data>
+  <data name="MSG_PROMPT_CRITERION" xml:space="preserve">
+    <value>Enter selection criterion (CR for default value, IsEqualTo):   ---&gt;&gt; </value>
+    <comment>Main module subroutine PromptForSelectionCriteria displays this prompt.</comment>
+  </data>
+  <data name="MSG_PROMPT_FOR_FIELD_VALUE" xml:space="preserve">
+    <value>        {0}: Enter value for field {1}: </value>
+    <comment>Main module subroutine AddNewRows displays this message once for each column (field) in the table.</comment>
+  </data>
+  <data name="MSG_PROMPT_FOR_NEW_FIELD_VALUE" xml:space="preserve">
+    <value>       {0,2:N0}: Current value of field {1} = {2}{4}           Enter new value, or '{3}' to keep the existing value. ---&gt;&gt;</value>
+    <comment>Main module subroutine AddOrUpdateRow uses this template for its prompt when it runs in Update maode.</comment>
+  </data>
+  <data name="MSG_PROMPT_FOR_NEW_VALUES" xml:space="preserve">
+    <value>    Enter values for the new record in response to the following prompts.{0}</value>
+    <comment>Main module subroutine AddNewRows displayss this message once before it begins prompting for new field values.</comment>
+  </data>
+  <data name="MSG_PROMPT_FOR_TABLE_NAME" xml:space="preserve">
+    <value>    Specify which table to process.</value>
+    <comment>Main module subroutine PromptForTableName in the main module displays this text to request a missing table name.</comment>
+  </data>
+  <data name="MSG_PROMPT_MATCH_STRING" xml:space="preserve">
+    <value>Column Value (There is no default. You must enter a value.):   ---&gt;&gt; </value>
+    <comment>Main module subroutine PromptForSelectionCriteria displays this prompt.</comment>
+  </data>
+  <data name="MSG_PROMPT_ONE_ROW_ONLY" xml:space="preserve">
+    <value>The update routine supports updating only one row at a time. Your query returned {0:N0} rows.</value>
+    <comment>Main module subroutine UpdateOneRow displays this message when the selection matches two or more rows or zero rows.</comment>
+  </data>
+  <data name="MSG_PROMPT_TRUNCATE_OK" xml:space="preserve">
+    <value>The input string is too long.{1}    To make it fit, it must be truncated to {0}.{1}    Is that OK (Y/N)? </value>
+    <comment>Main module subroutine PromptForSelectionCriteria displays this prompt.</comment>
+  </data>
+  <data name="MSG_REPORT_HEADER" xml:space="preserve">
     <value>Report Name: Listing of Everything in a PSQL Table{4}Run Date: {0} ({1} UTC){4}{4}Table Name       = {2}{4}Records in Table = {3:N0}{4}</value>
     <comment>Main module subroutine ListAllFieldsOnConsole uses this message to label the detail report.</comment>
   </data>
-  <data name="IDS_MSG_SCHEMA_PROGRESS" xml:space="preserve">
+  <data name="MSG_SCHEMA_PROGRESS" xml:space="preserve">
     <value>    Listing Column # {0}, {1} of table {2}</value>
     <comment>Method ListPropertiesOfColumn uses this template for its progress messages.</comment>
   </data>
-  <data name="IDS_MSG_SELECTION_COUNT_AND_PROMPT" xml:space="preserve">
+  <data name="MSG_SELECTION_COUNT_AND_PROMPT" xml:space="preserve">
     <value>{0:N0} records meet the selection criteria? OK to delete them? (Y/N) ---&gt;&gt; </value>
     <comment>Main module subroutine DeleteSelectedRows displays this summary when the selection includes at least one matching row.</comment>
   </data>
-  <data name="IDS_MSG_SELECTION_CRITERIA" xml:space="preserve">
+  <data name="MSG_SELECTION_CRITERIA" xml:space="preserve">
     <value>{3}Selection Criteria:{3}{3}    Column (Field) Name = {0}{3}    Criterion Value     = {2}{3}    Criterion Condition = {1}{3}</value>
     <comment>Main module subroutine PromptForSelectionCriteria generates its summary report message from this template.</comment>
   </data>
-  <data name="IDS_MSG_SELECT_QUERY" xml:space="preserve">
+  <data name="MSG_SELECT_QUERY" xml:space="preserve">
     <value>    SQL SELECT Query    = {0}{1}</value>
     <comment>Method AssembleSelectQuery displays its result through this message template.</comment>
   </data>
-  <data name="IDS_MSG_SHUTDOWN_NORMALLY" xml:space="preserve">
-    <value>Execution succeeded.</value>
-    <comment>Main module subroutine ShutdownNormally formats its report from this template.</comment>
-  </data>
-  <data name="IDS_MSG_SHUTDOWN_WITH_ERROR" xml:space="preserve">
-    <value>Execution failed with status code {0:0x8x} ({1} decimal).</value>
-    <comment>Main module subroutine ShutdownAbnormally formats its report from this template.</comment>
-  </data>
-  <data name="IDS_MSG_TASK_SUMMARY" xml:space="preserve">
+  <data name="MSG_TASK_SUMMARY" xml:space="preserve">
     <value>{0}{1} File Name = {2}</value>
     <comment>Main module subroutine DoTask constructs its summary report from this template.</comment>
   </data>
-  <data name="IDS_MSG_WAIT_FOR_CARBON_UNIT" xml:space="preserve">
-    <value>Press the RETURN key to return to Windows.</value>
-    <comment>Helper method WaitForCarbonUnit formats its prompt from this template.</comment>
-  </data>
-  <data name="IDS_PROMPT_NO_ROWS_SELECTED" xml:space="preserve">
+  <data name="PROMPT_NO_ROWS_SELECTED" xml:space="preserve">
     <value>Your selection matched no records. Nothing will happen.</value>
     <comment>Main module subroutine DeleteSelectedRows displays this message when the selection criteria yield an empty recordset.</comment>
   </data>
-  <data name="IDS_REPORT_FOOTER" xml:space="preserve">
+  <data name="REPORT_FOOTER" xml:space="preserve">
     <value>End of report, Total records = {0:N0}</value>
     <comment>Main module subroutine ListAllFieldsOnConsole uses this message to mark the end of the itemized listing report. NOTE: This format string manages its own numeric formatting.</comment>
   </data>
-  <data name="IDS_UNIQUE_COLUMN_NAME_TOSTRING" xml:space="preserve">
+  <data name="UNIQUE_COLUMN_NAME_TOSTRING" xml:space="preserve">
     <value>TableName = {1}, ColumnName = {0}</value>
     <comment>The ToString method on UniqueColumnName instances use this template to return their value.</comment>
   </data>
