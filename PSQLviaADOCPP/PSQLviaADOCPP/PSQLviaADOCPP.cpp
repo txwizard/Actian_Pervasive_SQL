@@ -38,7 +38,7 @@ int main ( int argc , char * argv [ ] )
 	int ret = ERROR_SUCCESS;
 	char *	lpszProgramName = ShowProgramInfo ( SHOWPROGRAMINFO_ON_STDERR );
 
-	char *  lpFormattedStartTimeLocal = FormatNowLocal ( (void * ) m_lpStrfTimeLocalFormatString ,
+	char *  lpFormattedStartTimeLocal = FormatNowLocal ( ( void * ) m_lpStrfTimeLocalFormatString ,
 		                                                 NULL );
 
 	if ( lpFormattedStartTimeLocal == NULL )
