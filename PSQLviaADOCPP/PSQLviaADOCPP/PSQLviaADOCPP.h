@@ -1,10 +1,30 @@
-// Tips for Getting Started: 
-//   1. Use the Solution Explorer window to add/manage files
-//   2. Use the Team Explorer window to connect to source control
-//   3. Use the Output window to see build output and other messages
-//   4. Use the Error List window to view errors
-//   5. Go to Project > Add New Item to create new code files, or Project > Add Existing Item to add existing code files to the project
-//   6. In the future, to open this project again, go to File > Open > Project and select the .sln file
+/*
+	============================================================================
+
+	Module Name:        PSQLviaADOCPP.cpp
+
+	Executable Name:    PSQLviaADOCS.exe
+
+	Module Objective:   This application demonstrates basic CRUD operations,
+						which were once also called ACID operations, on a
+						Pervacive SQL (BTrieve) data base, using the ADODB data
+						provider through COM interop.
+
+	Remarks:			This is a port of PSQLviaADOCS, version 1.4, from C#.
+
+						This file contains the declarations required to bind the
+						other source files into a complete program without any
+						unresolved external references.
+
+	----------------------------------------------------------------------------
+	Revision History
+	----------------------------------------------------------------------------
+
+	Date       Version By Description
+	---------- ------- ---------------------------------------------------------
+	2019/07/25 1.4.0.0 DG Revise the naming scheme for managed resource strings.
+	============================================================================
+*/
 
 #if !defined ( PSQLVIAADOCPP_H )
 #define PSQLVIAADOCPP_H
@@ -17,5 +37,7 @@
 #include <CRTTime.H>
 #include <NativeConssoleAppAids.h>
 #include <NativeStringAids.h>
+
+#define SHOWPROGRAMINFO_ON_STDERR	TRUE
 
 #endif // PSQLVIAADOCPP_H
