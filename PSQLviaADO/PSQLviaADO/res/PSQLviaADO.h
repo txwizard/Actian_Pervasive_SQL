@@ -1,6 +1,6 @@
  ==============================================================================
 
- Name:                 PSQLviaADOCPP_Messages.mc
+ Name:                 PSQLviaADO.mc
 
  Synopsis:             Define messages for use in place of string resources, so
                        that FormatMessage can be used to format them, rather
@@ -24,6 +24,7 @@
  Date       By Synopsis
  ---------- -- ----------------------------------------------------------------
  2019/07/25 DG Create and compile the initial English language message file.
+ 2019/07/27 DG Rename to match the shorter name of the new project.
  ==============================================================================
 -------------------------------------------------------------------------
  HEADER SECTION

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -19,41 +19,75 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <VCProjectVersion>15.0</VCProjectVersion>
-    <ProjectGuid>{932DF08F-A55B-4339-9052-F5E01A709EA5}</ProjectGuid>
+    <VCProjectVersion>16.0</VCProjectVersion>
+    <ProjectGuid>{B5ADF6A8-D652-4477-9761-E788EDF9A391}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>PSQLviaADOCPP</RootNamespace>
+    <RootNamespace>PSQLviaADO</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
-  <PropertyGroup Condition="'$(Configuration)'=='Debug'" Label="Configuration">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
-    <WholeProgramOptimization>fals</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
-    <UseOfMfc>false</UseOfMfc>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)'=='Release'" Label="Configuration">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
-    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <WholeProgramOptimization>false</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
-    <UseOfMfc>false</UseOfMfc>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <WholeProgramOptimization>false</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
   </ImportGroup>
   <ImportGroup Label="Shared">
   </ImportGroup>
-  <ImportGroup Label="PropertySheets">
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>false</LinkIncremental>
+    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(Platform)\$(Configuration)\</IntDir>
+    <TargetName>$(ProjectName)$(PlatformArchitecture)</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>false</LinkIncremental>
+    <TargetName>$(ProjectName)$(PlatformArchitecture)</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(Platform)\$(Configuration)\</IntDir>
+    <TargetName>$(ProjectName)$(PlatformArchitecture)</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
     <TargetName>$(ProjectName)$(PlatformArchitecture)</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -64,40 +98,26 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>$(SolutionDir)INCLUDE\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <DiagnosticsFormat>Caret</DiagnosticsFormat>
-      <MultiProcessorCompilation>false</MultiProcessorCompilation>
-      <ControlFlowGuard>Guard</ControlFlowGuard>
-      <EnableParallelCodeGeneration>false</EnableParallelCodeGeneration>
-      <EnforceTypeConversionRules>true</EnforceTypeConversionRules>
-      <RuntimeTypeInfo>false</RuntimeTypeInfo>
-      <AssemblerOutput>AssemblyAndSourceCode</AssemblerOutput>
-      <BrowseInformation>false</BrowseInformation>
       <SupportJustMyCode>false</SupportJustMyCode>
-      <OpenMPSupport>false</OpenMPSupport>
-      <ShowIncludes>false</ShowIncludes>
-      <ProgramDataBaseFileName>$(IntDir)$(TargetName).pdb</ProgramDataBaseFileName>
-      <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
-      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <DiagnosticsFormat>Caret</DiagnosticsFormat>
+      <EnableParallelCodeGeneration>false</EnableParallelCodeGeneration>
+      <AssemblerOutput>AssemblyAndSourceCode</AssemblerOutput>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
+      <GenerateDebugInformation>DebugFull</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)LIB\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>CRTTime$(PlatformArchitecture).lib;NativeConssoleAppAids$(PlatformArchitecture).lib;NativeStringAids$(PlatformArchitecture).lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <TerminalServerAware>true</TerminalServerAware>
       <OptimizeReferences>true</OptimizeReferences>
-      <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
-      <MapFileName>$(OutDir)$(TargetName).map</MapFileName>
     </Link>
     <BuildLog>
-      <Path>$(IntDir)$(TargetName).log</Path>
+      <Path>$(IntDir)$(MSBuildProjectName)$(PlatformArchitecture).log</Path>
     </BuildLog>
-    <Bscmake>
-      <SuppressStartupBanner>false</SuppressStartupBanner>
-    </Bscmake>
+    <ResourceCompile>
+      <AdditionalIncludeDirectories>$(SolutionDir)INCLUDE\;$(ProjectDir)res\</AdditionalIncludeDirectories>
+    </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -107,47 +127,26 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>$(SolutionDir)INCLUDE\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <DiagnosticsFormat>Caret</DiagnosticsFormat>
       <SupportJustMyCode>false</SupportJustMyCode>
-      <SuppressStartupBanner>false</SuppressStartupBanner>
-      <MultiProcessorCompilation>false</MultiProcessorCompilation>
-      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
-      <IntrinsicFunctions>true</IntrinsicFunctions>
-      <OmitFramePointers>false</OmitFramePointers>
-      <StringPooling>true</StringPooling>
-      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
-      <ControlFlowGuard>Guard</ControlFlowGuard>
+      <DiagnosticsFormat>Caret</DiagnosticsFormat>
       <EnableParallelCodeGeneration>false</EnableParallelCodeGeneration>
-      <EnforceTypeConversionRules>true</EnforceTypeConversionRules>
-      <RuntimeTypeInfo>false</RuntimeTypeInfo>
-      <OpenMPSupport>false</OpenMPSupport>
       <AssemblerOutput>AssemblyAndSourceCode</AssemblerOutput>
-      <BrowseInformation>false</BrowseInformation>
-      <ShowIncludes>false</ShowIncludes>
-      <ProgramDataBaseFileName>$(IntDir)$(TargetName).pdb</ProgramDataBaseFileName>
-      <EnableEnhancedInstructionSet>AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
-      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
+      <GenerateDebugInformation>DebugFull</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)LIB\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>CRTTime$(PlatformArchitecture).lib;NativeConssoleAppAids$(PlatformArchitecture).lib;NativeStringAids$(PlatformArchitecture).lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <TerminalServerAware>true</TerminalServerAware>
       <OptimizeReferences>true</OptimizeReferences>
-      <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
-      <MapFileName>$(OutDir)$(TargetName).map</MapFileName>
-      <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
     <BuildLog>
-      <Path>$(IntDir)$(TargetName).log</Path>
+      <Path>$(IntDir)$(MSBuildProjectName)$(PlatformArchitecture).log</Path>
     </BuildLog>
-    <Bscmake>
-      <SuppressStartupBanner>false</SuppressStartupBanner>
-    </Bscmake>
+    <ResourceCompile>
+      <AdditionalIncludeDirectories>$(SolutionDir)INCLUDE\;$(ProjectDir)res\</AdditionalIncludeDirectories>
+    </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -159,39 +158,26 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>$(SolutionDir)INCLUDE\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <DiagnosticsFormat>Caret</DiagnosticsFormat>
-      <MultiProcessorCompilation>false</MultiProcessorCompilation>
-      <ControlFlowGuard>Guard</ControlFlowGuard>
       <EnableParallelCodeGeneration>false</EnableParallelCodeGeneration>
-      <EnforceTypeConversionRules>true</EnforceTypeConversionRules>
-      <RuntimeTypeInfo>false</RuntimeTypeInfo>
       <AssemblerOutput>AssemblyAndSourceCode</AssemblerOutput>
-      <BrowseInformation>false</BrowseInformation>
-      <OpenMPSupport>false</OpenMPSupport>
-      <ShowIncludes>false</ShowIncludes>
-      <ProgramDataBaseFileName>$(IntDir)$(TargetName).pdb</ProgramDataBaseFileName>
-      <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
+      <GenerateDebugInformation>DebugFull</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)LIB\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>CRTTime$(PlatformArchitecture).lib;NativeConssoleAppAids$(PlatformArchitecture).lib;NativeStringAids$(PlatformArchitecture).lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
-      <MapFileName>$(OutDir)$(TargetName).map</MapFileName>
+      <TerminalServerAware>true</TerminalServerAware>
     </Link>
     <BuildLog>
-      <Path>$(IntDir)$(TargetName).log</Path>
+      <Path>$(IntDir)$(MSBuildProjectName)$(PlatformArchitecture).log</Path>
     </BuildLog>
-    <Bscmake>
-      <SuppressStartupBanner>false</SuppressStartupBanner>
-    </Bscmake>
+    <ResourceCompile>
+      <AdditionalIncludeDirectories>$(SolutionDir)INCLUDE\;$(ProjectDir)res\</AdditionalIncludeDirectories>
+    </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -203,71 +189,60 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>$(SolutionDir)INCLUDE\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <DiagnosticsFormat>Caret</DiagnosticsFormat>
-      <MultiProcessorCompilation>false</MultiProcessorCompilation>
-      <ControlFlowGuard>Guard</ControlFlowGuard>
       <EnableParallelCodeGeneration>false</EnableParallelCodeGeneration>
-      <EnforceTypeConversionRules>true</EnforceTypeConversionRules>
-      <RuntimeTypeInfo>false</RuntimeTypeInfo>
-      <OpenMPSupport>false</OpenMPSupport>
       <AssemblerOutput>AssemblyAndSourceCode</AssemblerOutput>
-      <BrowseInformation>false</BrowseInformation>
-      <ShowIncludes>false</ShowIncludes>
-      <ProgramDataBaseFileName>$(IntDir)$(TargetName).pdb</ProgramDataBaseFileName>
-      <EnableEnhancedInstructionSet>AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
+      <GenerateDebugInformation>DebugFull</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)LIB\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>CRTTime$(PlatformArchitecture).lib;NativeConssoleAppAids$(PlatformArchitecture).lib;NativeStringAids$(PlatformArchitecture).lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
-      <MapFileName>$(OutDir)$(TargetName).map</MapFileName>
-      <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
+      <TerminalServerAware>true</TerminalServerAware>
     </Link>
     <BuildLog>
-      <Path>$(IntDir)$(TargetName).log</Path>
+      <Path>$(IntDir)$(MSBuildProjectName)$(PlatformArchitecture).log</Path>
     </BuildLog>
-    <Bscmake>
-      <SuppressStartupBanner>false</SuppressStartupBanner>
-    </Bscmake>
+    <ResourceCompile>
+      <AdditionalIncludeDirectories>$(SolutionDir)INCLUDE\;$(ProjectDir)res\</AdditionalIncludeDirectories>
+    </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="PSQLviaADOCPP.h" />
+    <ClCompile Include="PSQLviaADO.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="PSQLviaADO.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="PSQLviaADOCPP.cpp" />
+    <ResourceCompile Include="PSQLviaADO.rc" />
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="PSQLviaADOCPP.mc">
+    <Image Include="..\..\..\Console_Apps\Date2FN\Date2FN\WW_Icon1.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="PSQLviaADO.mc">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
       <FileType>Document</FileType>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">mc -v -n -h $(ProjectDir)\res\ -r $(ProjectDir)\res\ %(FullPath)</Command>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compiling Message Resources</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectDir)\res\%(Filename).rc;$(ProjectDir)\res\%(Filename).h;$(ProjectDir)\res\%(Filename)_1033.bin</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">mc -v -n -h $(ProjectDir)\res\ -r $(ProjectDir)\res\ %(FullPath)</Command>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compiling Message Resources</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ProjectDir)\res\%(Filename).rc;$(ProjectDir)\res\%(Filename).h;$(ProjectDir)\res\%(Filename)_1033.bin</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">mc -v -n -h $(ProjectDir)\res\ -r $(ProjectDir)\res\ %(FullPath)</Command>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compiling Message Resources</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)\res\%(Filename).rc;$(ProjectDir)\res\%(Filename).h;$(ProjectDir)\res\%(Filename)_1033.bin</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">mc -v -n -h $(ProjectDir)\res\ -r $(ProjectDir)\res\ %(FullPath)</Command>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compiling Message Resources</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)\res\%(Filename).rc;$(ProjectDir)\res\%(Filename).h;$(ProjectDir)\res\%(Filename)_1033.bin</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">mc -v -n -h $(ProjectDir)res\ -r $(ProjectDir)res\ %(FullPath)</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compile Messages, Generate Read-only Symbols and RC Script</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectDir)res\%(Filename).rc;$(ProjectDir)res\%(Filename).h;$(ProjectDir)res\MSG00409.bin</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">mc -v -n -h $(ProjectDir)res\ -r $(ProjectDir)res\ %(FullPath)</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compile Messages, Generate Read-only Symbols and RC Script</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ProjectDir)res\%(Filename).rc;$(ProjectDir)res\%(Filename).h;$(ProjectDir)res\MSG00409.bin</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">mc -v -n -h $(ProjectDir)res\ -r $(ProjectDir)res\ %(FullPath)</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compile Messages, Generate Read-only Symbols and RC Script</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)res\%(Filename).rc;$(ProjectDir)res\%(Filename).h;$(ProjectDir)res\MSG00409.bin</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">mc -v -n -h $(ProjectDir)res\ -r $(ProjectDir)res\ %(FullPath)</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compile Messages, Generate Read-only Symbols and RC Script</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)res\%(Filename).rc;$(ProjectDir)res\%(Filename).h;$(ProjectDir)res\MSG00409.bin</Outputs>
     </CustomBuild>
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="PSQLviaADOCPP.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -72,10 +72,14 @@
 						   standaard error stream, for use with programs that
 						   always write only to the standard output stream.
 
-	2019/04/09 1.0.0.5 DAG Correct a misspelled routine name;WaitForCarbounUnit
-	                       is intended to be WaitForCarbonUnit. Move symbolic
+	2019/04/09 1.0.0.5 DAG Correct a misspelled routine name; WaitForCarbounUnit
+						   is intended to be WaitForCarbonUnit. Move symbolic
 						   constants for setting CRTWaitForCarbonUnit members to
 						   this public header; they were in a privat header.
+
+	2019/07/26 1.0.0.6 DAG Correct typographical errors in the comments. Though
+	                       the library is unchanged, this version is built
+						   against the tools that ship with Visual Studio 2019.
 	============================================================================
 */
 
@@ -165,7 +169,7 @@ extern "C" {
 	//  Remarks:        DEPRECATED: The original intent of this function was to
 	//                              validate a heap pointer before treating it
 	//                              as such. The behavior of the heap routines
-	//                              in Windows 7 makes this abad idea, because
+	//                              in Windows 7 makes this a bad idea, because
 	//                              it runs the risk of raising avoidable
 	//                              breakpoint exceptions, even in retail builds
 	//                              of the calling code. Since HeapAlloc and
@@ -223,10 +227,10 @@ extern "C" {
 	//
 	//  Remarks:            Since plpszFormatString is expected to point to the
 	//						buffer allocated by GetANSIStringPointer to hold the
-	//						message template, this routine 
-	//						This routine performs at most one call to wprintf.
-	//						If all of the expected preprocessor symbols are
-	//						undefined, it displays a message to that effect.
+	//						message template, this routine  performs at most one
+	//                      call to wprintf. If all of the expected preprocessor
+	//						symbols are undefined, it displays a message to that
+	//                      effect.
 	//  ------------------------------------------------------------------------
 
 	void    LIBSPEC_NATIVECONSSOLEAPPAIDS_API ShowPlatformA
@@ -245,7 +249,7 @@ extern "C" {
 	//  ------------------------------------------------------------------------
 	//  Function Name:      ShowProgramInfo
 	//
-	//  Abstract:           Get a pinter to a null terminated string resource
+	//  Abstract:           Get a pointer to a null terminated string resource
 	//                      for use, in situ, by any routine that deals in such
 	//                      strings.
 	//
@@ -332,7 +336,7 @@ extern "C" {
 	);
 #if defined ( __cplusplus )
 }   /* ... extern "C" */
-#endif  /* #if defined ( __cplusplus )    */
+#endif  /* #if defined ( __cplusplus ) */
 
 //	----------------------------------------------------------------------------
 //	Map the ANSI and Unicode (wide character) routines to common names by which 

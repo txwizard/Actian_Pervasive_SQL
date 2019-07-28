@@ -1,14 +1,19 @@
+#if !defined ( PSQLVIAADOCPP_H )
+#if defined ( _MSC_VER ) && ( _MSC_VER >= 1020 )
+	#pragma once
+#endif	/* #if defined ( _MSC_VER ) && ( _MSC_VER >= 1020 ) */
+
 /*
 	============================================================================
 
-	Module Name:        PSQLviaADOCPP.cpp
+	Module Name:        PSQLviaADO.cpp
 
-	Executable Name:    PSQLviaADOCS.exe
+	Executable Name:    PSQLviaADO.exe
 
 	Module Objective:   This application demonstrates basic CRUD operations,
-						which were once also called ACID operations, on a
-						Pervacive SQL (BTrieve) data base, using the ADODB data
-						provider through COM interop.
+						which were once called ACID operations, on a Pervacive
+						SQL (BTrieve) data base, using the ADODB data provider,
+						through COM.
 
 	Remarks:			This is a port of PSQLviaADOCS, version 1.4, from C#.
 
@@ -22,22 +27,20 @@
 
 	Date       Version By Description
 	---------- ------- ---------------------------------------------------------
-	2019/07/25 1.4.0.0 DG Revise the naming scheme for managed resource strings.
+	2019/07/27 1.0.0.1 DG Revise the naming scheme for managed resource strings.
 	============================================================================
 */
 
-#if !defined ( PSQLVIAADOCPP_H )
-#define PSQLVIAADOCPP_H
-#if defined ( _MSC_VER ) && ( _MSC_VER >= 1020 )
-	#pragma once
-#endif  /* #if defined ( _MSC_VER ) && ( _MSC_VER >= 1020 ) */
 
-#include <StandardMacros_DAG.H>
+#if defined ( RC_INVOKED )
+	#pragma message ("Skipping unnecessary parts of " __FILE__ )
+#else
+	#include <StandardMacros_DAG.H>
 
-#include <CRTTime.H>
-#include <NativeConssoleAppAids.h>
-#include <NativeStringAids.h>
+	#include <CRTTime.H>
+	#include <NativeConssoleAppAids.h>
+	#include <NativeStringAids.h>
 
-#define SHOWPROGRAMINFO_ON_STDERR	TRUE
-
+	#define SHOWPROGRAMINFO_ON_STDERR	TRUE
+#endif // RC_INVOKED
 #endif // PSQLVIAADOCPP_H
