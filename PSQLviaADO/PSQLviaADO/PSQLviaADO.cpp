@@ -20,7 +20,7 @@
 
 	Date       Version By Description
 	---------- ------- ---------------------------------------------------------
-	2019/07/27 1.4.0.1 DG Revise the naming scheme for managed resource strings.
+	2019/07/27 1,4,1,0 DG This is the version of the C# source that I ported.
 	============================================================================
 */
 

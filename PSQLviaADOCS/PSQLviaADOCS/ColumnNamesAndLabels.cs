@@ -12,6 +12,13 @@
     Objective:          This class models a column name and its label,
                         optionally associating both with a database table.
 
+    Remarks:            Each column has an auto-generated zero-based index
+                        number, unless one of the constructors that takes a
+                        pintColumnIndex parameter is called. Whan that happens,
+                        all subsequent calls must supply an index if you want
+                        them. Since indexes are optional infrastructure bits,
+                        the constructors don't enforce this rule.
+
     ----------------------------------------------------------------------------
     Revision History
     ----------------------------------------------------------------------------
@@ -36,6 +43,11 @@
                              the delegate is defined and called.
 
     2019/07/25 1.4.0.0 DG Revise the naming scheme for managed resource strings.
+
+    2019/07/28 1.4.1.0 DG Augment the Objective with additional details from the
+                          XML comments, and add a paragraph about the optional
+                          column indexes and the optional pintColumnIndex
+                          constructor argument for supplying your own.
     ============================================================================
 */
 

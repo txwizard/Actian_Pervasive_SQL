@@ -9,8 +9,9 @@
 
     Class:              ADOHelpers
 
-    Objective:          This class models a column name and its label,
-                        optionally associating both with a database table.
+    Objective:          This class exposes static methods for parsing string
+                        representations of data that is destined for a column
+                        (field) in an ADODB Recordset.
 
     ----------------------------------------------------------------------------
     Revision History
@@ -21,6 +22,10 @@
     2019/07/24 1.3.0.0 DG Initial implementation.
 
     2019/07/25 1.4.0.0 DG Revise the naming scheme for managed resource strings.
+
+    2019/07/28 1.4.1.0 DG Replace the Objective that was copied from another
+                          module, and wasn't discovered until I prepared to port
+                          this module to C++.
     ============================================================================
 */
 

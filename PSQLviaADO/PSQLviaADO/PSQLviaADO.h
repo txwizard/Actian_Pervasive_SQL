@@ -6,6 +6,8 @@
 /*
 	============================================================================
 
+	File Name:			PSQLviaADO.h
+
 	Module Name:        PSQLviaADO.cpp
 
 	Executable Name:    PSQLviaADO.exe
@@ -27,19 +29,23 @@
 
 	Date       Version By Description
 	---------- ------- ---------------------------------------------------------
-	2019/07/27 1.0.0.1 DG Revise the naming scheme for managed resource strings.
+	2019/07/29 1.4.1.0 DG Port from the inidcated version of PSQLviaADOCS, the
+	                      Visual C# implementation.
 	============================================================================
 */
 
 
 #if defined ( RC_INVOKED )
-	#pragma message ("Skipping unnecessary parts of " __FILE__ )
+	#pragma message ( "Skipping unnecessary parts of " __FILE__ )
 #else
-	#include <StandardMacros_DAG.H>
+	#include <StandardMacros_DAG.H>							// My standard preprocessor macros
+	#include <comdef.h>										// Main COM declarations, which auto-includes comutil.h
 
-	#include <CRTTime.H>
-	#include <NativeConssoleAppAids.h>
-	#include <NativeStringAids.h>
+	#import "msado15.dll" no_namespace rename ( "EOF" , "EndOfFile" )
+
+	#include <CRTTime.H>									// Custom CRT time formatting functions built around strftime
+	#include <NativeConssoleAppAids.h>						// Custom routines for parsing command lines, displaying version info, etc.
+	#include <NativeStringAids.h>							// Custom string processing routines
 
 	#define SHOWPROGRAMINFO_ON_STDERR	TRUE
 #endif // RC_INVOKED
