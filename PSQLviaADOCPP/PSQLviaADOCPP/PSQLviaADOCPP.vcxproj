@@ -22,7 +22,7 @@
     <VCProjectVersion>16.0</VCProjectVersion>
     <ProjectGuid>{B5ADF6A8-D652-4477-9761-E788EDF9A391}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>PSQLviaADO</RootNamespace>
+    <RootNamespace>PSQLviaADOCPP</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -219,40 +219,17 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="MessageResourceHelpers.c" />
-    <ClCompile Include="PSQLviaADO.cpp" />
+    <ClCompile Include="PSQLviaADOCPP.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="MessageResourceHelpers.h" />
-    <ClInclude Include="PSQLviaADO.h" />
+    <ClInclude Include="PSQLviaADOCPP.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="PSQLviaADO.rc" />
+    <ResourceCompile Include="PSQLviaADOCPP.rc" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="..\..\..\Console_Apps\Date2FN\Date2FN\WW_Icon1.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <CustomBuild Include="PSQLviaADO.mc">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
-      <FileType>Document</FileType>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">mc -v -n -h $(ProjectDir)res\ -r $(ProjectDir)res\ %(FullPath)</Command>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compile Messages, Generate Read-only Symbols and RC Script</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectDir)res\%(Filename).rc;$(ProjectDir)res\%(Filename).h;$(ProjectDir)res\MSG00409.bin</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">mc -v -n -h $(ProjectDir)res\ -r $(ProjectDir)res\ %(FullPath)</Command>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compile Messages, Generate Read-only Symbols and RC Script</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ProjectDir)res\%(Filename).rc;$(ProjectDir)res\%(Filename).h;$(ProjectDir)res\MSG00409.bin</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">mc -v -n -h $(ProjectDir)res\ -r $(ProjectDir)res\ %(FullPath)</Command>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compile Messages, Generate Read-only Symbols and RC Script</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)res\%(Filename).rc;$(ProjectDir)res\%(Filename).h;$(ProjectDir)res\MSG00409.bin</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">mc -v -n -h $(ProjectDir)res\ -r $(ProjectDir)res\ %(FullPath)</Command>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compile Messages, Generate Read-only Symbols and RC Script</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)res\%(Filename).rc;$(ProjectDir)res\%(Filename).h;$(ProjectDir)res\MSG00409.bin</Outputs>
-    </CustomBuild>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
