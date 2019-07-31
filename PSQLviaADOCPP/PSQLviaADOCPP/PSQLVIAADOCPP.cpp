@@ -10,9 +10,7 @@
 						SQL (BTrieve) data base, using the ADODB data provider,
 						through COM.
 
-	Remarks:			This is a port of PSQLviaADOCPPCS, version 1.4, from C#.
-
-						This file contains the main function. Program execution
+	Remarks:			This file contains the main function. Program execution
 						begins and ends there.
 	----------------------------------------------------------------------------
 	Revision History
@@ -20,7 +18,7 @@
 
 	Date       Version By Description
 	---------- ------- ---------------------------------------------------------
-	2019/07/30 1,0,0,1 DG First version, severely simplified
+	2019/07/31 1,0,0,1 DG First version, severely simplified
 	============================================================================
 */
 
@@ -83,12 +81,10 @@ int main ( int argc , char * argv [ ] )
 
 void __stdcall DoTask ( int pintArgC , char * pachrArgV [ ] , char * plpszProgramName )
 {
-	CoInitialize ( NULL );
-	_RecordsetPtr pRs ("ADODB.Recordset");
-	_ConnectionPtr pCn ("ADODB.Connection");
-	_variant_t vtTableName ("authors"), vtCriteria;
-	printf ( "%s Done\n\n",
-		     plpszProgramName );
+	printf ("%s: Commencing tasks:\n\n",
+		plpszProgramName);
+	printf ("%s Done\n\n",
+		plpszProgramName);
 }	// void __stdcall DoTask
 
 

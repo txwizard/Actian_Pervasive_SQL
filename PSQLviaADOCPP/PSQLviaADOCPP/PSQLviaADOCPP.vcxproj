@@ -98,19 +98,18 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)INCLUDE\;$(CommonProgramFiles)\System\ado\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)INCLUDE\</AdditionalIncludeDirectories>
       <SupportJustMyCode>false</SupportJustMyCode>
       <DiagnosticsFormat>Caret</DiagnosticsFormat>
       <EnableParallelCodeGeneration>false</EnableParallelCodeGeneration>
       <AssemblerOutput>AssemblyAndSourceCode</AssemblerOutput>
-      <AdditionalUsingDirectories>$(CommonProgramFiles)\System\ado\;%(AdditionalUsingDirectories)</AdditionalUsingDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>DebugFull</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)LIB\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>CRTTime$(PlatformArchitecture).lib;NativeConssoleAppAids$(PlatformArchitecture).lib;NativeStringAids$(PlatformArchitecture).lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>CRTTime$(PlatformArchitecture).lib;NativeConssoleAppAids$(PlatformArchitecture).lib;NativeStringAids$(PlatformArchitecture).lib;btrieveCpp$(PlatformArchitecture).lib;%(AdditionalDependencies)</AdditionalDependencies>
       <TerminalServerAware>true</TerminalServerAware>
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
@@ -129,19 +128,18 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)INCLUDE\;C:\Program Files\Common Files\System\ado\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)INCLUDE\</AdditionalIncludeDirectories>
       <SupportJustMyCode>false</SupportJustMyCode>
       <DiagnosticsFormat>Caret</DiagnosticsFormat>
       <EnableParallelCodeGeneration>false</EnableParallelCodeGeneration>
       <AssemblerOutput>AssemblyAndSourceCode</AssemblerOutput>
-      <AdditionalUsingDirectories>$(CommonProgramW6432)\System\ado\;%(AdditionalUsingDirectories)</AdditionalUsingDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>DebugFull</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)LIB\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>CRTTime$(PlatformArchitecture).lib;NativeConssoleAppAids$(PlatformArchitecture).lib;NativeStringAids$(PlatformArchitecture).lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>CRTTime$(PlatformArchitecture).lib;NativeConssoleAppAids$(PlatformArchitecture).lib;NativeStringAids$(PlatformArchitecture).lib;btrieveCpp$(PlatformArchitecture).lib;%(AdditionalDependencies)</AdditionalDependencies>
       <TerminalServerAware>true</TerminalServerAware>
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
@@ -162,11 +160,10 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)INCLUDE\;$(CommonProgramFiles)\System\ado\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)INCLUDE\</AdditionalIncludeDirectories>
       <DiagnosticsFormat>Caret</DiagnosticsFormat>
       <EnableParallelCodeGeneration>false</EnableParallelCodeGeneration>
       <AssemblerOutput>AssemblyAndSourceCode</AssemblerOutput>
-      <AdditionalUsingDirectories>$(CommonProgramFiles)\System\ado\;%(AdditionalUsingDirectories)</AdditionalUsingDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -175,7 +172,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>DebugFull</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)LIB\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>CRTTime$(PlatformArchitecture).lib;NativeConssoleAppAids$(PlatformArchitecture).lib;NativeStringAids$(PlatformArchitecture).lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>CRTTime$(PlatformArchitecture).lib;NativeConssoleAppAids$(PlatformArchitecture).lib;NativeStringAids$(PlatformArchitecture).lib;btrieveCpp$(PlatformArchitecture).lib;%(AdditionalDependencies)</AdditionalDependencies>
       <TerminalServerAware>true</TerminalServerAware>
     </Link>
     <BuildLog>
@@ -195,11 +192,10 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)INCLUDE\;C:\Program Files\Common Files\System\ado\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)INCLUDE\</AdditionalIncludeDirectories>
       <DiagnosticsFormat>Caret</DiagnosticsFormat>
       <EnableParallelCodeGeneration>false</EnableParallelCodeGeneration>
       <AssemblerOutput>AssemblyAndSourceCode</AssemblerOutput>
-      <AdditionalUsingDirectories>$(CommonProgramW6432)\System\ado\;%(AdditionalUsingDirectories)</AdditionalUsingDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -208,7 +204,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>DebugFull</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)LIB\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>CRTTime$(PlatformArchitecture).lib;NativeConssoleAppAids$(PlatformArchitecture).lib;NativeStringAids$(PlatformArchitecture).lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>CRTTime$(PlatformArchitecture).lib;NativeConssoleAppAids$(PlatformArchitecture).lib;NativeStringAids$(PlatformArchitecture).lib;btrieveCpp$(PlatformArchitecture).lib;%(AdditionalDependencies)</AdditionalDependencies>
       <TerminalServerAware>true</TerminalServerAware>
     </Link>
     <BuildLog>
