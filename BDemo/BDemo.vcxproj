@@ -108,7 +108,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>DebugFull</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)LIB\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>$(Platform)\btrieveCpp.lib;CRTTime$(PlatformArchitecture).lib;NativeConssoleAppAids$(PlatformArchitecture).lib;NativeStringAids$(PlatformArchitecture).lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(Platform)\btrieveCpp.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <TerminalServerAware>true</TerminalServerAware>
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
@@ -133,7 +133,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>DebugFull</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)LIB\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>$(Platform)\btrieveCpp.lib;CRTTime$(PlatformArchitecture).lib;NativeConssoleAppAids$(PlatformArchitecture).lib;NativeStringAids$(PlatformArchitecture).lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(Platform)\btrieveCpp.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <TerminalServerAware>true</TerminalServerAware>
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
@@ -161,7 +161,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>DebugFull</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)LIB\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>$(Platform)\btrieveCpp.lib;CRTTime$(PlatformArchitecture).lib;NativeConssoleAppAids$(PlatformArchitecture).lib;NativeStringAids$(PlatformArchitecture).lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(Platform)\btrieveCpp.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <TerminalServerAware>true</TerminalServerAware>
     </Link>
   </ItemDefinitionGroup>
@@ -188,7 +188,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>DebugFull</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)LIB\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>$(Platform)\btrieveCpp.lib;CRTTime$(PlatformArchitecture).lib;NativeConssoleAppAids$(PlatformArchitecture).lib;NativeStringAids$(PlatformArchitecture).lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(Platform)\btrieveCpp.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <TerminalServerAware>true</TerminalServerAware>
     </Link>
   </ItemDefinitionGroup>

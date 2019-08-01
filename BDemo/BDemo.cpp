@@ -49,7 +49,7 @@ static Btrieve::StatusCode createFile ( BtrieveClient* btrieveClient )
 	BtrieveFileAttributes btrieveFileAttributes;
 
 	printf (
-		"createFile: SetFixedRecordLength = %i ...",							// Format control string
+		"createFile: SetFixedRecordLength = %i ... ",							// Format control string
 		( int ) sizeof ( record_t ) );											// SetFixedRecordLength = %i, where the size of record_t is size_t, which must be cast to int to suppress a compiler warning
 
 	// If SetFixedRecordLength() fails.
@@ -61,7 +61,7 @@ static Btrieve::StatusCode createFile ( BtrieveClient* btrieveClient )
 	}
 
 	printf (
-		"done\n            FileCreate %s ...",
+		"done\n            FileCreate %s ... ",
 		btrieveFileName);
 
 	// If FileCreate() fails.
@@ -82,7 +82,7 @@ static Btrieve::StatusCode openFile ( BtrieveClient * btrieveClient, BtrieveFile
 	Btrieve::StatusCode status;
 
 	printf (
-		"openFile: Opening file %s ...",
+		"openFile: Opening file %s ... ",
 		btrieveFileName );
 
 	// If FileOpen ( ) fails.
@@ -161,7 +161,7 @@ static Btrieve::StatusCode deleteFile ( BtrieveClient* btrieveClient )
 {
 	Btrieve::StatusCode status;
 
-	printf ( "deleteFile: deleting the database file ... ");
+	printf ( "deleteFile: deleting the database file ... " );
 
 	// If FileDelete() fails.
 	if ( ( status = btrieveClient->FileDelete ( btrieveFileName ) ) != Btrieve::STATUS_CODE_NO_ERROR )
@@ -191,7 +191,7 @@ static Btrieve::StatusCode createIndex ( BtrieveFile* btrieveFile )
 			status );
 	}
 
-	printf ( "done\n             Adding key segment ..." );
+	printf ( "done\n             Adding key segment ... " );
 
 	// If AddKeySegment ( ) fails.
 	if ( ( status = btrieveIndexAttributes.AddKeySegment ( &btrieveKeySegment ) ) != Btrieve::STATUS_CODE_NO_ERROR )
@@ -201,7 +201,7 @@ static Btrieve::StatusCode createIndex ( BtrieveFile* btrieveFile )
 			status );
 	}
 
-	printf ( "done\n             Populating index ..." );
+	printf ( "done\n             Populating index ... " );
 
 	// If IndexCreate() fails.
 	if ( ( status = btrieveFile->IndexCreate ( &btrieveIndexAttributes ) ) != Btrieve::STATUS_CODE_NO_ERROR )
@@ -230,10 +230,10 @@ static Btrieve::StatusCode retrieveRecord ( BtrieveFile* btrieveFile, _key_t* ke
 	}
 
 	printf (
-		"record: Index = %u        Square of Index = %u        Square root of Index = %f\n\n",
-		record.x,
-		record.xSquared,
-		record.xSquareRoot );
+		"record: Index                = %u\n        Square of Index      = %u\n        Square root of Index = %f\n\n",
+		record.x,																// Index                = %u
+		record.xSquared,														// Square of Index      = %u
+		record.xSquareRoot );													// Square root of Index = %f
 
 	return status;
 }	// static Btrieve::StatusCode retrieveRecord
